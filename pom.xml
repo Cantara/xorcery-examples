@@ -215,7 +215,7 @@
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
             <artifactId>xorcery</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>0.5.1</version>
         </dependency>
 
         <!-- Test dependencies -->
