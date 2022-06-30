@@ -203,7 +203,7 @@
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
             <artifactId>xorcery</artifactId>
-            <version>0.6.2</version>
+            <version>0.7.1</version>
         </dependency>
 
         <!-- Test dependencies -->
