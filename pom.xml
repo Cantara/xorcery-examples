@@ -18,9 +18,9 @@
     </properties>
 
     <scm>
-        <developerConnection>scm:git:ssh://git@github.com/cantara/xorcery-examples.git</developerConnection>
-        <connection>scm:git:https://github.com/cantara/xorcery-examples.git</connection>
-        <url>https://github.com/cantara/xorcery-examples</url>
+        <developerConnection>scm:git:ssh://git@github.com/Cantara/xorcery-examples.git</developerConnection>
+        <connection>scm:git:https://github.com/Cantara/xorcery-examples.git</connection>
+        <url>https://github.com/Cantara/xorcery-examples</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -195,18 +195,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
@@ -215,7 +203,7 @@
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
             <artifactId>xorcery</artifactId>
-            <version>0.5.1</version>
+            <version>0.6.2</version>
         </dependency>
 
         <!-- Test dependencies -->
@@ -275,6 +263,19 @@
             <version>1.35</version>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>cantara-releases</id>
+            <name>Cantara Release Repository</name>
+            <url>https://mvnrepo.cantara.no/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>cantara-snapshots</id>
+            <name>Cantara Snapshot Repository</name>
+            <url>https://mvnrepo.cantara.no/content/repositories/snapshots/</url>
+        </repository>
+    </repositories>
 
     <distributionManagement>
         <repository>
