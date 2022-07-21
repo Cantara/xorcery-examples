@@ -1,0 +1,9 @@
+data:
+    - id: domainevents_neo4j
+      type: grouptemplate
+      attributes:
+        name: Forum events into Neo4j
+        sources:
+          pattern: rel=='domainevents'
+        consumers:
+          pattern: type=='neo4jprojections'

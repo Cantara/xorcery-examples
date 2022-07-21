@@ -12,7 +12,7 @@ conductor:
 
 # Logging
 log4jappender:
-  enabled: true
+  enabled: false
 
 soutlogging:
   enabled: true
@@ -41,18 +41,15 @@ neo4jprojections:
   enabled: true
 
 eventstore:
-  enabled: true
+  enabled: false
   url: esdb://localhost:2113?tls=false
 
 opensearch:
-  enabled: true
+  enabled: false
   url: http://localhost:9200
   templates:
     common: /opensearch/common.json
     domainevents: /opensearch/domainevents.json
-
-mapdbdomainevents:
-  enabled: false
 
 domainevents:
   enabled: true
