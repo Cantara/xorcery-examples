@@ -1,7 +1,29 @@
 version: "3.9"
 
 services:
-  eventstore.db:
+  xe-xorcery-examples:
+    image: exoreaction/xorcery-examples:latest
+    environment:
+      - "JAVA_OPTS=-Xms512m -Xmx512m"
+      - EVENTSTORE_HOST=xe-eventstore
+      - OPENSEARCH_HOST=xe-opensearch
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 2G
+        reservations:
+          cpus: "0.25"
+          memory: 1G
+    ports:
+      - "8889:8889"
+      - "8443:8443"
+    volumes:
+      - type: volume
+        source: xorcery-examples-volume-data
+        target: /var/lib/xorcery-examples
+
+  xe-eventstore:
     image: eventstore/eventstore:20.10.5-buster-slim
     environment:
       - EVENTSTORE_CLUSTER_SIZE=1
@@ -23,9 +45,8 @@ services:
         source: eventstore-volume-logs
         target: /var/log/eventstore
 
-  opensearch-node1:
-    image: opensearchproject/opensearch:2.0.1
-    container_name: opensearch-node1
+  xe-opensearch:
+    image: opensearchproject/opensearch:2.1.0
     environment:
       - cluster.name=opensearch-cluster
       - node.name=opensearch-node1
@@ -46,26 +67,19 @@ services:
     ports:
       - 9200:9200
       - 9600:9600 # required for Performance Analyzer
-    networks:
-      - opensearch-net
 
-  opensearch-dashboards:
-    image: opensearchproject/opensearch-dashboards:2.0.1
-    container_name: opensearch-dashboards
+  xe-opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.1.0
     ports:
       - 5601:5601
     expose:
       - "5601"
     environment:
-      - 'OPENSEARCH_HOSTS=["http://opensearch-node1:9200"]'
+      - 'OPENSEARCH_HOSTS=["http://xe-opensearch:9200"]'
       - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true" # disables security dashboards plugin in OpenSearch Dashboards
-    networks:
-      - opensearch-net
 
 volumes:
+  xorcery-examples-volume-data:
   eventstore-volume-data:
   eventstore-volume-logs:
   opensearch-data1:
-
-networks:
-  opensearch-net:

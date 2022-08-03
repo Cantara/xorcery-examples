@@ -13,12 +13,13 @@ data:
       attributes:
         name: Forum events from EventStore into Neo4j
         sources:
-          pattern: rel=='eventstorestreams'
+          pattern: rel=='events'
           configuration:
-            stream: development-default-forum
+            stream: "{{ environment }}-{{ tag }}-forum"
         consumers:
           pattern: type=='neo4jprojections'
           configuration:
+            id: forum
             database: neo4j
 
     - id: eventstore_opensearch
@@ -26,11 +27,11 @@ data:
       attributes:
         name: Forum events from EventStore into OpenSearch
         sources:
-          pattern: rel=='eventstorestreams'
+          pattern: rel=='events'
           configuration:
-            stream: development-default-forum
+            stream: "{{ environment }}-{{ tag }}-forum"
         consumers:
           pattern: type=='opensearch'
           configuration:
             type: domainevents
-            index: domainevents-development-default-forum
+            index: "domainevents-{{ environment }}-{{ tag }}-forum"

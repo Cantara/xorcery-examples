@@ -1,0 +1,76 @@
+reactivestreams:
+  enabled: true
+
+registry:
+  enabled: true
+
+conductor:
+  enabled: true
+  templates:
+    #    - /conductor/metrics.yaml
+    - /conductor/metrics_opensearch.yaml
+    - /conductor/logging_opensearch.yaml
+    - /conductor/requestlog_opensearch.yaml
+#    - /conductor/certmanager.yaml
+    #    - /conductor/forum.yaml
+    - /conductor/forumeventstore.yaml
+
+# Logging
+log4jappender:
+  enabled: true
+
+requestlog:
+  enabled: true
+
+#soutlogging:
+#  enabled: true
+
+# Metrics
+metrics:
+  enabled: true
+
+soutmetrics:
+  enabled: false
+
+jmxmetrics:
+  enabled: true
+
+# Domain events
+neo4jdatabase:
+  enabled: true
+  path: "{{ home }}/neo4j"
+  settings:
+    dbms:
+      allow_upgrade: true
+  databases:
+    - name: neo4j
+
+neo4jprojections:
+  enabled: true
+
+eventstore:
+  enabled: true
+
+opensearch:
+  enabled: true
+  component_templates:
+    common: /opensearch/templates/components/common.yaml
+  index_templates:
+    domainevents: /opensearch/templates/domainevents.yaml
+    logs: /opensearch/templates/logs.yaml
+    metrics: /opensearch/templates/metrics.yaml
+    requestlog: /opensearch/templates/requestlogs.yaml
+
+domainevents:
+  enabled: true
+
+# Examples
+greeter:
+  enabled: true
+
+forum:
+  enabled: true
+
+# Misc
+visualizer:
+  enabled: false

@@ -34,6 +34,7 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.jetty.connector.JettyConnectorProvider;
 import org.glassfish.jersey.jetty.connector.JettyHttpClientContract;
+import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.server.spi.Container;
 import org.glassfish.jersey.server.spi.ContainerLifecycleListener;
 
@@ -94,12 +95,12 @@ public class JmxMetrics
         this.reactiveStreams = reactiveStreams;
         this.conductor = conductor;
         this.registry = registry;
-        ClientConfig config = new ClientConfig();
-        config.register(new JsonApiMessageBodyReader(new ObjectMapper()));
-        config.connectorProvider(new JettyConnectorProvider());
-        config.register(instance);
         Client client = ClientBuilder.newBuilder()
-                .withConfig(config)
+                .withConfig(new ClientConfig()
+                        .register(new JsonApiMessageBodyReader(new ObjectMapper()))
+                        .register(new LoggingFeature.LoggingFeatureBuilder().withLogger(java.util.logging.Logger.getLogger("client.jmxmetrics")).build())
+                        .connectorProvider(new JettyConnectorProvider())
+                        .register(instance))
                 .build();
         this.client = new JsonApiClient(client);
         this.managementServer = ManagementFactory.getPlatformMBeanServer();

@@ -7,3 +7,6 @@ data:
           pattern: rel=='domainevents'
         consumers:
           pattern: type=='neo4jprojections'
+          configuration:
+            id: forum
+            database: neo4j

@@ -1,6 +1,6 @@
 package com.exoreaction.xorcery.service.greeter.resources.api;
 
-import com.exoreaction.xorcery.server.Server;
+import com.exoreaction.xorcery.server.Xorcery;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.util.Fields;
 import org.junit.jupiter.api.*;
@@ -8,18 +8,18 @@ import org.junit.jupiter.api.*;
 @Disabled
 class GreeterResourceIT {
 
-    static private Server server;
+    static private Xorcery xorcery;
     static private HttpClient httpClient = new HttpClient();
 
     @BeforeAll
     public static void setUp() throws Exception {
-        server = new Server(null, null);
+        xorcery = new Xorcery(null, null);
         httpClient.start();
     }
 
     @AfterAll
     public static void tearDown() throws Exception {
-        server.close();
+        xorcery.close();
         httpClient.stop();
 
 /* For debugging

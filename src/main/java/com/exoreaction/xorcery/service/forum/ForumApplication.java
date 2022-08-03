@@ -20,16 +20,22 @@ import com.exoreaction.xorcery.service.neo4jprojections.Neo4jProjections;
 import com.exoreaction.xorcery.service.neo4jprojections.WaitForProjections;
 import com.exoreaction.xorcery.service.neo4jprojections.aggregates.AggregateSnapshotLoader;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ext.Provider;
+import org.apache.logging.log4j.LogManager;
+import org.glassfish.jersey.jetty.connector.JettyHttpClientContract;
+import org.glassfish.jersey.server.spi.Container;
+import org.glassfish.jersey.server.spi.ContainerLifecycleListener;
 import org.glassfish.jersey.spi.Contract;
 
 import java.util.concurrent.*;
 
 @Singleton
 @Contract
-public class ForumApplication {
+public class ForumApplication
+{
 
     public static final String SERVICE_TYPE = "forum";
 
@@ -63,13 +69,23 @@ public class ForumApplication {
     private GraphDatabase database;
 
     @Inject
-    public ForumApplication(DomainEventPublisher domainEventPublisher, GraphDatabase database, Neo4jProjections neo4jProjections) {
+    public ForumApplication(DomainEventPublisher domainEventPublisher,
+                            GraphDatabase database,
+                            Neo4jProjections neo4jProjections
+    ) {
         this.domainEventPublisher = domainEventPublisher;
         this.database = database;
         this.snapshotLoader = new AggregateSnapshotLoader(database);
         this.neo4jProjections = neo4jProjections;
         listener = new WaitForProjections();
         neo4jProjections.addProjectionListener(listener);
+
+        try {
+            neo4jProjections.isLive("forum").get(60, TimeUnit.SECONDS);
+            LogManager.getLogger(getClass()).info("Forum is live!");
+        } catch (Throwable e) {
+            LogManager.getLogger(getClass()).error("Exception waiting for projection to go live", e);
+        }
     }
 
     public PostsContext posts() {

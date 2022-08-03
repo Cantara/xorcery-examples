@@ -10,6 +10,7 @@ import com.exoreaction.xorcery.jsonapi.resources.JsonSchemaMixin;
 import com.exoreaction.xorcery.jsonapi.schema.ResourceDocumentSchema;
 import com.exoreaction.xorcery.jsonapi.schema.ResourceObjectSchema;
 import com.exoreaction.xorcery.jsonschema.model.JsonSchema;
+import com.exoreaction.xorcery.service.forum.contexts.PostsContext;
 import com.exoreaction.xorcery.service.forum.model.ForumModel;
 import com.exoreaction.xorcery.service.forum.resources.aggregates.PostAggregate;
 import jakarta.ws.rs.GET;
@@ -26,7 +27,27 @@ public class ForumResource
     @GET
     @Produces(MediaTypes.APPLICATION_JSON_SCHEMA)
     public JsonSchema schema() {
-        return getSchema().schema().schema();
+        return new ResourceDocumentSchema.Builder()
+                .resources(postSchema(), commentSchema())
+                .included(commentSchema())
+                .builder()
+                .links(new com.exoreaction.xorcery.hyperschema.model.Links.Builder()
+                        .link(selfLink()).link(describedbyLink(getAbsolutePath().toASCIIString()))
+                        .with(commands(PostAggregate.class),
+                                commands(PostsContext.class),
+                                l -> l.link(new Link.UriTemplateBuilder("posts")
+                                        .parameter("post_fields", "Post fields", "Post fields to include")
+                                        .parameter("comment_fields", "Comment fields", "Comment fields to include")
+                                        .parameter("entity_fields", "Entity fields", "Entity fields to include")
+                                        .parameter("include", "Included relationships", "Relations to include")
+                                        .parameter("sort", "Sort", "Post sort field")
+                                        .parameter("skip", "Skip", "Nr of posts to skip")
+                                        .parameter("limit", "Limit", "Limit nr of posts")
+                                        .build()))
+                        .build())
+                .builder()
+                .title("Forum application")
+                .build();
     }
 
     @GET
@@ -46,29 +67,6 @@ public class ForumResource
                         .link("post", getUriBuilderFor(PostResource.class).toTemplate())
                         .build())
                 .build();
-    }
-
-    private ResourceDocumentSchema getSchema() {
-        ResourceDocumentSchema.Builder builder = new ResourceDocumentSchema.Builder();
-        builder.resources(postSchema(), commentSchema())
-                .included(commentSchema())
-                .builder()
-                .links(new com.exoreaction.xorcery.hyperschema.model.Links.Builder()
-                        .link(selfLink()).link(describedbyLink(getAbsolutePath().toASCIIString()))
-                        .with(commands(PostAggregate.class),
-                                l -> l.link(new Link.UriTemplateBuilder("posts")
-                                        .parameter("post_fields", "Post fields", "Post fields to include")
-                                        .parameter("comment_fields", "Comment fields", "Comment fields to include")
-                                        .parameter("entity_fields", "Entity fields", "Entity fields to include")
-                                        .parameter("include", "Included relationships", "Relations to include")
-                                        .parameter("sort", "Sort", "Post sort field")
-                                        .parameter("skip", "Skip", "Nr of posts to skip")
-                                        .parameter("limit", "Limit", "Limit nr of posts")
-                                        .build()))
-                        .build())
-                .builder()
-                .title("Forum application");
-        return builder.build();
     }
 
     private ResourceObjectSchema postSchema() {

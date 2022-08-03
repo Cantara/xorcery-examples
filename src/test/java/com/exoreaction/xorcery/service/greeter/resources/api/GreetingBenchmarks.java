@@ -1,6 +1,6 @@
 package com.exoreaction.xorcery.service.greeter.resources.api;
 
-import com.exoreaction.xorcery.server.Server;
+import com.exoreaction.xorcery.server.Xorcery;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.util.Fields;
 import org.openjdk.jmh.annotations.*;
@@ -23,12 +23,12 @@ public class GreetingBenchmarks {
                 .build()).run();
     }
 
-    private Server server;
+    private Xorcery xorcery;
     private HttpClient httpClient = new HttpClient();
 
     @Setup()
     public void setup() throws Exception {
-        server = new Server(null, null);
+        xorcery = new Xorcery(null, null);
         httpClient.start();
         System.out.println("Setup done");
     }
@@ -36,7 +36,7 @@ public class GreetingBenchmarks {
     @TearDown
     public void teardown() throws Exception {
         httpClient.stop();
-        server.close();
+        xorcery.close();
         System.out.println("Teardown done");
     }
 
