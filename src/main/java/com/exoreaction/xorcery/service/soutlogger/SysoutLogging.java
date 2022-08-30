@@ -110,7 +110,7 @@ public class SysoutLogging
         }
 
         @Override
-        public EventSink<Event<LogEvent>> onSubscribe(ReactiveEventStreams.Subscription subscription) {
+        public EventSink<Event<LogEvent>> onSubscribe(ReactiveEventStreams.Subscription subscription, Configuration configuration) {
             this.subscription = subscription;
             subscription.request(ringBuffer.getBufferSize());
             return ringBuffer;
@@ -141,7 +141,7 @@ public class SysoutLogging
         }
 
         public void connect(ServiceResourceObject sro, Link link, Configuration sourceConfiguration, Configuration consumerConfiguration) {
-            reactiveStreams.subscribe(serviceIdentifier, link, new LogSubscriberProxy(multiSubscriber), sourceConfiguration);
+            reactiveStreams.subscribe(serviceIdentifier, link, new LogSubscriberProxy(multiSubscriber), sourceConfiguration, consumerConfiguration);
         }
     }
 }

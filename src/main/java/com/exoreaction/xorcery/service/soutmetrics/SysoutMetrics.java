@@ -93,7 +93,7 @@ public class SysoutMetrics
         }
 
         @Override
-        public EventSink<Event<ObjectNode>> onSubscribe(ReactiveEventStreams.Subscription subscription) {
+        public EventSink<Event<ObjectNode>> onSubscribe(ReactiveEventStreams.Subscription subscription, Configuration configuration) {
             this.subscription = subscription;
 
             Disruptor<Event<ObjectNode>> disruptor = new Disruptor<>(Event::new, 1024, new NamedThreadFactory("SysoutMetrics-"));
@@ -120,7 +120,7 @@ public class SysoutMetrics
 
         public void connect(ServiceResourceObject sro, Link link, Configuration sourceConfiguration, Configuration consumerConfiguration) {
             reactiveStreams.subscribe(serviceIdentifier, link,
-                    new MetricEventSubscriber(consumerConfiguration, scheduledExecutorService), sourceConfiguration);
+                    new MetricEventSubscriber(consumerConfiguration, scheduledExecutorService), sourceConfiguration, consumerConfiguration);
         }
     }
 }
