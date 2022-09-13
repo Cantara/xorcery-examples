@@ -1,12 +1,12 @@
 package com.exoreaction.xorcery.service.visualizer;
 
 
-import com.exoreaction.xorcery.disruptor.Event;
 import com.exoreaction.xorcery.disruptor.handlers.DefaultEventHandler;
 import com.exoreaction.xorcery.jaxrs.AbstractFeature;
 import com.exoreaction.xorcery.jsonapi.model.Link;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
 import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreams;
+import com.exoreaction.xorcery.service.reactivestreams.api.WithMetadata;
 import com.exoreaction.xorcery.service.registry.api.Registry;
 import com.exoreaction.xorcery.service.registry.api.RegistryListener;
 import jakarta.inject.Inject;
@@ -94,12 +94,12 @@ public class Visualizer
     }
 
     private class LogEventHandler
-            implements DefaultEventHandler<Event<LogEvent>> {
+            implements DefaultEventHandler<WithMetadata<LogEvent>> {
         @Override
-        public void onEvent(Event<LogEvent> event, long sequence, boolean endOfBatch) throws Exception {
-            if (event.event.getMessage().getFormat().startsWith("Connected to")) {
-                String serviceId = event.event.getMarker().getName().split(":")[1];
-                String toUri = event.event.getMessage().getFormattedMessage().substring("Connected to ".length());
+        public void onEvent(WithMetadata<LogEvent> event, long sequence, boolean endOfBatch) throws Exception {
+            if (event.event().getMessage().getFormat().startsWith("Connected to")) {
+                String serviceId = event.event().getMarker().getName().split(":")[1];
+                String toUri = event.event().getMessage().getFormattedMessage().substring("Connected to ".length());
 
                 int fromId = getServiceById(serviceId);
                 int toId = getServiceByLink(toUri);

@@ -1,6 +1,6 @@
 package com.exoreaction.xorcery.service.forum.model;
 
-import com.exoreaction.xorcery.cqrs.model.CommonModel;
+import com.exoreaction.xorcery.model.CommonModel;
 import com.exoreaction.xorcery.service.neo4j.client.GraphDatabase;
 import com.exoreaction.xorcery.service.neo4j.client.GraphQuery;
 

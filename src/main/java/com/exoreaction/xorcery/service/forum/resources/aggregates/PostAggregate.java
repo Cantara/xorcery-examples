@@ -1,10 +1,10 @@
 package com.exoreaction.xorcery.service.forum.resources.aggregates;
 
-import com.exoreaction.xorcery.cqrs.aggregate.Aggregate;
-import com.exoreaction.xorcery.cqrs.aggregate.AggregateSnapshot;
-import com.exoreaction.xorcery.cqrs.aggregate.Command;
-import com.exoreaction.xorcery.cqrs.annotation.Create;
-import com.exoreaction.xorcery.cqrs.annotation.Update;
+import com.exoreaction.xorcery.service.domainevents.api.aggregate.Aggregate;
+import com.exoreaction.xorcery.service.domainevents.api.aggregate.AggregateSnapshot;
+import com.exoreaction.xorcery.service.domainevents.api.aggregate.Command;
+import com.exoreaction.xorcery.service.domainevents.api.aggregate.annotation.Create;
+import com.exoreaction.xorcery.service.domainevents.api.aggregate.annotation.Update;
 import com.exoreaction.xorcery.service.forum.resources.events.PostEvents;
 
 public class PostAggregate

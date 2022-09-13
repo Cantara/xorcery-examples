@@ -2,8 +2,8 @@ package com.exoreaction.xorcery.service.greeter;
 
 import com.exoreaction.xorcery.configuration.Configuration;
 import com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata;
-import com.exoreaction.xorcery.cqrs.aggregate.DomainEvents;
-import com.exoreaction.xorcery.cqrs.metadata.Metadata;
+import com.exoreaction.xorcery.service.domainevents.api.aggregate.DomainEvents;
+import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.jaxrs.AbstractFeature;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
 import com.exoreaction.xorcery.service.domainevents.api.DomainEventPublisher;
@@ -22,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletionStage;
 
-import static com.exoreaction.xorcery.cqrs.aggregate.DomainEvents.events;
+import static com.exoreaction.xorcery.service.domainevents.api.aggregate.DomainEvents.events;
 
 @Singleton
 @Contract
@@ -67,7 +67,7 @@ public class GreeterApplication {
         this.configuration = configuration;
         this.graphDatabase = graphDatabase;
         this.domainEventMetadata = new DomainEventMetadata(new Metadata.Builder()
-                .add("domain", "Greeter")
+                .add("domain", "greeter")
                 .build());
     }
 
@@ -89,6 +89,7 @@ public class GreeterApplication {
     // Writes
     public CompletionStage<Metadata> handle(Record command) {
         Metadata.Builder metadata = domainEventMetadata.metadata().toBuilder();
+        metadata.add("timestamp", System.currentTimeMillis());
 
         try {
             DomainEvents domainEvents = (DomainEvents) getClass().getDeclaredMethod("handle", command.getClass()).invoke(this, command);

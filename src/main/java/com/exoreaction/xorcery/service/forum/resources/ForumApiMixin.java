@@ -1,6 +1,6 @@
 package com.exoreaction.xorcery.service.forum.resources;
 
-import com.exoreaction.xorcery.cqrs.model.CommonModel;
+import com.exoreaction.xorcery.model.CommonModel;
 import com.exoreaction.xorcery.jsonapi.model.*;
 import com.exoreaction.xorcery.jsonapi.resources.JsonApiResourceMixin;
 import com.exoreaction.xorcery.jsonapi.resources.Pagination;

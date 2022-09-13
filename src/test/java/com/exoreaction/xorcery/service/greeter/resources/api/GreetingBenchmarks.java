@@ -4,8 +4,6 @@ import com.exoreaction.xorcery.server.Xorcery;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.util.Fields;
 import org.openjdk.jmh.annotations.*;
-import org.openjdk.jmh.runner.Runner;
-import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -16,11 +14,13 @@ import java.util.concurrent.TimeoutException;
 @Measurement(iterations = 10)
 public class GreetingBenchmarks {
     public static void main(String[] args) throws Exception {
-
+        org.openjdk.jmh.Main.main(args);
+/*
         new Runner(new OptionsBuilder()
                 .include(GreetingBenchmarks.class.getSimpleName()+".writes")
                 .forks(1)
                 .build()).run();
+*/
     }
 
     private Xorcery xorcery;

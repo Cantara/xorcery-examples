@@ -2,22 +2,13 @@ package com.exoreaction.xorcery.service.soutlogger;
 
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
-import com.exoreaction.xorcery.concurrent.NamedThreadFactory;
 import com.exoreaction.xorcery.configuration.Configuration;
-import com.exoreaction.xorcery.disruptor.Event;
 import com.exoreaction.xorcery.jaxrs.AbstractFeature;
-import com.exoreaction.xorcery.jsonapi.model.Link;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
-import com.exoreaction.xorcery.service.conductor.api.AbstractConductorListener;
 import com.exoreaction.xorcery.service.conductor.api.Conductor;
-import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveEventStreams;
 import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreams;
-import com.exoreaction.xorcery.service.reactivestreams.helper.MultiSubscriber;
-import com.exoreaction.xorcery.service.reactivestreams.helper.SubscriberProxy;
-import com.lmax.disruptor.EventHandler;
-import com.lmax.disruptor.EventSink;
-import com.lmax.disruptor.RingBuffer;
-import com.lmax.disruptor.dsl.Disruptor;
+import com.exoreaction.xorcery.service.reactivestreams.api.WithMetadata;
+import com.exoreaction.xorcery.service.reactivestreams.helper.ClientSubscriberConductorListener;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -25,6 +16,8 @@ import jakarta.ws.rs.ext.Provider;
 import org.apache.logging.log4j.core.LogEvent;
 import org.glassfish.jersey.server.spi.Container;
 import org.glassfish.jersey.server.spi.ContainerLifecycleListener;
+
+import java.util.concurrent.Flow;
 
 /**
  * @author rickardoberg
@@ -35,7 +28,7 @@ import org.glassfish.jersey.server.spi.ContainerLifecycleListener;
 public class SysoutLogging
         implements ContainerLifecycleListener {
 
-    public static final String SERVICE_TYPE = "soutlogging";
+    public static final String SERVICE_TYPE = "sysoutlogging";
 
     @Provider
     public static class Feature
@@ -43,6 +36,11 @@ public class SysoutLogging
         @Override
         protected String serviceType() {
             return SERVICE_TYPE;
+        }
+
+        @Override
+        protected void buildResourceObject(ServiceResourceObject.Builder builder) {
+            builder.websocket("sysoutlogging", "ws/sysoutlogging");
         }
 
         @Override
@@ -55,31 +53,29 @@ public class SysoutLogging
     private ServiceResourceObject serviceResourceObject;
 
     private ReactiveStreams reactiveStreams;
-    private Conductor conductor;
     private Configuration configuration;
-    private MultiSubscriber<LogEvent> multiSubscriber;
 
     @Inject
-    public SysoutLogging(ReactiveStreams reactiveStreams, Conductor conductor,
-                         Configuration configuration, MetricRegistry metricRegistry,
+    public SysoutLogging(ReactiveStreams reactiveStreams,
+                         Conductor conductor,
+                         Configuration configuration,
+                         MetricRegistry metricRegistry,
                          @Named(SERVICE_TYPE) ServiceResourceObject serviceResourceObject) {
         this.reactiveStreams = reactiveStreams;
-        this.conductor = conductor;
         this.configuration = configuration;
         meter = metricRegistry.meter("logmeter");
         this.serviceResourceObject = serviceResourceObject;
+
+        serviceResourceObject.getLinkByRel("sysoutlogging").ifPresent(link ->
+        {
+            reactiveStreams.subscriber(link.getHrefAsUri().getPath(), cfg -> new SysoutSubscriber(), SysoutSubscriber.class);
+        });
+
+        conductor.addConductorListener(new ClientSubscriberConductorListener(serviceResourceObject.serviceIdentifier(), cfg -> new SysoutSubscriber(), SysoutSubscriber.class, "logging", reactiveStreams));
     }
 
     @Override
     public void onStartup(Container container) {
-        conductor.addConductorListener(new LoggingConductorListener());
-
-        Disruptor<Event<LogEvent>> disruptor = new Disruptor<>(Event::new, configuration.getInteger("sysoutlogger.size").orElse(4096), new NamedThreadFactory("SysoutLogger-"));
-        LogEventSubscriber subscriber = new LogEventSubscriber(disruptor.getRingBuffer());
-        disruptor.handleEventsWith(subscriber);
-        disruptor.start();
-
-        multiSubscriber = new MultiSubscriber<>(subscriber);
     }
 
     @Override
@@ -92,56 +88,30 @@ public class SysoutLogging
 
     }
 
-    private final static class LogSubscriberProxy
-            extends SubscriberProxy<LogEvent>
-            implements ReactiveEventStreams.Subscriber<LogEvent> {
-        public LogSubscriberProxy(MultiSubscriber<LogEvent> multiSubscriber) {
-            super(multiSubscriber);
-        }
-    }
-
-    private class LogEventSubscriber
-            implements ReactiveEventStreams.Subscriber<LogEvent>, EventHandler<Event<LogEvent>> {
-        private RingBuffer<Event<LogEvent>> ringBuffer;
-        private ReactiveEventStreams.Subscription subscription;
-
-        private LogEventSubscriber(RingBuffer<Event<LogEvent>> ringBuffer) {
-            this.ringBuffer = ringBuffer;
-        }
+    private static class SysoutSubscriber
+            implements Flow.Subscriber<WithMetadata<LogEvent>> {
+        private Flow.Subscription subscription;
 
         @Override
-        public EventSink<Event<LogEvent>> onSubscribe(ReactiveEventStreams.Subscription subscription, Configuration configuration) {
+        public void onSubscribe(Flow.Subscription subscription) {
             this.subscription = subscription;
-            subscription.request(ringBuffer.getBufferSize());
-            return ringBuffer;
-        }
-
-
-        long bs;
-
-        @Override
-        public void onBatchStart(long batchSize) {
-            bs = batchSize;
+            subscription.request(1);
         }
 
         @Override
-        public void onEvent(Event<LogEvent> event, long sequence, boolean endOfBatch) throws Exception {
-            System.out.println("Log:" + event.event.toString() + ":" + event.metadata);
-            meter.mark();
-            if (endOfBatch) {
-                subscription.request(bs);
-            }
-        }
-    }
-
-    private class LoggingConductorListener extends AbstractConductorListener {
-
-        public LoggingConductorListener() {
-            super(serviceResourceObject.serviceIdentifier(), "logevents");
+        public void onNext(WithMetadata<LogEvent> item) {
+            System.out.println("Log:" + item.event().toString() + ":" + item.metadata().metadata().toString());
+            subscription.request(1);
         }
 
-        public void connect(ServiceResourceObject sro, Link link, Configuration sourceConfiguration, Configuration consumerConfiguration) {
-            reactiveStreams.subscribe(serviceIdentifier, link, new LogSubscriberProxy(multiSubscriber), sourceConfiguration, consumerConfiguration);
+        @Override
+        public void onError(Throwable throwable) {
+
+        }
+
+        @Override
+        public void onComplete() {
+
         }
     }
 }

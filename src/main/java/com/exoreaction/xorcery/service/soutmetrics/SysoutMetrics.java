@@ -1,19 +1,13 @@
 package com.exoreaction.xorcery.service.soutmetrics;
 
-import com.exoreaction.xorcery.concurrent.NamedThreadFactory;
 import com.exoreaction.xorcery.configuration.Configuration;
-import com.exoreaction.xorcery.disruptor.Event;
 import com.exoreaction.xorcery.jaxrs.AbstractFeature;
-import com.exoreaction.xorcery.jsonapi.model.Link;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
-import com.exoreaction.xorcery.service.conductor.api.AbstractConductorListener;
 import com.exoreaction.xorcery.service.conductor.api.Conductor;
-import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveEventStreams;
 import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreams;
+import com.exoreaction.xorcery.service.reactivestreams.api.WithMetadata;
+import com.exoreaction.xorcery.service.reactivestreams.helper.ClientSubscriberConductorListener;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.lmax.disruptor.EventHandler;
-import com.lmax.disruptor.EventSink;
-import com.lmax.disruptor.dsl.Disruptor;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -23,6 +17,7 @@ import org.glassfish.jersey.server.spi.ContainerLifecycleListener;
 
 import java.time.Duration;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Flow;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -34,9 +29,7 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 public class SysoutMetrics
         implements ContainerLifecycleListener {
-    public static final String SERVICE_TYPE = "soutmetrics";
-
-    private ScheduledExecutorService scheduledExecutorService;
+    public static final String SERVICE_TYPE = "sysoutmetrics";
 
     @Provider
     public static class Feature
@@ -45,6 +38,11 @@ public class SysoutMetrics
         @Override
         protected String serviceType() {
             return SERVICE_TYPE;
+        }
+
+        @Override
+        protected void buildResourceObject(ServiceResourceObject.Builder builder) {
+            builder.websocket("sysoutmetrics", "ws/sysoutmetrics");
         }
 
         @Override
@@ -57,22 +55,30 @@ public class SysoutMetrics
     private Conductor conductor;
     private ServiceResourceObject sro;
 
+    private ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+
     @Inject
-    public SysoutMetrics(ReactiveStreams reactiveStreams, Conductor conductor, @Named(SERVICE_TYPE) ServiceResourceObject sro) {
+    public SysoutMetrics(ReactiveStreams reactiveStreams,
+                         Conductor conductor,
+                         @Named(SERVICE_TYPE) ServiceResourceObject sro) {
         this.reactiveStreams = reactiveStreams;
         this.conductor = conductor;
         this.sro = sro;
+
+        sro.getLinkByRel("sysoutmetrics").ifPresent(link ->
+        {
+            reactiveStreams.subscriber(link.getHrefAsUri().getPath(), cfg -> new MetricEventSubscriber(cfg, scheduledExecutorService), MetricEventSubscriber.class);
+        });
+
+        conductor.addConductorListener(new ClientSubscriberConductorListener(sro.serviceIdentifier(), cfg -> new MetricEventSubscriber(cfg, scheduledExecutorService), MetricEventSubscriber.class, "metrics", reactiveStreams));
     }
 
     @Override
     public void onStartup(Container container) {
-        scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        conductor.addConductorListener(new MetricsConductorListener());
     }
 
     @Override
     public void onReload(Container container) {
-
     }
 
     @Override
@@ -81,9 +87,9 @@ public class SysoutMetrics
     }
 
     private static class MetricEventSubscriber
-            implements ReactiveEventStreams.Subscriber<ObjectNode>, EventHandler<Event<ObjectNode>> {
+            implements Flow.Subscriber<WithMetadata<ObjectNode>> {
         private final ScheduledExecutorService scheduledExecutorService;
-        private ReactiveEventStreams.Subscription subscription;
+        private Flow.Subscription subscription;
         private final long delay;
 
         public MetricEventSubscriber(Configuration consumerConfiguration, ScheduledExecutorService scheduledExecutorService) {
@@ -93,34 +99,26 @@ public class SysoutMetrics
         }
 
         @Override
-        public EventSink<Event<ObjectNode>> onSubscribe(ReactiveEventStreams.Subscription subscription, Configuration configuration) {
+        public void onSubscribe(Flow.Subscription subscription) {
             this.subscription = subscription;
-
-            Disruptor<Event<ObjectNode>> disruptor = new Disruptor<>(Event::new, 1024, new NamedThreadFactory("SysoutMetrics-"));
-            disruptor.handleEventsWith(this);
-            disruptor.start();
-
-            scheduledExecutorService.schedule(() -> subscription.request(1), delay, TimeUnit.SECONDS);
-
-            return disruptor.getRingBuffer();
+            subscription.request(1);
         }
 
         @Override
-        public void onEvent(Event<ObjectNode> event, long sequence, boolean endOfBatch) throws Exception {
-            System.out.println("Metric:" + event.event.toString() + ":" + event.metadata);
+        public void onNext(WithMetadata<ObjectNode> item) {
+            System.out.println("Metric:" + item.event().toString() + ":" + item.metadata().toString());
             scheduledExecutorService.schedule(() -> subscription.request(1), delay, TimeUnit.SECONDS);
-        }
-    }
-
-    private class MetricsConductorListener extends AbstractConductorListener {
-
-        public MetricsConductorListener() {
-            super(sro.serviceIdentifier(), "metricevents");
+            subscription.request(1);
         }
 
-        public void connect(ServiceResourceObject sro, Link link, Configuration sourceConfiguration, Configuration consumerConfiguration) {
-            reactiveStreams.subscribe(serviceIdentifier, link,
-                    new MetricEventSubscriber(consumerConfiguration, scheduledExecutorService), sourceConfiguration, consumerConfiguration);
+        @Override
+        public void onError(Throwable throwable) {
+
+        }
+
+        @Override
+        public void onComplete() {
+
         }
     }
 }

@@ -1,8 +1,8 @@
 package com.exoreaction.xorcery.service.forum.resources.api;
 
-import com.exoreaction.xorcery.cqrs.aggregate.Command;
+import com.exoreaction.xorcery.service.domainevents.api.aggregate.Command;
 import com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata;
-import com.exoreaction.xorcery.cqrs.metadata.Metadata;
+import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.jsonapi.model.Included;
 import com.exoreaction.xorcery.jsonapi.model.Links;
 import com.exoreaction.xorcery.jsonapi.model.ResourceDocument;

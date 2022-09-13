@@ -47,11 +47,8 @@ Configuration:
       - name: client
         level: debug
 
-      - name: client.opensearch.logs
-        level: info
-
-      - name: client.opensearch.metrics
-        level: info
+      - name: client.opensearch
+        level: warn
 
     Root:
       level: info

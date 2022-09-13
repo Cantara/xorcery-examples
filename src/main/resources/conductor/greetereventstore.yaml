@@ -1,8 +1,8 @@
 data:
-    - id: domainevents_eventstore
+    - id: greeter_domainevents_eventstore
       type: grouptemplate
       attributes:
-        name: Forum events into EventStore
+        name: Greeter events into EventStore
         sources:
           pattern: type=='domainevents'
           configuration:
@@ -10,34 +10,34 @@ data:
         consumers:
           pattern: rel=='eventsubscriber'
           configuration:
-            stream: "{{ environment }}-{{ tag }}-forum"
+            stream: "{{ environment }}-{{ tag }}-greeter"
 
-    - id: eventstore_neo4jprojection
+    - id: greeter_eventstore_neo4jprojection
       type: grouptemplate
       attributes:
-        name: Forum events from EventStore into Neo4j
+        name: Greeter events from EventStore into Neo4j
         sources:
           pattern: rel=='eventpublisher'
           configuration:
-            stream: "{{ environment }}-{{ tag }}-forum"
+            stream: "{{ environment }}-{{ tag }}-greeter"
         consumers:
           pattern: type=='neo4jprojections'
           configuration:
-            id: forum
+            id: greeter
             database: neo4j
             rel: eventpublisher
 
-    - id: eventstore_opensearch
+    - id: greeter_eventstore_opensearch
       type: grouptemplate
       attributes:
-        name: Forum events from EventStore into OpenSearch
+        name: Greeter events from EventStore into OpenSearch
         sources:
           pattern: rel=='eventpublisher'
           configuration:
-            stream: "{{ environment }}-{{ tag }}-forum"
+            stream: "{{ environment }}-{{ tag }}-greeter"
         consumers:
           pattern: type=='opensearch'
           configuration:
             rel: eventpublisher
-            index: "domainevents-{{ environment }}-{{ tag }}-forum-%tF"
+            index: "domainevents-{{ environment }}-{{ tag }}-greeter-%tF"
             alias: "domainevents"

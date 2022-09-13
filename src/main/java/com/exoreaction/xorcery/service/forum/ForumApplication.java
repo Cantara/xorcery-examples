@@ -1,10 +1,10 @@
 package com.exoreaction.xorcery.service.forum;
 
-import com.exoreaction.xorcery.cqrs.aggregate.Aggregate;
-import com.exoreaction.xorcery.cqrs.aggregate.AggregateSnapshot;
-import com.exoreaction.xorcery.cqrs.aggregate.Command;
-import com.exoreaction.xorcery.cqrs.aggregate.DomainEvents;
-import com.exoreaction.xorcery.cqrs.metadata.Metadata;
+import com.exoreaction.xorcery.service.domainevents.api.aggregate.Aggregate;
+import com.exoreaction.xorcery.service.domainevents.api.aggregate.AggregateSnapshot;
+import com.exoreaction.xorcery.service.domainevents.api.aggregate.Command;
+import com.exoreaction.xorcery.service.domainevents.api.aggregate.DomainEvents;
+import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata;
 import com.exoreaction.xorcery.jaxrs.AbstractFeature;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
@@ -18,16 +18,12 @@ import com.exoreaction.xorcery.service.forum.model.PostModel;
 import com.exoreaction.xorcery.service.neo4j.client.GraphDatabase;
 import com.exoreaction.xorcery.service.neo4jprojections.Neo4jProjections;
 import com.exoreaction.xorcery.service.neo4jprojections.WaitForProjections;
-import com.exoreaction.xorcery.service.neo4jprojections.aggregates.AggregateSnapshotLoader;
+import com.exoreaction.xorcery.service.domainevents.api.aggregate.Neo4jAggregateSnapshotLoader;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ext.Provider;
 import org.apache.logging.log4j.LogManager;
-import org.glassfish.jersey.jetty.connector.JettyHttpClientContract;
-import org.glassfish.jersey.server.spi.Container;
-import org.glassfish.jersey.server.spi.ContainerLifecycleListener;
 import org.glassfish.jersey.spi.Contract;
 
 import java.util.concurrent.*;
@@ -63,10 +59,10 @@ public class ForumApplication
     }
 
     private final DomainEventPublisher domainEventPublisher;
-    private final AggregateSnapshotLoader snapshotLoader;
-    private Neo4jProjections neo4jProjections;
+    private final Neo4jAggregateSnapshotLoader snapshotLoader;
+    private final Neo4jProjections neo4jProjections;
     private final WaitForProjections listener;
-    private GraphDatabase database;
+    private final GraphDatabase database;
 
     @Inject
     public ForumApplication(DomainEventPublisher domainEventPublisher,
@@ -75,7 +71,7 @@ public class ForumApplication
     ) {
         this.domainEventPublisher = domainEventPublisher;
         this.database = database;
-        this.snapshotLoader = new AggregateSnapshotLoader(database);
+        this.snapshotLoader = new Neo4jAggregateSnapshotLoader(database);
         this.neo4jProjections = neo4jProjections;
         listener = new WaitForProjections();
         neo4jProjections.addProjectionListener(listener);
