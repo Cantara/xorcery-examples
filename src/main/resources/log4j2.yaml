@@ -45,7 +45,7 @@ Configuration:
         level: debug
 
       - name: client
-        level: debug
+        level: warn
 
       - name: client.opensearch
         level: warn

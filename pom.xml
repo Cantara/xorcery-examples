@@ -11,15 +11,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <xorcery.version>0.8.21</xorcery.version>
-        <log4j.version>2.17.2</log4j.version>
-        <jetty.version>11.0.9</jetty.version>
-        <jersey.version>3.0.5</jersey.version>
-        <javax.activation.version>1.2.0</javax.activation.version>
-        <jackson.version>2.13.3</jackson.version>
-        <metrics.version>4.2.10</metrics.version>
-
-        <neo4j.version>4.4.8</neo4j.version>
+        <xorcery.version>0.8.22</xorcery.version>
+        <jackson.version>2.13.4</jackson.version>
 
         <junit.version>5.9.0</junit.version>
         <junit.platform.version>1.8.2</junit.platform.version>
@@ -71,6 +64,23 @@
             <artifactId>jmh-generator-annprocess</artifactId>
             <version>1.35</version>
         </dependency>
+
+        <!-- Force version overrides -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-base</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-jaxb-annotations</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
     </dependencies>
 
 
@@ -90,8 +100,9 @@
                         <arg>--add-opens=java.base/java.lang.reflect=ALL-UNNAMED</arg>
                         <arg>--add-opens=java.base/java.io=ALL-UNNAMED</arg>
                         <arg>--add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED</arg>
-                        <arg>-processor</arg>
+<!--                        <arg>-processor</arg>
                         <arg>org.apache.logging.log4j.core.config.plugins.processor.PluginProcessor</arg>
+                        -->
                         <arg>-processor</arg>
                         <arg>org.openjdk.jmh.generators.BenchmarkProcessor</arg>
                     </compilerArgs>
@@ -103,6 +114,11 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.3.0</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

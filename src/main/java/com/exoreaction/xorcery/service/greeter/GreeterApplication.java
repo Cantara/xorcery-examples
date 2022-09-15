@@ -1,16 +1,22 @@
 package com.exoreaction.xorcery.service.greeter;
 
 import com.exoreaction.xorcery.configuration.Configuration;
-import com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata;
-import com.exoreaction.xorcery.service.domainevents.api.aggregate.DomainEvents;
-import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.jaxrs.AbstractFeature;
+import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
+import com.exoreaction.xorcery.service.conductor.api.Conductor;
+import com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata;
 import com.exoreaction.xorcery.service.domainevents.api.DomainEventPublisher;
+import com.exoreaction.xorcery.service.domainevents.api.aggregate.DomainEvents;
 import com.exoreaction.xorcery.service.greeter.commands.UpdateGreeting;
 import com.exoreaction.xorcery.service.greeter.domainevents.UpdatedGreeting;
 import com.exoreaction.xorcery.service.neo4j.client.GraphDatabase;
 import com.exoreaction.xorcery.service.neo4j.client.GraphResult;
+import com.exoreaction.xorcery.service.neo4jprojections.api.Neo4jProjectionRels;
+import com.exoreaction.xorcery.service.neo4jprojections.api.WaitForProjectionCommit;
+import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreams;
+import com.exoreaction.xorcery.service.reactivestreams.api.WithMetadata;
+import com.exoreaction.xorcery.service.reactivestreams.helper.ClientSubscriberConductorListener;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -21,8 +27,6 @@ import org.neo4j.internal.helpers.collection.MapUtil;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletionStage;
-
-import static com.exoreaction.xorcery.service.domainevents.api.aggregate.DomainEvents.events;
 
 @Singleton
 @Contract
@@ -57,18 +61,28 @@ public class GreeterApplication {
     private final DomainEventMetadata domainEventMetadata;
     private Configuration configuration;
     private GraphDatabase graphDatabase;
+    private final WaitForProjectionCommit waitForProjectionCommit;
 
     @Inject
     public GreeterApplication(DomainEventPublisher domainEventPublisher,
                               Configuration configuration,
                               GraphDatabase graphDatabase,
-                              @Named(SERVICE_TYPE) ServiceResourceObject serviceResourceObject) {
+                              Conductor conductor,
+                              ReactiveStreams reactiveStreams,
+                              @Named(SERVICE_TYPE) ServiceResourceObject sro) {
         this.domainEventPublisher = domainEventPublisher;
         this.configuration = configuration;
         this.graphDatabase = graphDatabase;
         this.domainEventMetadata = new DomainEventMetadata(new Metadata.Builder()
                 .add("domain", "greeter")
                 .build());
+
+        waitForProjectionCommit = new WaitForProjectionCommit("forum");
+        conductor.addConductorListener(new ClientSubscriberConductorListener(sro.serviceIdentifier(),
+                cfg -> waitForProjectionCommit,
+                WaitForProjectionCommit.class,
+                Neo4jProjectionRels.neo4jprojectioncommits.name(),
+                reactiveStreams));
     }
 
     // Reads
@@ -88,18 +102,21 @@ public class GreeterApplication {
 
     // Writes
     public CompletionStage<Metadata> handle(Record command) {
-        Metadata.Builder metadata = domainEventMetadata.metadata().toBuilder();
-        metadata.add("timestamp", System.currentTimeMillis());
+        Metadata.Builder metadata = new DomainEventMetadata.Builder(new Metadata.Builder().add(domainEventMetadata.metadata()))
+                .timestamp(System.currentTimeMillis()).builder();
 
         try {
             DomainEvents domainEvents = (DomainEvents) getClass().getDeclaredMethod("handle", command.getClass()).invoke(this, command);
-            return domainEventPublisher.publish(metadata.add("commandType", command.getClass().getName()).build(), domainEvents);
+
+            Metadata md = metadata.add("commandType", command.getClass().getName()).build();
+            domainEventPublisher.publish(md, domainEvents);
+            return waitForProjectionCommit.waitForTimestamp(md.getLong("timestamp").orElseThrow()).thenApply(WithMetadata::metadata);
         } catch (Throwable e) {
             return CompletableFuture.failedStage(e);
         }
     }
 
     private DomainEvents handle(UpdateGreeting updateGreeting) {
-        return events(new UpdatedGreeting(updateGreeting.newGreeting()));
+        return DomainEvents.of(new UpdatedGreeting(updateGreeting.newGreeting()));
     }
 }

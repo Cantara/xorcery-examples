@@ -6,12 +6,12 @@ conductor:
   templates:
     #    - /conductor/metrics.yaml
     #    - /conductor/certmanager.yaml
-    - /conductor/metrics_opensearch.yaml
-    - /conductor/log4j_opensearch.yaml
-    - /conductor/requestlog_opensearch.yaml
-    #    - /conductor/forum.yaml
-    - /conductor/greetereventstore.yaml
-    - /conductor/forumeventstore.yaml
+#    - /conductor/metrics_opensearch.yaml
+#    - /conductor/log4j_opensearch.yaml
+#    - /conductor/requestlog_opensearch.yaml
+#    - /conductor/greetereventstore.yaml
+    - /conductor/forum.yaml
+#    - /conductor/forumeventstore.yaml
 
 reactivestreams:
   enabled: true

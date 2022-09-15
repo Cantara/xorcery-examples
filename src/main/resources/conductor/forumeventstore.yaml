@@ -27,6 +27,15 @@ data:
             database: neo4j
             rel: eventpublisher
 
+    - id: neo4jcommits_forum
+      type: grouptemplate
+      attributes:
+        name: Neo4j projection commits to Forum
+        sources:
+          pattern: rel=='neo4jprojectioncommits'
+        consumers:
+          pattern: type=='forum'
+
     - id: eventstore_opensearch
       type: grouptemplate
       attributes:

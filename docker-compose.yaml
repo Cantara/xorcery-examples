@@ -3,6 +3,10 @@ version: "3.9"
 services:
   xe-xorcery-examples:
     image: exoreaction/xorcery-examples:latest
+    build:
+      context: .
+      args:
+        JAR_VERSION: 1.1-SNAPSHOT
     environment:
       - "JAVA_OPTS=-Xms512m -Xmx512m"
       - EVENTSTORE_HOST=xe-eventstore
@@ -16,8 +20,8 @@ services:
           cpus: "0.25"
           memory: 1G
     ports:
-      - "8889:8889"
-      - "8443:8443"
+      - "80:80"
+      - "443:443"
     volumes:
       - type: volume
         source: xorcery-examples-volume-data

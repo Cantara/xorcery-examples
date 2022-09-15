@@ -1,37 +1,42 @@
 package com.exoreaction.xorcery.service.forum;
 
-import com.exoreaction.xorcery.service.domainevents.api.aggregate.Aggregate;
-import com.exoreaction.xorcery.service.domainevents.api.aggregate.AggregateSnapshot;
-import com.exoreaction.xorcery.service.domainevents.api.aggregate.Command;
-import com.exoreaction.xorcery.service.domainevents.api.aggregate.DomainEvents;
-import com.exoreaction.xorcery.metadata.Metadata;
-import com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata;
 import com.exoreaction.xorcery.jaxrs.AbstractFeature;
+import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
+import com.exoreaction.xorcery.service.conductor.api.Conductor;
+import com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata;
 import com.exoreaction.xorcery.service.domainevents.api.DomainEventPublisher;
+import com.exoreaction.xorcery.service.domainevents.api.aggregate.*;
 import com.exoreaction.xorcery.service.forum.contexts.CommentContext;
 import com.exoreaction.xorcery.service.forum.contexts.PostCommentsContext;
 import com.exoreaction.xorcery.service.forum.contexts.PostContext;
 import com.exoreaction.xorcery.service.forum.contexts.PostsContext;
 import com.exoreaction.xorcery.service.forum.model.CommentModel;
 import com.exoreaction.xorcery.service.forum.model.PostModel;
+import com.exoreaction.xorcery.service.forum.resources.aggregates.PostAggregate;
 import com.exoreaction.xorcery.service.neo4j.client.GraphDatabase;
-import com.exoreaction.xorcery.service.neo4jprojections.Neo4jProjections;
-import com.exoreaction.xorcery.service.neo4jprojections.WaitForProjections;
-import com.exoreaction.xorcery.service.domainevents.api.aggregate.Neo4jAggregateSnapshotLoader;
+import com.exoreaction.xorcery.service.neo4jprojections.api.Neo4jProjectionRels;
+import com.exoreaction.xorcery.service.neo4jprojections.api.WaitForProjectionCommit;
+import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreams;
+import com.exoreaction.xorcery.service.reactivestreams.api.WithMetadata;
+import com.exoreaction.xorcery.service.reactivestreams.helper.ClientSubscriberConductorListener;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ext.Provider;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.spi.Contract;
 
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.TimeUnit;
 
 @Singleton
 @Contract
-public class ForumApplication
-{
+public class ForumApplication {
+    private static final Logger logger = LogManager.getLogger(ForumApplication.class);
 
     public static final String SERVICE_TYPE = "forum";
 
@@ -60,27 +65,40 @@ public class ForumApplication
 
     private final DomainEventPublisher domainEventPublisher;
     private final Neo4jAggregateSnapshotLoader snapshotLoader;
-    private final Neo4jProjections neo4jProjections;
-    private final WaitForProjections listener;
-    private final GraphDatabase database;
+    private final WaitForProjectionCommit waitForProjectionCommit;
 
     @Inject
-    public ForumApplication(DomainEventPublisher domainEventPublisher,
-                            GraphDatabase database,
-                            Neo4jProjections neo4jProjections
+    public ForumApplication(@Named(SERVICE_TYPE) ServiceResourceObject sro,
+                            DomainEventPublisher domainEventPublisher,
+                            Conductor conductor,
+                            ReactiveStreams reactiveStreams,
+                            GraphDatabase database
     ) {
         this.domainEventPublisher = domainEventPublisher;
-        this.database = database;
         this.snapshotLoader = new Neo4jAggregateSnapshotLoader(database);
-        this.neo4jProjections = neo4jProjections;
-        listener = new WaitForProjections();
-        neo4jProjections.addProjectionListener(listener);
+
+        waitForProjectionCommit = new WaitForProjectionCommit("forum");
+        conductor.addConductorListener(new ClientSubscriberConductorListener(sro.serviceIdentifier(),
+                cfg -> waitForProjectionCommit,
+                WaitForProjectionCommit.class,
+                Neo4jProjectionRels.neo4jprojectioncommits.name(),
+                reactiveStreams));
 
         try {
-            neo4jProjections.isLive("forum").get(60, TimeUnit.SECONDS);
-            LogManager.getLogger(getClass()).info("Forum is live!");
+            long now = System.currentTimeMillis();
+            DomainEventMetadata domainEventMetadata = new DomainEventMetadata.Builder(new Metadata.Builder())
+                    .commandType(PostAggregate.CreatePost.class)
+                    .timestamp(now).build();
+            domainEventPublisher.publish(domainEventMetadata.metadata(), DomainEvents.of());
+            logger.info("Published startup noop events");
+
+            CompletionStage<?> isLive = waitForProjectionCommit.waitForTimestamp(domainEventMetadata.getTimestamp());
+
+            isLive.toCompletableFuture().get(60, TimeUnit.SECONDS);
+
+            logger.info("Forum is live!");
         } catch (Throwable e) {
-            LogManager.getLogger(getClass()).error("Exception waiting for projection to go live", e);
+            logger.error("Could not wait for projection to start", e);
         }
     }
 
@@ -127,11 +145,10 @@ public class ForumApplication
 
             DomainEvents events = aggregate.handle(domainMetadata.metadata(), snapshot, command);
 
-            return domainEventPublisher.publish(metadata, events)
-                    .thenCompose(md -> listener.waitFor(md));
+            domainEventPublisher.publish(metadata, events);
+            return waitForProjectionCommit.waitForTimestamp(domainMetadata.getTimestamp()).thenApply(WithMetadata::metadata);
         } catch (Throwable e) {
             return CompletableFuture.failedStage(e);
         }
     }
-
 }
