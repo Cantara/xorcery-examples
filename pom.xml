@@ -14,7 +14,7 @@
         <xorcery.version>0.8.23</xorcery.version>
         <jackson.version>2.13.4</jackson.version>
 
-        <junit.version>5.9.0</junit.version>
+        <junit.version>5.9.1</junit.version>
         <junit.platform.version>1.8.2</junit.platform.version>
     </properties>
 
