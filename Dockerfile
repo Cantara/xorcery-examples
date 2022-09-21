@@ -1,5 +1,5 @@
 # Amazon Corretto OpenJDK 18 image (https://hub.docker.com/_/amazoncorretto)
-FROM amazoncorretto:18.0.2
+FROM amazoncorretto:19.0.0
 # copy application jar (with libraries inside)
 ARG JAR_VERSION
 COPY target/xorcery-examples-${JAR_VERSION}-launcher.jar /xorcery-examples.jar
