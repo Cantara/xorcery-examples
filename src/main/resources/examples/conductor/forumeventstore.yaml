@@ -1,0 +1,52 @@
+data:
+    - id: domainevents_eventstore
+      type: grouptemplate
+      attributes:
+        name: Forum events into EventStore
+        sources:
+          pattern: type=='domainevents'
+          configuration:
+            rel: eventsubscriber
+        consumers:
+          pattern: rel=='eventsubscriber'
+          configuration:
+            stream: "{{ environment }}-{{ tag }}-forum"
+
+    - id: eventstore_neo4jprojection
+      type: grouptemplate
+      attributes:
+        name: Forum events from EventStore into Neo4j
+        sources:
+          pattern: rel=='eventpublisher'
+          configuration:
+            stream: "{{ environment }}-{{ tag }}-forum"
+        consumers:
+          pattern: type=='neo4jprojections'
+          configuration:
+            id: forum
+            database: neo4j
+            rel: eventpublisher
+
+    - id: neo4jcommits_forum
+      type: grouptemplate
+      attributes:
+        name: Neo4j projection commits to Forum
+        sources:
+          pattern: rel=='neo4jprojectioncommits'
+        consumers:
+          pattern: type=='forum'
+
+    - id: eventstore_opensearch
+      type: grouptemplate
+      attributes:
+        name: Forum events from EventStore into OpenSearch
+        sources:
+          pattern: rel=='eventpublisher'
+          configuration:
+            stream: "{{ environment }}-{{ tag }}-forum"
+        consumers:
+          pattern: type=='opensearch'
+          configuration:
+            rel: eventpublisher
+            index: "domainevents-{{ environment }}-{{ tag }}-forum-%tF"
+            alias: "domainevents"

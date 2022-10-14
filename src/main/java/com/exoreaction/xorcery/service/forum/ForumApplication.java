@@ -1,25 +1,28 @@
 package com.exoreaction.xorcery.service.forum;
 
-import com.exoreaction.xorcery.jaxrs.AbstractFeature;
+import com.exoreaction.xorcery.jersey.AbstractFeature;
 import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
 import com.exoreaction.xorcery.service.conductor.api.Conductor;
+import com.exoreaction.xorcery.service.conductor.helpers.ClientSubscriberConductorListener;
 import com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata;
 import com.exoreaction.xorcery.service.domainevents.api.DomainEventPublisher;
-import com.exoreaction.xorcery.service.domainevents.api.aggregate.*;
+import com.exoreaction.xorcery.service.domainevents.api.aggregate.Aggregate;
+import com.exoreaction.xorcery.service.domainevents.api.aggregate.AggregateSnapshot;
+import com.exoreaction.xorcery.service.domainevents.api.aggregate.Command;
+import com.exoreaction.xorcery.service.domainevents.api.aggregate.DomainEvents;
 import com.exoreaction.xorcery.service.forum.contexts.CommentContext;
 import com.exoreaction.xorcery.service.forum.contexts.PostCommentsContext;
 import com.exoreaction.xorcery.service.forum.contexts.PostContext;
 import com.exoreaction.xorcery.service.forum.contexts.PostsContext;
 import com.exoreaction.xorcery.service.forum.model.CommentModel;
 import com.exoreaction.xorcery.service.forum.model.PostModel;
-import com.exoreaction.xorcery.service.forum.resources.aggregates.PostAggregate;
 import com.exoreaction.xorcery.service.neo4j.client.GraphDatabase;
+import com.exoreaction.xorcery.service.neo4jprojections.aggregate.Neo4jAggregateSnapshotLoader;
 import com.exoreaction.xorcery.service.neo4jprojections.api.Neo4jProjectionRels;
 import com.exoreaction.xorcery.service.neo4jprojections.api.WaitForProjectionCommit;
 import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreams;
 import com.exoreaction.xorcery.service.reactivestreams.api.WithMetadata;
-import com.exoreaction.xorcery.service.reactivestreams.helper.ClientSubscriberConductorListener;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -29,6 +32,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.spi.Contract;
 
+import java.util.ServiceLoader;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
@@ -84,6 +88,7 @@ public class ForumApplication {
                 Neo4jProjectionRels.neo4jprojectioncommits.name(),
                 reactiveStreams));
 
+/*
         try {
             long now = System.currentTimeMillis();
             DomainEventMetadata domainEventMetadata = new DomainEventMetadata.Builder(new Metadata.Builder())
@@ -100,6 +105,7 @@ public class ForumApplication {
         } catch (Throwable e) {
             logger.error("Could not wait for projection to start", e);
         }
+*/
     }
 
     public PostsContext posts() {
@@ -143,10 +149,11 @@ public class ForumApplication {
                 snapshot = snapshotLoader.load(domainMetadata, aggregate);
             }
 
-            DomainEvents events = aggregate.handle(domainMetadata.metadata(), snapshot, command);
+            DomainEvents events = aggregate.handle(domainMetadata.context(), snapshot, command);
 
             domainEventPublisher.publish(metadata, events);
-            return waitForProjectionCommit.waitForTimestamp(domainMetadata.getTimestamp()).thenApply(WithMetadata::metadata);
+            return waitForProjectionCommit.waitForTimestamp(domainMetadata.getTimestamp())
+                    .orTimeout(10, TimeUnit.SECONDS).thenApply(WithMetadata::metadata);
         } catch (Throwable e) {
             return CompletableFuture.failedStage(e);
         }

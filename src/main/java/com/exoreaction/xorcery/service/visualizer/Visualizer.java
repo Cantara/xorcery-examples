@@ -2,7 +2,7 @@ package com.exoreaction.xorcery.service.visualizer;
 
 
 import com.exoreaction.xorcery.disruptor.handlers.DefaultEventHandler;
-import com.exoreaction.xorcery.jaxrs.AbstractFeature;
+import com.exoreaction.xorcery.jersey.AbstractFeature;
 import com.exoreaction.xorcery.jsonapi.model.Link;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
 import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreams;

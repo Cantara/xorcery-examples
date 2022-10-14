@@ -1,5 +1,6 @@
 package com.exoreaction.xorcery.service.forum.resources.api;
 
+import com.exoreaction.xorcery.jsonapi.server.resources.JsonApiResource;
 import com.exoreaction.xorcery.service.domainevents.api.aggregate.Command;
 import com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata;
 import com.exoreaction.xorcery.metadata.Metadata;
@@ -7,7 +8,6 @@ import com.exoreaction.xorcery.jsonapi.model.Included;
 import com.exoreaction.xorcery.jsonapi.model.Links;
 import com.exoreaction.xorcery.jsonapi.model.ResourceDocument;
 import com.exoreaction.xorcery.jsonapi.model.ResourceObject;
-import com.exoreaction.xorcery.jsonapi.resources.JsonApiResource;
 import com.exoreaction.xorcery.service.forum.ForumApplication;
 import com.exoreaction.xorcery.service.forum.contexts.PostsContext;
 import com.exoreaction.xorcery.service.forum.resources.ForumApiMixin;
@@ -18,7 +18,7 @@ import jakarta.ws.rs.core.Response;
 import java.net.URI;
 import java.util.concurrent.CompletionStage;
 
-import static com.exoreaction.xorcery.jaxrs.MediaTypes.APPLICATION_JSON_API;
+import static com.exoreaction.xorcery.jsonapi.MediaTypes.APPLICATION_JSON_API;
 
 @Path("api/forum/posts")
 public class PostsResource

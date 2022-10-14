@@ -1,7 +1,8 @@
-package com.exoreaction.xorcery.service.reactivestreams;
+package com.exoreaction.xorcery.service.reactivestreams.test;
 
-import com.exoreaction.xorcery.configuration.Configuration;
-import com.exoreaction.xorcery.configuration.StandardConfiguration;
+import com.exoreaction.xorcery.configuration.builder.StandardConfigurationBuilder;
+import com.exoreaction.xorcery.configuration.model.Configuration;
+import com.exoreaction.xorcery.configuration.model.StandardConfiguration;
 import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.server.Xorcery;
 import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreams;
@@ -44,7 +45,8 @@ public class ReactiveStreamsBenchmarks {
     @Setup()
     public void setup() throws Exception {
 
-        xorcery = new Xorcery(Configuration.Builder.loadTest(null).addYaml(config).build());
+        Configuration configuration = new Configuration.Builder().with(new StandardConfigurationBuilder().addTestDefaultsWithYaml(config)).build();
+        xorcery = new Xorcery(configuration);
         ReactiveStreams reactiveStreams = xorcery.getInjectionManager().getInstance(ReactiveStreams.class);
 
         // Server subscriber
@@ -81,7 +83,8 @@ public class ReactiveStreamsBenchmarks {
             }
         };
 
-        URI serverUri = new StandardConfiguration.Impl(xorcery.getInjectionManager().getInstance(Configuration.class)).getServerUri();
+        StandardConfiguration standardConfiguration = ()->xorcery.getInjectionManager().getInstance(Configuration.class);
+        URI serverUri = standardConfiguration.getServerUri();
         reactiveStreams.publish(UriBuilder.fromUri(serverUri).scheme("ws").path("serversubscriber").build(), Configuration.empty(), clientPublisher, (Class<? extends Flow.Publisher<?>>) clientPublisher.getClass());
 
         System.out.println("Setup done");

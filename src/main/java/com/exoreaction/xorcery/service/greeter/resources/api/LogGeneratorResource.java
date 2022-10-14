@@ -1,6 +1,6 @@
 package com.exoreaction.xorcery.service.greeter.resources.api;
 
-import com.exoreaction.xorcery.jsonapi.resources.JsonApiResource;
+import com.exoreaction.xorcery.jsonapi.server.resources.JsonApiResource;
 import com.exoreaction.xorcery.service.greeter.GreeterApplication;
 import com.github.jknack.handlebars.Context;
 import jakarta.inject.Inject;

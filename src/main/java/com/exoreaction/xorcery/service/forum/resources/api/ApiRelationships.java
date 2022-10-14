@@ -1,7 +1,7 @@
 package com.exoreaction.xorcery.service.forum.resources.api;
 
-import com.exoreaction.xorcery.jsonapi.schema.annotations.Cardinality;
-import com.exoreaction.xorcery.jsonapi.schema.annotations.RelationshipSchema;
+import com.exoreaction.xorcery.jsonschema.server.annotations.Cardinality;
+import com.exoreaction.xorcery.jsonschema.server.annotations.RelationshipSchema;
 
 public interface ApiRelationships {
     enum Post {

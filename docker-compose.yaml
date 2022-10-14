@@ -1,32 +1,6 @@
 version: "3.9"
 
 services:
-  xe-xorcery-examples:
-    image: exoreaction/xorcery-examples:latest
-    build:
-      context: .
-      args:
-        JAR_VERSION: 1.1-SNAPSHOT
-    environment:
-      - "JAVA_OPTS=-Xms512m -Xmx512m"
-      - EVENTSTORE_HOST=xe-eventstore
-      - OPENSEARCH_HOST=xe-opensearch
-    deploy:
-      resources:
-        limits:
-          cpus: "0.50"
-          memory: 2G
-        reservations:
-          cpus: "0.25"
-          memory: 1G
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - type: volume
-        source: xorcery-examples-volume-data
-        target: /var/lib/xorcery-examples
-
   xe-eventstore:
     image: eventstore/eventstore:20.10.5-buster-slim
     environment:
@@ -81,6 +55,32 @@ services:
     environment:
       - 'OPENSEARCH_HOSTS=["http://xe-opensearch:9200"]'
       - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true" # disables security dashboards plugin in OpenSearch Dashboards
+
+  xe-xorcery-examples:
+    image: exoreaction/xorcery-examples:latest
+    build:
+      context: .
+      args:
+        JAR_VERSION: 1.1-SNAPSHOT
+    environment:
+      - "JAVA_OPTS=-Xms512m -Xmx512m"
+      - EVENTSTORE_HOST=xe-eventstore
+      - OPENSEARCH_HOST=xe-opensearch
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 2G
+        reservations:
+          cpus: "0.25"
+          memory: 1G
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - type: volume
+        source: xorcery-examples-volume-data
+        target: /var/lib/xorcery-examples
 
 volumes:
   xorcery-examples-volume-data:

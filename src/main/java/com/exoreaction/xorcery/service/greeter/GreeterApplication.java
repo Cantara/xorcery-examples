@@ -1,10 +1,11 @@
 package com.exoreaction.xorcery.service.greeter;
 
-import com.exoreaction.xorcery.configuration.Configuration;
-import com.exoreaction.xorcery.jaxrs.AbstractFeature;
+import com.exoreaction.xorcery.configuration.model.Configuration;
+import com.exoreaction.xorcery.jersey.AbstractFeature;
 import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
 import com.exoreaction.xorcery.service.conductor.api.Conductor;
+import com.exoreaction.xorcery.service.conductor.helpers.ClientSubscriberConductorListener;
 import com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata;
 import com.exoreaction.xorcery.service.domainevents.api.DomainEventPublisher;
 import com.exoreaction.xorcery.service.domainevents.api.aggregate.DomainEvents;
@@ -16,7 +17,6 @@ import com.exoreaction.xorcery.service.neo4jprojections.api.Neo4jProjectionRels;
 import com.exoreaction.xorcery.service.neo4jprojections.api.WaitForProjectionCommit;
 import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreams;
 import com.exoreaction.xorcery.service.reactivestreams.api.WithMetadata;
-import com.exoreaction.xorcery.service.reactivestreams.helper.ClientSubscriberConductorListener;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -102,7 +102,7 @@ public class GreeterApplication {
 
     // Writes
     public CompletionStage<Metadata> handle(Record command) {
-        Metadata.Builder metadata = new DomainEventMetadata.Builder(new Metadata.Builder().add(domainEventMetadata.metadata()))
+        Metadata.Builder metadata = new DomainEventMetadata.Builder(new Metadata.Builder().add(domainEventMetadata.context()))
                 .timestamp(System.currentTimeMillis()).builder();
 
         try {

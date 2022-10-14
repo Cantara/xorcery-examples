@@ -1,6 +1,6 @@
 package com.exoreaction.xorcery.service.forum.model;
 
-import com.exoreaction.xorcery.model.CommonModel;
+import com.exoreaction.xorcery.service.domainevents.api.model.CommonModel;
 
 public interface ForumModel
         extends CommonModel {

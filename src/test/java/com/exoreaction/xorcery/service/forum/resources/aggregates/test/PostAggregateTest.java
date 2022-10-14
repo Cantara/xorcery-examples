@@ -1,7 +1,8 @@
-package com.exoreaction.xorcery.service.forum.resources.aggregates;
+package com.exoreaction.xorcery.service.forum.resources.aggregates.test;
 
 import com.exoreaction.xorcery.service.domainevents.api.aggregate.DomainEvents;
 import com.exoreaction.xorcery.metadata.Metadata;
+import com.exoreaction.xorcery.service.forum.resources.aggregates.PostAggregate;
 import com.exoreaction.xorcery.service.forum.resources.events.PostEvents;
 import org.junit.jupiter.api.Test;
 

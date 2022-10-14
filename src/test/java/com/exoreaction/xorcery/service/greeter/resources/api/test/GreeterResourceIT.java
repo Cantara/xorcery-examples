@@ -1,4 +1,4 @@
-package com.exoreaction.xorcery.service.greeter.resources.api;
+package com.exoreaction.xorcery.service.greeter.resources.api.test;
 
 import com.exoreaction.xorcery.server.Xorcery;
 import org.eclipse.jetty.client.HttpClient;

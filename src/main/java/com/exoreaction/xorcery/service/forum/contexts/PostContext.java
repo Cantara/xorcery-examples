@@ -23,7 +23,7 @@ public record PostContext(ForumApplication forumApplication, PostModel postModel
     public CompletionStage<Metadata> handle(Metadata metadata, Command command) {
         metadata = new DomainEventMetadata.Builder(metadata)
                 .aggregateId(postModel.getId())
-                .build().metadata();
+                .build().context();
         return forumApplication.handle(new PostAggregate(), metadata, command);
     }
 }

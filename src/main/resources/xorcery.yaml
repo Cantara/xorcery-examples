@@ -4,31 +4,46 @@ registry:
 conductor:
   enabled: true
   templates:
-    #    - /conductor/metrics.yaml
-    #    - /conductor/certmanager.yaml
-#    - /conductor/metrics_opensearch.yaml
-#    - /conductor/log4j_opensearch.yaml
-#    - /conductor/requestlog_opensearch.yaml
-#    - /conductor/greetereventstore.yaml
-    - /conductor/forum.yaml
-#    - /conductor/forumeventstore.yaml
+    #    - conductor/metrics.yaml
+    #    - conductor/certmanager.yaml
+#    - conductor/metrics_opensearch.yaml
+#    - conductor/log4j_opensearch.yaml
+#    - conductor/requestlog_opensearch.yaml
+#    - examples/conductor/greetereventstore.yaml
+    - examples/conductor/forum_v1.yaml
+#    - examples/conductor/forum_v2.yaml
+#    - examples/conductor/forum_v3.yaml
+#    - examples/conductor/forumeventstore.yaml
 
 reactivestreams:
   enabled: true
 
-# Logging
-log4jappender:
+eventstore:
   enabled: true
 
-requestlog:
+opensearch:
   enabled: true
+  component_templates:
+    common: opensearch/templates/components/common.yaml
+  index_templates:
+    domainevents: opensearch/templates/domainevents.yaml
+    logs: opensearch/templates/logs.yaml
+    metrics: opensearch/templates/metrics.yaml
+    requestlog: opensearch/templates/requestlogs.yaml
+
+# Logging
+log4jappender:
+  enabled: false
+
+requestlog:
+  enabled: false
 
 #soutlogging:
 #  enabled: true
 
 # Metrics
 metrics:
-  enabled: true
+  enabled: false
 
 soutmetrics:
   enabled: false
@@ -48,19 +63,6 @@ neo4jdatabase:
 
 neo4jprojections:
   enabled: true
-
-eventstore:
-  enabled: true
-
-opensearch:
-  enabled: true
-  component_templates:
-    common: /opensearch/templates/components/common.yaml
-  index_templates:
-    domainevents: /opensearch/templates/domainevents.yaml
-    logs: /opensearch/templates/logs.yaml
-    metrics: /opensearch/templates/metrics.yaml
-    requestlog: /opensearch/templates/requestlogs.yaml
 
 domainevents:
   enabled: true

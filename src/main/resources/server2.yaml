@@ -14,7 +14,7 @@ conductor:
   templates:
     - /conductor/metrics.yaml
     - /conductor/certmanager.yaml
-#    - /conductor/forum.yaml
+#    - /conductor/forum_v1.yaml
 
 log4jappender:
   enabled: true

@@ -1,10 +1,10 @@
 package com.exoreaction.xorcery.service.forum.resources;
 
-import com.exoreaction.xorcery.model.CommonModel;
 import com.exoreaction.xorcery.jsonapi.model.*;
-import com.exoreaction.xorcery.jsonapi.resources.JsonApiResourceMixin;
-import com.exoreaction.xorcery.jsonapi.resources.Pagination;
-import com.exoreaction.xorcery.jsonapi.resources.ResourceObjectMapperMixin;
+import com.exoreaction.xorcery.neo4j.jsonapi.resources.JsonApiNeo4jResourceMixin;
+import com.exoreaction.xorcery.neo4j.jsonapi.resources.Pagination;
+import com.exoreaction.xorcery.service.domainevents.api.model.CommonModel;
+import com.exoreaction.xorcery.service.domainevents.resources.ResourceObjectMapperMixin;
 import com.exoreaction.xorcery.service.forum.ForumApplication;
 import com.exoreaction.xorcery.service.forum.model.*;
 import com.exoreaction.xorcery.service.forum.resources.api.*;
@@ -22,7 +22,7 @@ import static com.exoreaction.xorcery.jsonapi.model.JsonApiRels.describedby;
 import static com.exoreaction.xorcery.jsonapi.model.JsonApiRels.self;
 
 public interface ForumApiMixin
-        extends JsonApiResourceMixin, ResourceObjectMapperMixin {
+        extends JsonApiNeo4jResourceMixin, ResourceObjectMapperMixin {
 
     default CompletionStage<ResourceObjects> posts(Included.Builder included, Links.Builder links) {
         GraphQuery graphQuery = postsQuery()
