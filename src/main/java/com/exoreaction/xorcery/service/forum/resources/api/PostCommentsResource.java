@@ -1,17 +1,19 @@
 package com.exoreaction.xorcery.service.forum.resources.api;
 
 import com.exoreaction.xorcery.jsonapi.server.resources.JsonApiResource;
-import com.exoreaction.xorcery.service.domainevents.api.aggregate.Command;
+import com.exoreaction.xorcery.service.domainevents.api.entity.Command;
 import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.jsonapi.model.Included;
 import com.exoreaction.xorcery.jsonapi.model.Links;
 import com.exoreaction.xorcery.jsonapi.model.ResourceDocument;
 import com.exoreaction.xorcery.jsonapi.model.ResourceObject;
+import com.exoreaction.xorcery.service.domainevents.api.entity.Entity;
 import com.exoreaction.xorcery.service.forum.ForumApplication;
 import com.exoreaction.xorcery.service.forum.contexts.PostCommentsContext;
 import com.exoreaction.xorcery.service.forum.model.PostModel;
 import com.exoreaction.xorcery.service.forum.resources.ForumApiMixin;
-import com.exoreaction.xorcery.service.forum.resources.aggregates.PostAggregate;
+import com.exoreaction.xorcery.service.forum.resources.entities.CommentEntity;
+import com.exoreaction.xorcery.service.forum.resources.entities.PostEntity;
 import com.exoreaction.xorcery.service.neo4j.client.GraphQuery;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -59,13 +61,13 @@ public class PostCommentsResource
     @POST
     @Consumes({"application/x-www-form-urlencoded", APPLICATION_JSON_API})
     public CompletionStage<Response> post(ResourceObject resourceObject) {
-        return execute(resourceObject, context, aggregateId(getFirstPathParameter("id"), metadata()));
+        return execute(resourceObject, context, metadata());
     }
 
     @Override
     public CompletionStage<Response> ok(Metadata metadata, Command command) {
 
-        if (command instanceof PostAggregate.AddComment addComment) {
+        if (command instanceof CommentEntity.AddComment addComment) {
             return comment(addComment.id(), new Included.Builder())
                     .thenApply(resource -> Response.created(resource.getLinks().getSelf().orElseThrow().getHrefAsUri())
                             .links(schemaHeader()).entity(resource).build());

@@ -19,10 +19,10 @@ public record Comments(GraphDatabase db) {
 
     private static final String POST_COMMENTS = MessageFormat.format(
             "MATCH ({0}:{0})-[:{1}]->({2}:{2}) WITH {2}, {2} as {3}",
-            ForumModel.Label.Post, ForumModel.Relationship.HAS_COMMENT, ForumModel.Label.Comment, CommonModel.Label.Entity);
+            ForumModel.Label.Post, ForumModel.Relationship.PostComments, ForumModel.Label.Comment, CommonModel.Label.Entity);
 
     private final static BiConsumer<GraphQuery, StringBuilder> byPostClauses = where()
-            .parameter(CommonModel.Aggregate.id, String.class, "Post.id=$aggregate_id");
+            .parameter(CommonModel.Entity.id, String.class, "Post.id=$entity_id");
 
     public GraphQuery comments() {
         return db.query(COMMENTS).where(clauses);
@@ -30,6 +30,6 @@ public record Comments(GraphDatabase db) {
 
     public GraphQuery commentsByPost(String postId)
     {
-        return db.query(POST_COMMENTS).where(byPostClauses).parameter(CommonModel.Aggregate.id, postId);
+        return db.query(POST_COMMENTS).where(byPostClauses).parameter(CommonModel.Entity.id, postId);
     }
 }

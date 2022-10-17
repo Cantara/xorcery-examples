@@ -12,7 +12,8 @@ import com.exoreaction.xorcery.service.domainevents.api.model.CommonModel;
 import com.exoreaction.xorcery.service.domainevents.resources.JsonSchemaMixin;
 import com.exoreaction.xorcery.service.forum.contexts.PostsContext;
 import com.exoreaction.xorcery.service.forum.model.ForumModel;
-import com.exoreaction.xorcery.service.forum.resources.aggregates.PostAggregate;
+import com.exoreaction.xorcery.service.forum.resources.entities.CommentEntity;
+import com.exoreaction.xorcery.service.forum.resources.entities.PostEntity;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -33,8 +34,9 @@ public class ForumResource
                 .builder()
                 .links(new com.exoreaction.xorcery.hyperschema.model.Links.Builder()
                         .link(selfLink()).link(describedbyLink(getAbsolutePath().toASCIIString()))
-                        .with(commands(PostAggregate.class),
+                        .with(commands(PostEntity.class),
                                 commands(PostsContext.class),
+                                commands(CommentEntity.class),
                                 l -> l.link(new Link.UriTemplateBuilder("posts")
                                         .parameter("post_fields", "Post fields", "Post fields to include")
                                         .parameter("comment_fields", "Comment fields", "Comment fields to include")

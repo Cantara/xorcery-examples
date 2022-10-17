@@ -8,7 +8,7 @@ import com.exoreaction.xorcery.service.conductor.api.Conductor;
 import com.exoreaction.xorcery.service.conductor.helpers.ClientSubscriberConductorListener;
 import com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata;
 import com.exoreaction.xorcery.service.domainevents.api.DomainEventPublisher;
-import com.exoreaction.xorcery.service.domainevents.api.aggregate.DomainEvents;
+import com.exoreaction.xorcery.service.domainevents.api.entity.DomainEvents;
 import com.exoreaction.xorcery.service.greeter.commands.UpdateGreeting;
 import com.exoreaction.xorcery.service.greeter.domainevents.UpdatedGreeting;
 import com.exoreaction.xorcery.service.neo4j.client.GraphDatabase;

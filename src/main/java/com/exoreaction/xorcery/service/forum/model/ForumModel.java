@@ -11,7 +11,7 @@ public interface ForumModel
     }
 
     enum Relationship {
-        HAS_COMMENT
+        PostComments
     }
 
     enum Post {

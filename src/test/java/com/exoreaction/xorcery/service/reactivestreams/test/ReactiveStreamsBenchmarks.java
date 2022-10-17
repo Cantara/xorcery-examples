@@ -47,7 +47,7 @@ public class ReactiveStreamsBenchmarks {
 
         Configuration configuration = new Configuration.Builder().with(new StandardConfigurationBuilder().addTestDefaultsWithYaml(config)).build();
         xorcery = new Xorcery(configuration);
-        ReactiveStreams reactiveStreams = xorcery.getInjectionManager().getInstance(ReactiveStreams.class);
+        ReactiveStreams reactiveStreams = xorcery.getServiceLocator().getService(ReactiveStreams.class);
 
         // Server subscriber
         ServerSubscriber<WithResult<WithMetadata<String>, Integer>> serverSubscriber = new ServerSubscriber<>() {
@@ -83,7 +83,7 @@ public class ReactiveStreamsBenchmarks {
             }
         };
 
-        StandardConfiguration standardConfiguration = ()->xorcery.getInjectionManager().getInstance(Configuration.class);
+        StandardConfiguration standardConfiguration = () -> xorcery.getServiceLocator().getService(Configuration.class);
         URI serverUri = standardConfiguration.getServerUri();
         reactiveStreams.publish(UriBuilder.fromUri(serverUri).scheme("ws").path("serversubscriber").build(), Configuration.empty(), clientPublisher, (Class<? extends Flow.Publisher<?>>) clientPublisher.getClass());
 
@@ -101,7 +101,7 @@ public class ReactiveStreamsBenchmarks {
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
     public void writes() throws ExecutionException, InterruptedException, TimeoutException {
-        queue.add(System.currentTimeMillis()+"");
+        queue.add(System.currentTimeMillis() + "");
     }
 
     public static abstract class ServerSubscriber<T>

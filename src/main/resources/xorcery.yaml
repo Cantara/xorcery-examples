@@ -19,10 +19,10 @@ reactivestreams:
   enabled: true
 
 eventstore:
-  enabled: true
+  enabled: false
 
 opensearch:
-  enabled: true
+  enabled: false
   component_templates:
     common: opensearch/templates/components/common.yaml
   index_templates:
@@ -55,6 +55,8 @@ jmxmetrics:
 neo4jdatabase:
   enabled: true
   path: "{{ home }}/neo4j"
+  startup:
+    - examples/forum/neo4j/schema.cyp
   settings:
     dbms:
       allow_upgrade: true

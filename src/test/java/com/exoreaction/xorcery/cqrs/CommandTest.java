@@ -1,6 +1,6 @@
 package com.exoreaction.xorcery.cqrs;
 
-import com.exoreaction.xorcery.service.forum.resources.aggregates.PostAggregate;
+import com.exoreaction.xorcery.service.forum.resources.entities.PostEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
@@ -17,14 +17,14 @@ class CommandTest {
     public void testSerializeDeserializeCommand() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
 
-        PostAggregate.CreatePost command = new PostAggregate.CreatePost("Title", "Body");
+        PostEntity.CreatePost command = new PostEntity.CreatePost("Title", "Body");
 
         StringWriter writer = new StringWriter();
         mapper.writeValue(writer, command);
 
         System.out.println(writer);
 
-        PostAggregate.CreatePost command2 = mapper.readValue(new StringReader(writer.toString()), PostAggregate.CreatePost.class);
+        PostEntity.CreatePost command2 = mapper.readValue(new StringReader(writer.toString()), PostEntity.CreatePost.class);
 
         assertThat(command2.title(), equalTo("Title"));
         assertThat(command2.body(), equalTo("Body"));

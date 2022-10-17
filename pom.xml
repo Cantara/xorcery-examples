@@ -70,6 +70,12 @@
         </dependency>
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
+            <artifactId>xorcery-domainevents-neo4j</artifactId>
+            <version>${xorcery.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.exoreaction.xorcery</groupId>
             <artifactId>xorcery-eventstore</artifactId>
             <version>${xorcery.version}</version>
         </dependency>

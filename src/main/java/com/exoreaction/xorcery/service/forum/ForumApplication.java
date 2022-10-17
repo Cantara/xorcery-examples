@@ -7,10 +7,10 @@ import com.exoreaction.xorcery.service.conductor.api.Conductor;
 import com.exoreaction.xorcery.service.conductor.helpers.ClientSubscriberConductorListener;
 import com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata;
 import com.exoreaction.xorcery.service.domainevents.api.DomainEventPublisher;
-import com.exoreaction.xorcery.service.domainevents.api.aggregate.Aggregate;
-import com.exoreaction.xorcery.service.domainevents.api.aggregate.AggregateSnapshot;
-import com.exoreaction.xorcery.service.domainevents.api.aggregate.Command;
-import com.exoreaction.xorcery.service.domainevents.api.aggregate.DomainEvents;
+import com.exoreaction.xorcery.service.domainevents.api.entity.Entity;
+import com.exoreaction.xorcery.service.domainevents.api.entity.EntitySnapshot;
+import com.exoreaction.xorcery.service.domainevents.api.entity.Command;
+import com.exoreaction.xorcery.service.domainevents.api.entity.DomainEvents;
 import com.exoreaction.xorcery.service.forum.contexts.CommentContext;
 import com.exoreaction.xorcery.service.forum.contexts.PostCommentsContext;
 import com.exoreaction.xorcery.service.forum.contexts.PostContext;
@@ -18,7 +18,7 @@ import com.exoreaction.xorcery.service.forum.contexts.PostsContext;
 import com.exoreaction.xorcery.service.forum.model.CommentModel;
 import com.exoreaction.xorcery.service.forum.model.PostModel;
 import com.exoreaction.xorcery.service.neo4j.client.GraphDatabase;
-import com.exoreaction.xorcery.service.neo4jprojections.aggregate.Neo4jAggregateSnapshotLoader;
+import com.exoreaction.xorcery.service.neo4jprojections.entity.Neo4jEntitySnapshotLoader;
 import com.exoreaction.xorcery.service.neo4jprojections.api.Neo4jProjectionRels;
 import com.exoreaction.xorcery.service.neo4jprojections.api.WaitForProjectionCommit;
 import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreams;
@@ -32,7 +32,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.spi.Contract;
 
-import java.util.ServiceLoader;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
@@ -68,7 +67,7 @@ public class ForumApplication {
     }
 
     private final DomainEventPublisher domainEventPublisher;
-    private final Neo4jAggregateSnapshotLoader snapshotLoader;
+    private final Neo4jEntitySnapshotLoader snapshotLoader;
     private final WaitForProjectionCommit waitForProjectionCommit;
 
     @Inject
@@ -79,7 +78,7 @@ public class ForumApplication {
                             GraphDatabase database
     ) {
         this.domainEventPublisher = domainEventPublisher;
-        this.snapshotLoader = new Neo4jAggregateSnapshotLoader(database);
+        this.snapshotLoader = new Neo4jEntitySnapshotLoader(database);
 
         waitForProjectionCommit = new WaitForProjectionCommit("forum");
         conductor.addConductorListener(new ClientSubscriberConductorListener(sro.serviceIdentifier(),
@@ -124,12 +123,11 @@ public class ForumApplication {
         return new PostCommentsContext(this, postModel);
     }
 
-    public <T extends AggregateSnapshot> CompletionStage<Metadata> handle(Aggregate<T> aggregate, Metadata metadata, Command command) {
+    public <T extends EntitySnapshot> CompletionStage<Metadata> handle(Entity<T> entity, DomainEventMetadata metadata, Command command) {
 
         try {
-            DomainEventMetadata domainMetadata = new DomainEventMetadata.Builder(metadata.toBuilder())
-                    .domain("forum")
-                    .aggregateType(aggregate.getClass())
+            DomainEventMetadata domainMetadata = new DomainEventMetadata.Builder(metadata.context())
+                    .domain("domainevents")
                     .commandType(command.getClass())
                     .build();
 
@@ -138,20 +136,20 @@ public class ForumApplication {
             if (Command.isCreate(command.getClass())) {
                 // Should fail
                 try {
-                    snapshotLoader.load(domainMetadata, aggregate);
+                    snapshotLoader.load(domainMetadata, entity);
                     return CompletableFuture.failedStage(new BadRequestException("Entity already exists"));
                 } catch (Exception e) {
                     // Good!
-                    snapshot = aggregate.getSnapshot();
+                    snapshot = entity.getSnapshot();
                 }
 
             } else {
-                snapshot = snapshotLoader.load(domainMetadata, aggregate);
+                snapshot = snapshotLoader.load(domainMetadata, entity);
             }
 
-            DomainEvents events = aggregate.handle(domainMetadata.context(), snapshot, command);
+            DomainEvents events = entity.handle(domainMetadata, snapshot, command);
 
-            domainEventPublisher.publish(metadata, events);
+            domainEventPublisher.publish(metadata.context(), events);
             return waitForProjectionCommit.waitForTimestamp(domainMetadata.getTimestamp())
                     .orTimeout(10, TimeUnit.SECONDS).thenApply(WithMetadata::metadata);
         } catch (Throwable e) {

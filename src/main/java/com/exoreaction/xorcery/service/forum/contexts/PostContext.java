@@ -1,29 +1,29 @@
 package com.exoreaction.xorcery.service.forum.contexts;
 
-import com.exoreaction.xorcery.service.domainevents.api.aggregate.Command;
+import com.exoreaction.xorcery.service.domainevents.api.entity.Command;
 import com.exoreaction.xorcery.service.domainevents.api.context.DomainContext;
 import com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata;
 import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.service.forum.ForumApplication;
 import com.exoreaction.xorcery.service.forum.model.PostModel;
-import com.exoreaction.xorcery.service.forum.resources.aggregates.PostAggregate;
+import com.exoreaction.xorcery.service.forum.resources.entities.PostEntity;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
+
+import static com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata.Builder.aggregate;
+import static com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata.Builder.aggregateType;
 
 public record PostContext(ForumApplication forumApplication, PostModel postModel)
         implements DomainContext {
 
     @Override
     public List<Command> commands() {
-        return List.of(new PostAggregate.UpdatePost(postModel.getTitle(), postModel.getBody()));
+        return List.of(new PostEntity.UpdatePost(postModel.getTitle(), postModel.getBody()));
     }
 
     @Override
     public CompletionStage<Metadata> handle(Metadata metadata, Command command) {
-        metadata = new DomainEventMetadata.Builder(metadata)
-                .aggregateId(postModel.getId())
-                .build().context();
-        return forumApplication.handle(new PostAggregate(), metadata, command);
+        return forumApplication.handle(new PostEntity(), aggregate("PostAggregate", postModel.getId(), metadata), command);
     }
 }
