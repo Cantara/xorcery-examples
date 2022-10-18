@@ -1,6 +1,6 @@
 package com.exoreaction.xorcery.cqrs;
 
-import com.exoreaction.xorcery.service.forum.resources.entities.PostEntity;
+import com.exoreaction.xorcery.service.forum.entities.PostEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 

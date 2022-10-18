@@ -1,8 +1,8 @@
 data:
-  - id: forum_neo4j
+  - id: greeter_neo4j
     type: grouptemplate
     attributes:
-      name: Forum events into Neo4j
+      name: Greeter events into Neo4j
       sources:
         pattern: type=='domainevents'
         configuration:
@@ -10,14 +10,14 @@ data:
       consumers:
         pattern: type=='neo4jprojections'
         configuration:
-          id: forum
+          id: greeter
           database: neo4j
 
-  - id: neo4jcommits_forum
+  - id: neo4jcommits_greeter
     type: grouptemplate
     attributes:
-      name: Neo4j projection commits to Forum
+      name: Neo4j projection commits to Greeter
       sources:
         pattern: rel=='neo4jprojectioncommits'
       consumers:
-        pattern: type=='forum'
+        pattern: type=='greeter'

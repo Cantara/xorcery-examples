@@ -77,7 +77,7 @@ public class GreeterApplication {
                 .add("domain", "greeter")
                 .build());
 
-        waitForProjectionCommit = new WaitForProjectionCommit("forum");
+        waitForProjectionCommit = new WaitForProjectionCommit("greeter");
         conductor.addConductorListener(new ClientSubscriberConductorListener(sro.serviceIdentifier(),
                 cfg -> waitForProjectionCommit,
                 WaitForProjectionCommit.class,

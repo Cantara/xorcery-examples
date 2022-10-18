@@ -9,7 +9,7 @@ conductor:
 #    - conductor/metrics_opensearch.yaml
 #    - conductor/log4j_opensearch.yaml
 #    - conductor/requestlog_opensearch.yaml
-#    - examples/conductor/greetereventstore.yaml
+    - examples/conductor/greeterneo4j.yaml
     - examples/conductor/forum_v1.yaml
 #    - examples/conductor/forum_v2.yaml
 #    - examples/conductor/forum_v3.yaml

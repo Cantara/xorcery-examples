@@ -1,4 +1,4 @@
-package com.exoreaction.xorcery.service.forum.resources.entities;
+package com.exoreaction.xorcery.service.forum.entities;
 
 import com.exoreaction.xorcery.service.domainevents.api.entity.Command;
 import com.exoreaction.xorcery.service.domainevents.api.entity.Entity;
@@ -29,7 +29,7 @@ public class CommentEntity
 
     public static class CommentSnapshot
             implements EntitySnapshot {
-        public String title;
+        public String body;
     }
 
     private CommentSnapshot snapshot = new CommentSnapshot();

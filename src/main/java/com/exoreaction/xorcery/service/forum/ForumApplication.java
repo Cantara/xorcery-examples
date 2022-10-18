@@ -18,7 +18,7 @@ import com.exoreaction.xorcery.service.forum.contexts.PostsContext;
 import com.exoreaction.xorcery.service.forum.model.CommentModel;
 import com.exoreaction.xorcery.service.forum.model.PostModel;
 import com.exoreaction.xorcery.service.neo4j.client.GraphDatabase;
-import com.exoreaction.xorcery.service.neo4jprojections.entity.Neo4jEntitySnapshotLoader;
+import com.exoreaction.xorcery.service.domainevents.snapshot.Neo4jEntitySnapshotLoader;
 import com.exoreaction.xorcery.service.neo4jprojections.api.Neo4jProjectionRels;
 import com.exoreaction.xorcery.service.neo4jprojections.api.WaitForProjectionCommit;
 import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreams;
@@ -127,7 +127,7 @@ public class ForumApplication {
 
         try {
             DomainEventMetadata domainMetadata = new DomainEventMetadata.Builder(metadata.context())
-                    .domain("domainevents")
+                    .domain("forum")
                     .commandType(command.getClass())
                     .build();
 

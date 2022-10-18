@@ -1,5 +1,5 @@
 open module xorcery.examples {
-    exports com.exoreaction.xorcery.service.forum.resources.entities;
+    exports com.exoreaction.xorcery.service.forum.entities;
     exports com.exoreaction.xorcery.examples;
 
     requires xorcery.server;

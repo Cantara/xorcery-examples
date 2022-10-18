@@ -1,4 +1,4 @@
-package com.exoreaction.xorcery.service.forum.resources.entities;
+package com.exoreaction.xorcery.service.forum.entities;
 
 import com.exoreaction.xorcery.service.domainevents.api.entity.Command;
 import com.exoreaction.xorcery.service.domainevents.api.entity.Entity;

@@ -5,14 +5,12 @@ import com.exoreaction.xorcery.service.domainevents.api.context.DomainContext;
 import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.service.forum.ForumApplication;
 import com.exoreaction.xorcery.service.forum.model.CommentModel;
-import com.exoreaction.xorcery.service.forum.resources.entities.CommentEntity;
-import com.exoreaction.xorcery.util.UUIDs;
+import com.exoreaction.xorcery.service.forum.entities.CommentEntity;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
 import static com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata.Builder.aggregate;
-import static com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata.Builder.aggregateId;
 
 public record CommentContext(ForumApplication forumApplication, CommentModel model)
         implements DomainContext {
