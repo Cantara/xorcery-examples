@@ -34,6 +34,12 @@
         </dependency>
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
+            <artifactId>xorcery-client</artifactId>
+            <version>${xorcery.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.exoreaction.xorcery</groupId>
             <artifactId>xorcery-server</artifactId>
             <version>${xorcery.version}</version>
             <scope>compile</scope>

@@ -1,81 +1,42 @@
 package com.exoreaction.xorcery.service.visualizer;
 
 
+import com.exoreaction.xorcery.configuration.model.Configuration;
 import com.exoreaction.xorcery.disruptor.handlers.DefaultEventHandler;
-import com.exoreaction.xorcery.jersey.AbstractFeature;
 import com.exoreaction.xorcery.jsonapi.model.Link;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
-import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreams;
 import com.exoreaction.xorcery.service.reactivestreams.api.WithMetadata;
-import com.exoreaction.xorcery.service.registry.api.Registry;
-import com.exoreaction.xorcery.service.registry.api.RegistryListener;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
-import jakarta.ws.rs.ext.Provider;
+import jakarta.inject.Named;
+import jakarta.inject.Provider;
 import org.apache.logging.log4j.core.LogEvent;
-import org.glassfish.jersey.server.spi.Container;
-import org.glassfish.jersey.server.spi.ContainerLifecycleListener;
-import org.glassfish.jersey.spi.Contract;
+import org.glassfish.hk2.api.messaging.MessageReceiver;
+import org.glassfish.hk2.api.messaging.SubscribeTo;
+import org.glassfish.hk2.api.messaging.Topic;
+import org.jvnet.hk2.annotations.Service;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Singleton
-@Contract
-public class Visualizer
-        implements ContainerLifecycleListener {
+@Service
+@Named(Visualizer.SERVICE_TYPE)
+public class Visualizer {
 
-    @Provider
-    public static class Feature
-            extends AbstractFeature {
+    public static final String SERVICE_TYPE = "visualizer";
 
-        @Override
-        protected String serviceType() {
-            return "visualizer";
-        }
-
-        @Override
-        protected void buildResourceObject(ServiceResourceObject.Builder builder) {
-            builder.api("visualizer", "api/visualizer");
-        }
-
-        @Override
-        protected void configure() {
-            context.register(Visualizer.class, Visualizer.class, ContainerLifecycleListener.class);
-        }
-    }
-
-    private ReactiveStreams reactiveStreams;
-    private Registry registry;
     private final AtomicInteger serviceCounter = new AtomicInteger();
-    private final List<ServiceEntry> services = new CopyOnWriteArrayList<>();
+    public final List<ServiceEntry> services = new CopyOnWriteArrayList<>();
 
     private final List<ServiceConnection> connections = new CopyOnWriteArrayList<>();
 
     @Inject
-    public Visualizer(ReactiveStreams reactiveStreams, Registry registry) {
-        this.reactiveStreams = reactiveStreams;
-        this.registry = registry;
-    }
+    public Visualizer(Topic<ServiceResourceObject> registryTopic,
+                      Configuration configuration) {
 
-    @Override
-    public void onStartup(Container container) {
-        System.out.println("Visualizer Startup");
-
-//        registry.addRegistryListener(new VisualizerRegistryListener());
-    }
-
-    @Override
-    public void onReload(Container container) {
-
-    }
-
-    @Override
-    public void onShutdown(Container container) {
-
-        // TODO Close active sessions
-        System.out.println("Shutdown");
+        registryTopic.publish(new ServiceResourceObject.Builder(() -> configuration, SERVICE_TYPE)
+                .api("visualizer", "api/visualizer")
+                .build());
     }
 
     public List<ServiceEntry> getServices() {
@@ -84,13 +45,6 @@ public class Visualizer
 
     public List<ServiceConnection> getConnections() {
         return connections;
-    }
-
-    private class VisualizerRegistryListener implements RegistryListener {
-        @Override
-        public void addedService(ServiceResourceObject service) {
-            services.add(new ServiceEntry(service, serviceCounter.incrementAndGet()));
-        }
     }
 
     private class LogEventHandler
@@ -128,9 +82,28 @@ public class Visualizer
 
     }
 
+    private void addService(ServiceResourceObject service) {
+        services.add(new ServiceEntry(service, serviceCounter.incrementAndGet()));
+    }
+
     private record ServiceEntry(ServiceResourceObject resource, int id) {
     }
 
     private record ServiceConnection(int from, int to) {
+    }
+
+
+    @MessageReceiver
+    public static class ServiceSubscriber {
+        private final Provider<Visualizer> visualizerProvider;
+
+        @Inject
+        public ServiceSubscriber(Provider<Visualizer> visualizerProvider) {
+            this.visualizerProvider = visualizerProvider;
+        }
+
+        public void addedService(@SubscribeTo ServiceResourceObject service) {
+            visualizerProvider.get().addService(service);
+        }
     }
 }

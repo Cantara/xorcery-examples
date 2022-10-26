@@ -1,11 +1,9 @@
 package com.exoreaction.xorcery.service.greeter;
 
 import com.exoreaction.xorcery.configuration.model.Configuration;
-import com.exoreaction.xorcery.jersey.AbstractFeature;
 import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
-import com.exoreaction.xorcery.service.conductor.api.Conductor;
-import com.exoreaction.xorcery.service.conductor.helpers.ClientSubscriberConductorListener;
+import com.exoreaction.xorcery.service.conductor.helpers.ClientSubscriberGroupListener;
 import com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata;
 import com.exoreaction.xorcery.service.domainevents.api.DomainEventPublisher;
 import com.exoreaction.xorcery.service.domainevents.api.entity.DomainEvents;
@@ -19,70 +17,56 @@ import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreams;
 import com.exoreaction.xorcery.service.reactivestreams.api.WithMetadata;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.inject.Singleton;
-import jakarta.ws.rs.ext.Provider;
-import org.glassfish.jersey.spi.Contract;
+import org.glassfish.hk2.api.ServiceLocator;
+import org.glassfish.hk2.api.messaging.Topic;
+import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
+import org.jvnet.hk2.annotations.Service;
 import org.neo4j.internal.helpers.collection.MapUtil;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletionStage;
 
-@Singleton
-@Contract
+@Service
+@Named(GreeterApplication.SERVICE_TYPE)
 public class GreeterApplication {
 
     public static final String SERVICE_TYPE = "greeter";
 
-    @Provider
-    public static class Feature
-            extends AbstractFeature {
-
-        @Override
-        protected String serviceType() {
-            return SERVICE_TYPE;
-        }
-
-        @Override
-        protected void buildResourceObject(ServiceResourceObject.Builder builder) {
-            builder
-                    .version("1.0.0")
-                    .attribute("domain", "greeter")
-                    .api("greeter", "api/greeter");
-        }
-
-        @Override
-        protected void configure() {
-            context.register(GreeterApplication.class, GreeterApplication.class);
-        }
-    }
-
-    private DomainEventPublisher domainEventPublisher;
+    private final DomainEventPublisher domainEventPublisher;
     private final DomainEventMetadata domainEventMetadata;
-    private Configuration configuration;
-    private GraphDatabase graphDatabase;
+    private final GraphDatabase graphDatabase;
     private final WaitForProjectionCommit waitForProjectionCommit;
 
     @Inject
-    public GreeterApplication(DomainEventPublisher domainEventPublisher,
+    public GreeterApplication(Topic<ServiceResourceObject> registryTopic,
+                              DomainEventPublisher domainEventPublisher,
                               Configuration configuration,
                               GraphDatabase graphDatabase,
-                              Conductor conductor,
-                              ReactiveStreams reactiveStreams,
-                              @Named(SERVICE_TYPE) ServiceResourceObject sro) {
+                              ServiceLocator serviceLocator,
+                              ReactiveStreams reactiveStreams) {
+
+        ServiceResourceObject sro = new ServiceResourceObject.Builder(() -> configuration, SERVICE_TYPE)
+                .version("1.0.0")
+                .attribute("domain", "greeter")
+                .api("greeter", "api/greeter")
+                .build();
+
         this.domainEventPublisher = domainEventPublisher;
-        this.configuration = configuration;
         this.graphDatabase = graphDatabase;
         this.domainEventMetadata = new DomainEventMetadata(new Metadata.Builder()
                 .add("domain", "greeter")
                 .build());
 
         waitForProjectionCommit = new WaitForProjectionCommit("greeter");
-        conductor.addConductorListener(new ClientSubscriberConductorListener(sro.serviceIdentifier(),
+
+        ServiceLocatorUtilities.addOneConstant(serviceLocator, new ClientSubscriberGroupListener(sro.getServiceIdentifier(),
                 cfg -> waitForProjectionCommit,
                 WaitForProjectionCommit.class,
                 Neo4jProjectionRels.neo4jprojectioncommits.name(),
                 reactiveStreams));
+
+        registryTopic.publish(sro);
     }
 
     // Reads

@@ -1,11 +1,11 @@
 package com.exoreaction.xorcery.service.forum.contexts;
 
-import com.exoreaction.xorcery.service.domainevents.api.entity.Command;
-import com.exoreaction.xorcery.service.domainevents.api.context.DomainContext;
 import com.exoreaction.xorcery.metadata.Metadata;
+import com.exoreaction.xorcery.service.domainevents.api.context.DomainContext;
+import com.exoreaction.xorcery.service.domainevents.api.entity.Command;
 import com.exoreaction.xorcery.service.forum.ForumApplication;
-import com.exoreaction.xorcery.service.forum.model.PostModel;
 import com.exoreaction.xorcery.service.forum.entities.PostEntity;
+import com.exoreaction.xorcery.service.forum.model.PostModel;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;

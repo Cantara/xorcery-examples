@@ -1,8 +1,8 @@
 package com.exoreaction.xorcery.service.forum.contexts;
 
-import com.exoreaction.xorcery.service.domainevents.api.entity.Command;
-import com.exoreaction.xorcery.service.domainevents.api.context.DomainContext;
 import com.exoreaction.xorcery.metadata.Metadata;
+import com.exoreaction.xorcery.service.domainevents.api.context.DomainContext;
+import com.exoreaction.xorcery.service.domainevents.api.entity.Command;
 import com.exoreaction.xorcery.service.forum.ForumApplication;
 import com.exoreaction.xorcery.service.forum.entities.PostEntity;
 

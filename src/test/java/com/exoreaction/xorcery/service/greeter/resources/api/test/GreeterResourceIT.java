@@ -1,9 +1,12 @@
 package com.exoreaction.xorcery.service.greeter.resources.api.test;
 
-import com.exoreaction.xorcery.server.Xorcery;
+import com.exoreaction.xorcery.core.Xorcery;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.util.Fields;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 @Disabled
 class GreeterResourceIT {
@@ -13,7 +16,7 @@ class GreeterResourceIT {
 
     @BeforeAll
     public static void setUp() throws Exception {
-        xorcery = new Xorcery(null, null);
+        xorcery = new Xorcery(null);
         httpClient.start();
     }
 

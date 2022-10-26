@@ -1,17 +1,17 @@
 package com.exoreaction.xorcery.service.forum.resources.api;
 
-import com.exoreaction.xorcery.jsonapi.server.resources.JsonApiResource;
-import com.exoreaction.xorcery.service.domainevents.api.entity.Command;
-import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.jsonapi.model.Included;
 import com.exoreaction.xorcery.jsonapi.model.Links;
 import com.exoreaction.xorcery.jsonapi.model.ResourceDocument;
 import com.exoreaction.xorcery.jsonapi.model.ResourceObject;
+import com.exoreaction.xorcery.jsonapi.server.resources.JsonApiResource;
+import com.exoreaction.xorcery.metadata.Metadata;
+import com.exoreaction.xorcery.service.domainevents.api.entity.Command;
 import com.exoreaction.xorcery.service.forum.ForumApplication;
 import com.exoreaction.xorcery.service.forum.contexts.PostCommentsContext;
+import com.exoreaction.xorcery.service.forum.entities.CommentEntity;
 import com.exoreaction.xorcery.service.forum.model.PostModel;
 import com.exoreaction.xorcery.service.forum.resources.ForumApiMixin;
-import com.exoreaction.xorcery.service.forum.entities.CommentEntity;
 import com.exoreaction.xorcery.service.neo4j.client.GraphQuery;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;

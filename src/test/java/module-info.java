@@ -1,6 +1,7 @@
 open module xorcery.examples.test {
     requires xorcery.examples;
     requires xorcery.server;
+    requires xorcery.client;
     requires org.eclipse.jetty.client;
     requires org.junit.jupiter.api;
     requires org.hamcrest;

@@ -43,7 +43,7 @@ requestlog:
 
 # Metrics
 metrics:
-  enabled: false
+  enabled: true
 
 soutmetrics:
   enabled: false

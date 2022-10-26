@@ -1,13 +1,13 @@
 package com.exoreaction.xorcery.service.forum.resources.api;
 
-import com.exoreaction.xorcery.jsonapi.server.resources.JsonApiResource;
-import com.exoreaction.xorcery.service.domainevents.api.entity.Command;
-import com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata;
-import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.jsonapi.model.Included;
 import com.exoreaction.xorcery.jsonapi.model.Links;
 import com.exoreaction.xorcery.jsonapi.model.ResourceDocument;
 import com.exoreaction.xorcery.jsonapi.model.ResourceObject;
+import com.exoreaction.xorcery.jsonapi.server.resources.JsonApiResource;
+import com.exoreaction.xorcery.metadata.Metadata;
+import com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata;
+import com.exoreaction.xorcery.service.domainevents.api.entity.Command;
 import com.exoreaction.xorcery.service.forum.ForumApplication;
 import com.exoreaction.xorcery.service.forum.contexts.PostsContext;
 import com.exoreaction.xorcery.service.forum.resources.ForumApiMixin;

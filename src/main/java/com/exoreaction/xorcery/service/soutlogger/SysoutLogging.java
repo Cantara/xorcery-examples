@@ -3,19 +3,17 @@ package com.exoreaction.xorcery.service.soutlogger;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.exoreaction.xorcery.configuration.model.Configuration;
-import com.exoreaction.xorcery.jersey.AbstractFeature;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
-import com.exoreaction.xorcery.service.conductor.api.Conductor;
-import com.exoreaction.xorcery.service.conductor.helpers.ClientSubscriberConductorListener;
+import com.exoreaction.xorcery.service.conductor.helpers.ClientSubscriberGroupListener;
 import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreams;
 import com.exoreaction.xorcery.service.reactivestreams.api.WithMetadata;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.inject.Singleton;
-import jakarta.ws.rs.ext.Provider;
 import org.apache.logging.log4j.core.LogEvent;
-import org.glassfish.jersey.server.spi.Container;
-import org.glassfish.jersey.server.spi.ContainerLifecycleListener;
+import org.glassfish.hk2.api.ServiceLocator;
+import org.glassfish.hk2.api.messaging.Topic;
+import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
+import org.jvnet.hk2.annotations.Service;
 
 import java.util.concurrent.Flow;
 
@@ -24,70 +22,33 @@ import java.util.concurrent.Flow;
  * @since 13/04/2022
  */
 
-@Singleton
-public class SysoutLogging
-        implements ContainerLifecycleListener {
+@Service
+@Named(SysoutLogging.SERVICE_TYPE)
+public class SysoutLogging {
 
     public static final String SERVICE_TYPE = "sysoutlogging";
 
-    @Provider
-    public static class Feature
-            extends AbstractFeature {
-        @Override
-        protected String serviceType() {
-            return SERVICE_TYPE;
-        }
-
-        @Override
-        protected void buildResourceObject(ServiceResourceObject.Builder builder) {
-            builder.websocket("sysoutlogging", "ws/sysoutlogging");
-        }
-
-        @Override
-        protected void configure() {
-            context.register(SysoutLogging.class, ContainerLifecycleListener.class);
-        }
-    }
-
     private final Meter meter;
-    private ServiceResourceObject serviceResourceObject;
-
-    private ReactiveStreams reactiveStreams;
-    private Configuration configuration;
 
     @Inject
-    public SysoutLogging(ReactiveStreams reactiveStreams,
-                         Conductor conductor,
+    public SysoutLogging(Topic<ServiceResourceObject> registryTopic, ReactiveStreams reactiveStreams,
+                         ServiceLocator serviceLocator,
                          Configuration configuration,
-                         MetricRegistry metricRegistry,
-                         @Named(SERVICE_TYPE) ServiceResourceObject serviceResourceObject) {
-        this.reactiveStreams = reactiveStreams;
-        this.configuration = configuration;
+                         MetricRegistry metricRegistry) {
+        ServiceResourceObject sro = new ServiceResourceObject.Builder(() -> configuration, SERVICE_TYPE)
+                .websocket("sysoutlogging", "ws/sysoutlogging")
+                .build();
         meter = metricRegistry.meter("logmeter");
-        this.serviceResourceObject = serviceResourceObject;
 
-        serviceResourceObject.getLinkByRel("sysoutlogging").ifPresent(link ->
+        sro.getLinkByRel("sysoutlogging").ifPresent(link ->
         {
             reactiveStreams.subscriber(link.getHrefAsUri().getPath(), cfg -> new SysoutSubscriber(), SysoutSubscriber.class);
         });
 
-        conductor.addConductorListener(new ClientSubscriberConductorListener(serviceResourceObject.serviceIdentifier(), cfg -> new SysoutSubscriber(), SysoutSubscriber.class, "logging", reactiveStreams));
+        ServiceLocatorUtilities.addOneConstant(serviceLocator, new ClientSubscriberGroupListener(sro.getServiceIdentifier(), cfg -> new SysoutSubscriber(), SysoutSubscriber.class, "logging", reactiveStreams));
+
+        registryTopic.publish(sro);
     }
-
-    @Override
-    public void onStartup(Container container) {
-    }
-
-    @Override
-    public void onReload(Container container) {
-
-    }
-
-    @Override
-    public void onShutdown(Container container) {
-
-    }
-
     private static class SysoutSubscriber
             implements Flow.Subscriber<WithMetadata<LogEvent>> {
         private Flow.Subscription subscription;

@@ -6,6 +6,6 @@ public class Main
 {
     public static void main(String[] args ) throws Exception
     {
-        System.exit(new CommandLine(new com.exoreaction.xorcery.server.Main()).execute(args));
+        System.exit(new CommandLine(new com.exoreaction.xorcery.core.Main()).execute(args));
     }
 }

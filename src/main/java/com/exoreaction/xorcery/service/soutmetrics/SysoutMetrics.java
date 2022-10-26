@@ -1,19 +1,18 @@
 package com.exoreaction.xorcery.service.soutmetrics;
 
 import com.exoreaction.xorcery.configuration.model.Configuration;
-import com.exoreaction.xorcery.jersey.AbstractFeature;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
-import com.exoreaction.xorcery.service.conductor.api.Conductor;
-import com.exoreaction.xorcery.service.conductor.helpers.ClientSubscriberConductorListener;
+import com.exoreaction.xorcery.service.conductor.helpers.ClientSubscriberGroupListener;
 import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreams;
 import com.exoreaction.xorcery.service.reactivestreams.api.WithMetadata;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.inject.Singleton;
-import jakarta.ws.rs.ext.Provider;
-import org.glassfish.jersey.server.spi.Container;
-import org.glassfish.jersey.server.spi.ContainerLifecycleListener;
+import org.glassfish.hk2.api.PreDestroy;
+import org.glassfish.hk2.api.ServiceLocator;
+import org.glassfish.hk2.api.messaging.Topic;
+import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
+import org.jvnet.hk2.annotations.Service;
 
 import java.time.Duration;
 import java.util.concurrent.Executors;
@@ -26,63 +25,36 @@ import java.util.concurrent.TimeUnit;
  * @since 13/04/2022
  */
 
-@Singleton
+@Service
+@Named(SysoutMetrics.SERVICE_TYPE)
 public class SysoutMetrics
-        implements ContainerLifecycleListener {
+        implements PreDestroy {
     public static final String SERVICE_TYPE = "sysoutmetrics";
-
-    @Provider
-    public static class Feature
-            extends AbstractFeature {
-
-        @Override
-        protected String serviceType() {
-            return SERVICE_TYPE;
-        }
-
-        @Override
-        protected void buildResourceObject(ServiceResourceObject.Builder builder) {
-            builder.websocket("sysoutmetrics", "ws/sysoutmetrics");
-        }
-
-        @Override
-        protected void configure() {
-            context.register(SysoutMetrics.class, ContainerLifecycleListener.class);
-        }
-    }
-
-    private ReactiveStreams reactiveStreams;
-    private Conductor conductor;
-    private ServiceResourceObject sro;
 
     private ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 
     @Inject
-    public SysoutMetrics(ReactiveStreams reactiveStreams,
-                         Conductor conductor,
-                         @Named(SERVICE_TYPE) ServiceResourceObject sro) {
-        this.reactiveStreams = reactiveStreams;
-        this.conductor = conductor;
-        this.sro = sro;
+    public SysoutMetrics(Topic<ServiceResourceObject> registryTopic,
+                         ReactiveStreams reactiveStreams,
+                         Configuration configuration,
+                         ServiceLocator serviceLocator) {
+        ServiceResourceObject sro = new ServiceResourceObject.Builder(() -> configuration, SERVICE_TYPE)
+                .websocket("sysoutmetrics", "ws/sysoutmetrics")
+                .build();
 
         sro.getLinkByRel("sysoutmetrics").ifPresent(link ->
         {
             reactiveStreams.subscriber(link.getHrefAsUri().getPath(), cfg -> new MetricEventSubscriber(cfg, scheduledExecutorService), MetricEventSubscriber.class);
         });
 
-        conductor.addConductorListener(new ClientSubscriberConductorListener(sro.serviceIdentifier(), cfg -> new MetricEventSubscriber(cfg, scheduledExecutorService), MetricEventSubscriber.class, "metrics", reactiveStreams));
+        ServiceLocatorUtilities.addOneConstant(serviceLocator, new ClientSubscriberGroupListener(sro.getServiceIdentifier(), cfg -> new MetricEventSubscriber(cfg, scheduledExecutorService), MetricEventSubscriber.class, "metrics", reactiveStreams));
+
+        registryTopic.publish(sro);
     }
 
-    @Override
-    public void onStartup(Container container) {
-    }
 
     @Override
-    public void onReload(Container container) {
-    }
-
-    @Override
-    public void onShutdown(Container container) {
+    public void preDestroy() {
         scheduledExecutorService.shutdown();
     }
 
