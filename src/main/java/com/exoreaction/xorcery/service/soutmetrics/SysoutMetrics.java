@@ -1,6 +1,7 @@
 package com.exoreaction.xorcery.service.soutmetrics;
 
 import com.exoreaction.xorcery.configuration.model.Configuration;
+import com.exoreaction.xorcery.core.TopicSubscribers;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
 import com.exoreaction.xorcery.service.conductor.helpers.ClientSubscriberGroupListener;
 import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreams;
@@ -47,7 +48,7 @@ public class SysoutMetrics
             reactiveStreams.subscriber(link.getHrefAsUri().getPath(), cfg -> new MetricEventSubscriber(cfg, scheduledExecutorService), MetricEventSubscriber.class);
         });
 
-        ServiceLocatorUtilities.addOneConstant(serviceLocator, new ClientSubscriberGroupListener(sro.getServiceIdentifier(), cfg -> new MetricEventSubscriber(cfg, scheduledExecutorService), MetricEventSubscriber.class, "metrics", reactiveStreams));
+        TopicSubscribers.addSubscriber(serviceLocator, new ClientSubscriberGroupListener(sro.getServiceIdentifier(), cfg -> new MetricEventSubscriber(cfg, scheduledExecutorService), MetricEventSubscriber.class, "metrics", reactiveStreams));
 
         registryTopic.publish(sro);
     }

@@ -1,6 +1,7 @@
 package com.exoreaction.xorcery.service.greeter;
 
 import com.exoreaction.xorcery.configuration.model.Configuration;
+import com.exoreaction.xorcery.core.TopicSubscribers;
 import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
 import com.exoreaction.xorcery.service.conductor.helpers.ClientSubscriberGroupListener;
@@ -60,10 +61,10 @@ public class GreeterApplication {
 
         waitForProjectionCommit = new WaitForProjectionCommit("greeter");
 
-        ServiceLocatorUtilities.addOneConstant(serviceLocator, new ClientSubscriberGroupListener(sro.getServiceIdentifier(),
+        TopicSubscribers.addSubscriber(serviceLocator, new ClientSubscriberGroupListener(sro.getServiceIdentifier(),
                 cfg -> waitForProjectionCommit,
                 WaitForProjectionCommit.class,
-                Neo4jProjectionRels.neo4jprojectioncommits.name(),
+                Neo4jProjectionRels.neo4jprojectionspublisher.name(),
                 reactiveStreams));
 
         registryTopic.publish(sro);

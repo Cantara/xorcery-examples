@@ -3,6 +3,7 @@ package com.exoreaction.xorcery.service.soutlogger;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.exoreaction.xorcery.configuration.model.Configuration;
+import com.exoreaction.xorcery.core.TopicSubscribers;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
 import com.exoreaction.xorcery.service.conductor.helpers.ClientSubscriberGroupListener;
 import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreams;
@@ -45,10 +46,11 @@ public class SysoutLogging {
             reactiveStreams.subscriber(link.getHrefAsUri().getPath(), cfg -> new SysoutSubscriber(), SysoutSubscriber.class);
         });
 
-        ServiceLocatorUtilities.addOneConstant(serviceLocator, new ClientSubscriberGroupListener(sro.getServiceIdentifier(), cfg -> new SysoutSubscriber(), SysoutSubscriber.class, "logging", reactiveStreams));
+        TopicSubscribers.addSubscriber(serviceLocator, new ClientSubscriberGroupListener(sro.getServiceIdentifier(), cfg -> new SysoutSubscriber(), SysoutSubscriber.class, "logging", reactiveStreams));
 
         registryTopic.publish(sro);
     }
+
     private static class SysoutSubscriber
             implements Flow.Subscriber<WithMetadata<LogEvent>> {
         private Flow.Subscription subscription;

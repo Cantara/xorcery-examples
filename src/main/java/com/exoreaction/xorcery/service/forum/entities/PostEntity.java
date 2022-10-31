@@ -12,7 +12,7 @@ public class PostEntity
         extends Entity<PostEntity.PostSnapshot> {
 
     @Create
-    public record CreatePost(String title, String body)
+    public record CreatePost(String id, String title, String body)
             implements Command {
     }
 

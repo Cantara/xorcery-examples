@@ -32,6 +32,6 @@ data:
       attributes:
         name: Neo4j projection commits to Forum
         sources:
-          pattern: rel=='neo4jprojectioncommits'
+          pattern: rel=='neo4jprojectionspublisher'
         consumers:
           pattern: type=='forum'

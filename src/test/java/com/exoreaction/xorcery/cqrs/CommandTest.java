@@ -17,7 +17,7 @@ class CommandTest {
     public void testSerializeDeserializeCommand() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
 
-        PostEntity.CreatePost command = new PostEntity.CreatePost("Title", "Body");
+        PostEntity.CreatePost command = new PostEntity.CreatePost("1234", "Title", "Body");
 
         StringWriter writer = new StringWriter();
         mapper.writeValue(writer, command);

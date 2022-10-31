@@ -6,7 +6,7 @@ data:
       sources:
         pattern: type=='domainevents'
         configuration:
-          rel: neo4jprojectionsubscriber
+          rel: neo4jprojectionssubscriber
       consumers:
         pattern: type=='neo4jprojections'
         configuration:
@@ -18,6 +18,6 @@ data:
     attributes:
       name: Neo4j projection commits to Forum
       sources:
-        pattern: rel=='neo4jprojectioncommits'
+        pattern: rel=='neo4jprojectionspublisher'
       consumers:
         pattern: type=='forum'

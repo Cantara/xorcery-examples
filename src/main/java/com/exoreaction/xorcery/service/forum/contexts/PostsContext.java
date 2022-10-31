@@ -5,6 +5,7 @@ import com.exoreaction.xorcery.service.domainevents.api.context.DomainContext;
 import com.exoreaction.xorcery.service.domainevents.api.entity.Command;
 import com.exoreaction.xorcery.service.forum.ForumApplication;
 import com.exoreaction.xorcery.service.forum.entities.PostEntity;
+import com.exoreaction.xorcery.util.UUIDs;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
@@ -15,7 +16,7 @@ public record PostsContext(ForumApplication forumApplication)
         implements DomainContext {
     @Override
     public List<Command> commands() {
-        return List.of(new PostEntity.CreatePost("", ""), new CreatePosts("", "", 10));
+        return List.of(new PostEntity.CreatePost(UUIDs.newId(), "", ""), new CreatePosts("", "", 10));
     }
 
     @Override
@@ -23,7 +24,7 @@ public record PostsContext(ForumApplication forumApplication)
         if (command instanceof CreatePosts createPosts) {
             CompletionStage<Metadata> result = null;
             for (int i = 0; i < createPosts.amount(); i++) {
-                result = forumApplication.handle(new PostEntity(), aggregateType("PostAggregate", metadata.copy()), new PostEntity.CreatePost(createPosts.title() + " " + i, createPosts.body() + " " + i));
+                result = forumApplication.handle(new PostEntity(), aggregateType("PostAggregate", metadata.copy()), new PostEntity.CreatePost(UUIDs.newId(), createPosts.title() + " " + i, createPosts.body() + " " + i));
             }
             return result;
         } else {

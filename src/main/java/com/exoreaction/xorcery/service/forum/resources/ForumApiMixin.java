@@ -24,6 +24,8 @@ import static com.exoreaction.xorcery.jsonapi.model.JsonApiRels.self;
 public interface ForumApiMixin
         extends JsonApiNeo4jResourceMixin, ResourceObjectMapperMixin {
 
+
+
     default CompletionStage<ResourceObjects> posts(Included.Builder included, Links.Builder links) {
         GraphQuery graphQuery = postsQuery()
                 .sort(CommonModel.Entity.created_on, GraphQuery.Order.ASCENDING) // Default sorting
@@ -142,8 +144,4 @@ public interface ForumApiMixin
         return service(ForumApplication.class);
     }
 
-    @Override
-    default ObjectMapper objectMapper() {
-        return service(ObjectMapper.class);
-    }
 }

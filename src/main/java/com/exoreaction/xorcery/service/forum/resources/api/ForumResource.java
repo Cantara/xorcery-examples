@@ -14,6 +14,7 @@ import com.exoreaction.xorcery.service.forum.contexts.PostsContext;
 import com.exoreaction.xorcery.service.forum.entities.CommentEntity;
 import com.exoreaction.xorcery.service.forum.entities.PostEntity;
 import com.exoreaction.xorcery.service.forum.model.ForumModel;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
