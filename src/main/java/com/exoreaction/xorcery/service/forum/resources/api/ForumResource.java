@@ -9,12 +9,13 @@ import com.exoreaction.xorcery.jsonapischema.model.ResourceObjectSchema;
 import com.exoreaction.xorcery.jsonschema.jaxrs.MediaTypes;
 import com.exoreaction.xorcery.jsonschema.model.JsonSchema;
 import com.exoreaction.xorcery.service.domainevents.api.model.CommonModel;
-import com.exoreaction.xorcery.service.domainevents.resources.JsonSchemaMixin;
+import com.exoreaction.xorcery.jsonschema.server.resources.JsonSchemaMixin;
+import com.exoreaction.xorcery.service.domainevents.resources.CommandsJsonSchemaMixin;
+import com.exoreaction.xorcery.service.domainevents.resources.CommandsMixin;
 import com.exoreaction.xorcery.service.forum.contexts.PostsContext;
 import com.exoreaction.xorcery.service.forum.entities.CommentEntity;
 import com.exoreaction.xorcery.service.forum.entities.PostEntity;
 import com.exoreaction.xorcery.service.forum.model.ForumModel;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -24,7 +25,7 @@ import static com.exoreaction.xorcery.jsonapi.model.JsonApiRels.describedby;
 @Path("api/forum")
 public class ForumResource
         extends JsonApiResource
-        implements JsonSchemaMixin {
+        implements JsonSchemaMixin, CommandsJsonSchemaMixin {
 
     @GET
     @Produces(MediaTypes.APPLICATION_JSON_SCHEMA)
