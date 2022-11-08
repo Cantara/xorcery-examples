@@ -4,6 +4,7 @@ import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.exoreaction.xorcery.configuration.model.Configuration;
 import com.exoreaction.xorcery.core.TopicSubscribers;
+import com.exoreaction.xorcery.server.api.ServiceResourceObjects;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
 import com.exoreaction.xorcery.service.conductor.helpers.ClientSubscriberGroupListener;
 import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreams;
@@ -32,7 +33,7 @@ public class SysoutLogging {
     private final Meter meter;
 
     @Inject
-    public SysoutLogging(Topic<ServiceResourceObject> registryTopic, ReactiveStreams reactiveStreams,
+    public SysoutLogging(ServiceResourceObjects serviceResourceObjects, ReactiveStreams reactiveStreams,
                          ServiceLocator serviceLocator,
                          Configuration configuration,
                          MetricRegistry metricRegistry) {
@@ -48,7 +49,7 @@ public class SysoutLogging {
 
         TopicSubscribers.addSubscriber(serviceLocator, new ClientSubscriberGroupListener(sro.getServiceIdentifier(), cfg -> new SysoutSubscriber(), SysoutSubscriber.class, "logging", reactiveStreams));
 
-        registryTopic.publish(sro);
+        serviceResourceObjects.publish(sro);
     }
 
     private static class SysoutSubscriber

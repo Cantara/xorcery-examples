@@ -48,7 +48,7 @@ public class CommentEntity
         add(event("addedcomment")
                 .created("Comment", command.id)
                 .attribute("body", command.body)
-                .addedRelationships("PostComments", "Post", metadata.getAggregateId())
+                .addedRelationship("PostComments", "Post", metadata.getAggregateId())
                 .build());
     }
 

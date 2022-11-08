@@ -3,6 +3,7 @@ package com.exoreaction.xorcery.service.forum;
 import com.exoreaction.xorcery.configuration.model.Configuration;
 import com.exoreaction.xorcery.core.TopicSubscribers;
 import com.exoreaction.xorcery.metadata.Metadata;
+import com.exoreaction.xorcery.server.api.ServiceResourceObjects;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
 import com.exoreaction.xorcery.service.conductor.helpers.ClientSubscriberGroupListener;
 import com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata;
@@ -49,7 +50,7 @@ public class ForumApplication {
     private final WaitForProjectionCommit waitForProjectionCommit;
 
     @Inject
-    public ForumApplication(Topic<ServiceResourceObject> registryTopic,
+    public ForumApplication(ServiceResourceObjects serviceResourceObjects,
                             DomainEventPublisher domainEventPublisher,
                             Configuration configuration,
                             ServiceLocator serviceLocator,
@@ -91,7 +92,7 @@ public class ForumApplication {
             logger.error("Could not wait for projection to start", e);
         }
 */
-        registryTopic.publish(sro);
+        serviceResourceObjects.publish(sro);
     }
 
     public PostsContext posts() {

@@ -4,6 +4,7 @@ package com.exoreaction.xorcery.service.visualizer;
 import com.exoreaction.xorcery.configuration.model.Configuration;
 import com.exoreaction.xorcery.disruptor.handlers.DefaultEventHandler;
 import com.exoreaction.xorcery.jsonapi.model.Link;
+import com.exoreaction.xorcery.server.api.ServiceResourceObjects;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
 import com.exoreaction.xorcery.service.reactivestreams.api.WithMetadata;
 import jakarta.inject.Inject;
@@ -31,10 +32,10 @@ public class Visualizer {
     private final List<ServiceConnection> connections = new CopyOnWriteArrayList<>();
 
     @Inject
-    public Visualizer(Topic<ServiceResourceObject> registryTopic,
+    public Visualizer(ServiceResourceObjects serviceResourceObjects,
                       Configuration configuration) {
 
-        registryTopic.publish(new ServiceResourceObject.Builder(() -> configuration, SERVICE_TYPE)
+        serviceResourceObjects.publish(new ServiceResourceObject.Builder(() -> configuration, SERVICE_TYPE)
                 .api("visualizer", "api/visualizer")
                 .build());
     }

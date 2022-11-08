@@ -3,6 +3,7 @@ package com.exoreaction.xorcery.service.greeter;
 import com.exoreaction.xorcery.configuration.model.Configuration;
 import com.exoreaction.xorcery.core.TopicSubscribers;
 import com.exoreaction.xorcery.metadata.Metadata;
+import com.exoreaction.xorcery.server.api.ServiceResourceObjects;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
 import com.exoreaction.xorcery.service.conductor.helpers.ClientSubscriberGroupListener;
 import com.exoreaction.xorcery.service.domainevents.api.DomainEventMetadata;
@@ -40,7 +41,7 @@ public class GreeterApplication {
     private final WaitForProjectionCommit waitForProjectionCommit;
 
     @Inject
-    public GreeterApplication(Topic<ServiceResourceObject> registryTopic,
+    public GreeterApplication(ServiceResourceObjects serviceResourceObjects,
                               DomainEventPublisher domainEventPublisher,
                               Configuration configuration,
                               GraphDatabase graphDatabase,
@@ -67,7 +68,7 @@ public class GreeterApplication {
                 Neo4jProjectionRels.neo4jprojectionspublisher.name(),
                 reactiveStreams));
 
-        registryTopic.publish(sro);
+        serviceResourceObjects.publish(sro);
     }
 
     // Reads

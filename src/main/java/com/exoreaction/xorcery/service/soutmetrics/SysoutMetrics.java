@@ -2,6 +2,7 @@ package com.exoreaction.xorcery.service.soutmetrics;
 
 import com.exoreaction.xorcery.configuration.model.Configuration;
 import com.exoreaction.xorcery.core.TopicSubscribers;
+import com.exoreaction.xorcery.server.api.ServiceResourceObjects;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
 import com.exoreaction.xorcery.service.conductor.helpers.ClientSubscriberGroupListener;
 import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreams;
@@ -35,7 +36,7 @@ public class SysoutMetrics
     private ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 
     @Inject
-    public SysoutMetrics(Topic<ServiceResourceObject> registryTopic,
+    public SysoutMetrics(ServiceResourceObjects serviceResourceObjects,
                          ReactiveStreams reactiveStreams,
                          Configuration configuration,
                          ServiceLocator serviceLocator) {
@@ -50,7 +51,7 @@ public class SysoutMetrics
 
         TopicSubscribers.addSubscriber(serviceLocator, new ClientSubscriberGroupListener(sro.getServiceIdentifier(), cfg -> new MetricEventSubscriber(cfg, scheduledExecutorService), MetricEventSubscriber.class, "metrics", reactiveStreams));
 
-        registryTopic.publish(sro);
+        serviceResourceObjects.publish(sro);
     }
 
 
