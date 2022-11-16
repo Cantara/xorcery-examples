@@ -11,7 +11,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <xorcery.version>0.10.2-SNAPSHOT</xorcery.version>
+        <xorcery.version>0.11.1</xorcery.version>
         <jackson.version>2.13.4</jackson.version>
         <hk.version>3.0.3</hk.version>
 
@@ -30,6 +30,12 @@
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
             <artifactId>xorcery-jsonapi-jaxrs</artifactId>
+            <version>${xorcery.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.exoreaction.xorcery</groupId>
+            <artifactId>xorcery-dns-server</artifactId>
             <version>${xorcery.version}</version>
             <scope>compile</scope>
         </dependency>
@@ -175,19 +181,6 @@
                 <configuration>
                     <source>17</source>
                     <target>17</target>
-                    <compilerArgs>
-                        <arg>--add-exports=java.base/sun.nio.ch=ALL-UNNAMED</arg>
-                        <arg>--add-exports=java.base/java.nio=ALL-UNNAMED</arg>
-                        <arg>--add-opens=java.base/java.lang=ALL-UNNAMED</arg>
-                        <arg>--add-opens=java.base/java.lang.reflect=ALL-UNNAMED</arg>
-                        <arg>--add-opens=java.base/java.io=ALL-UNNAMED</arg>
-                        <arg>--add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED</arg>
-<!--                        <arg>-processor</arg>
-                        <arg>org.apache.logging.log4j.core.config.plugins.processor.PluginProcessor</arg>
-                        <arg>-processor</arg>
-                        <arg>org.openjdk.jmh.generators.BenchmarkProcessor</arg>
-                        -->
-                    </compilerArgs>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.glassfish.hk2</groupId>
@@ -222,15 +215,9 @@
                     <executable>java</executable>
                     <workingDirectory>target/classes</workingDirectory>
                     <arguments>
-                        <argument>--add-exports=java.base/sun.nio.ch=ALL-UNNAMED</argument>
-                        <argument>--add-opens=java.base/java.nio=ALL-UNNAMED</argument>
-                        <argument>--add-opens=java.base/java.lang=ALL-UNNAMED</argument>
-                        <argument>--add-opens=java.base/java.lang.reflect=ALL-UNNAMED</argument>
-                        <argument>--add-opens=java.base/java.io=ALL-UNNAMED</argument>
-                        <argument>--add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED</argument>
                         <argument>-classpath</argument>
                         <classpath />
-                        <argument>com.exoreaction.xorcery.server.Main</argument>
+                        <argument>com.exoreaction.xorcery.examples.Main</argument>
                     </arguments>
                 </configuration>
             </plugin>
