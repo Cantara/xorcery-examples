@@ -11,7 +11,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <xorcery.version>0.11.7</xorcery.version>
+        <xorcery.version>0.12.0</xorcery.version>
         <jackson.version>2.13.4</jackson.version>
         <hk.version>3.0.3</hk.version>
 
