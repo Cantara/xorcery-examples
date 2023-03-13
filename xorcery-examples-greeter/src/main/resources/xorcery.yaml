@@ -1,0 +1,14 @@
+jersey.server.register:
+  - com.exoreaction.xorcery.examples.greeter.resources.api.GreeterResource
+
+keystores:
+  enabled: true
+  keystore:
+    path: "{{ home }}/keystore.p12"
+    password: "password"
+    template: "META-INF/intermediatecakeystore.p12"
+
+log4jpublisher.enabled: false
+log4jsubscriber.enabled: false
+
+domainevents.subscriber.configuration.projection: "greeter"

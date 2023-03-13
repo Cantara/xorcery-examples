@@ -1,0 +1,11 @@
+jersey.server.register:
+  - com.exoreaction.xorcery.examples.forum.resources.api.CommentResource
+  - com.exoreaction.xorcery.examples.forum.resources.api.ForumResource
+  - com.exoreaction.xorcery.examples.forum.resources.api.PostCommentsResource
+  - com.exoreaction.xorcery.examples.forum.resources.api.PostResource
+  - com.exoreaction.xorcery.examples.forum.resources.api.PostsResource
+
+dns.client.search:
+  - xorcery.test
+dns.nameservers:
+  - 127.0.0.1:8853
