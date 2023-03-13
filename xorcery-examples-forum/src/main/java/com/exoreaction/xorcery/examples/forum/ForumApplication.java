@@ -1,6 +1,7 @@
 package com.exoreaction.xorcery.examples.forum;
 
 import com.exoreaction.xorcery.configuration.model.Configuration;
+import com.exoreaction.xorcery.configuration.model.InstanceConfiguration;
 import com.exoreaction.xorcery.domainevents.api.DomainEvents;
 import com.exoreaction.xorcery.domainevents.helpers.context.DomainEventMetadata;
 import com.exoreaction.xorcery.domainevents.helpers.entity.Command;
@@ -80,7 +81,7 @@ public class ForumApplication {
             logger.error("Could not wait for projection to start", e);
         }
 */
-        serviceResourceObjects.add(new ServiceResourceObject.Builder(() -> configuration, SERVICE_TYPE)
+        serviceResourceObjects.add(new ServiceResourceObject.Builder(new InstanceConfiguration(configuration.getConfiguration("instance")), SERVICE_TYPE)
                 .version("1.0.0")
                 .attribute("domain", "forum")
                 .api("forum", "api/forum")

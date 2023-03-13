@@ -3,6 +3,7 @@ package com.exoreaction.xorcery.examples.monitor.soutlogger;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.exoreaction.xorcery.configuration.model.Configuration;
+import com.exoreaction.xorcery.configuration.model.InstanceConfiguration;
 import com.exoreaction.xorcery.server.api.ServiceResourceObjects;
 import com.exoreaction.xorcery.server.model.ServiceResourceObject;
 import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreamsServer;
@@ -12,6 +13,7 @@ import jakarta.inject.Named;
 import org.apache.logging.log4j.core.LogEvent;
 import org.glassfish.hk2.runlevel.RunLevel;
 import org.jvnet.hk2.annotations.Service;
+import org.neo4j.cypher.internal.expressions.In;
 
 import java.util.concurrent.Flow;
 
@@ -33,7 +35,7 @@ public class SysoutLogging {
                          Configuration configuration,
                          MetricRegistry metricRegistry) {
         reactiveStreamsServer.subscriber("logging", cfg -> new SysoutSubscriber(metricRegistry.meter("logmeter")), SysoutSubscriber.class);
-        serviceResourceObjects.add(new ServiceResourceObject.Builder(() -> configuration, SERVICE_TYPE)
+        serviceResourceObjects.add(new ServiceResourceObject.Builder(new InstanceConfiguration(configuration.getConfiguration("instance")), SERVICE_TYPE)
                 .subscriber("logging")
                 .build());
     }
