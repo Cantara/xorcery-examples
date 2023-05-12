@@ -7,5 +7,14 @@ jersey.server.register:
 
 dns.client.search:
   - xorcery.test
+dns.client.hosts:
+      _certificates._sub._https._tcp : "https://127.0.0.1"
 dns.nameservers:
   - 127.0.0.1:8853
+jwt.server.key: "MEECAQAwEwYHKoZIzj0CAQYIKoZIzj0DAQcEJzAlAgEBBCDmIWkGxup5OVTnS22GQSnfEyJ4dikLuK6/y3mtn9TQrQ=="
+jetty:
+  server:
+    security:
+      jwt:
+        issuers:
+          server.xorcery.test: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEO5l+pm5xkDjAAPfq41OTN5DWstmoLt4JsyiJ87wbQHH5487FjpsvRTr1UFaXv3ktM5ZL+gHZaeK7m4G2x6Zmlg=="

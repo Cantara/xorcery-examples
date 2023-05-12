@@ -21,6 +21,7 @@ import com.exoreaction.xorcery.examples.forum.contexts.CommentContext;
 import com.exoreaction.xorcery.service.neo4j.client.GraphDatabase;
 import com.exoreaction.xorcery.service.neo4jprojections.api.Neo4jProjectionStreams;
 import com.exoreaction.xorcery.service.neo4jprojections.api.WaitForProjectionCommit;
+import com.exoreaction.xorcery.service.reactivestreams.api.ClientConfiguration;
 import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreamsClient;
 import com.exoreaction.xorcery.service.reactivestreams.api.WithMetadata;
 import jakarta.inject.Inject;
@@ -61,7 +62,7 @@ public class ForumApplication {
 
         waitForProjectionCommit = new WaitForProjectionCommit("forum");
         reactiveStreams.subscribe(null, Neo4jProjectionStreams.COMMIT_PUBLISHER,
-                Configuration::empty, waitForProjectionCommit, WaitForProjectionCommit.class, Configuration.empty());
+                Configuration::empty, waitForProjectionCommit, WaitForProjectionCommit.class, ClientConfiguration.defaults());
 
 /*
         try {

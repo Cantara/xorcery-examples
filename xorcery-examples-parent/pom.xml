@@ -12,7 +12,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.release>17</maven.compiler.release>
 
-        <xorcery.version>0.20.0</xorcery.version>
+        <xorcery.version>0.21.0</xorcery.version>
         <hk2.version>3.0.4</hk2.version>
         <slf4j.version>2.0.7</slf4j.version>
         <log4j.version>2.20.0</log4j.version>
@@ -70,7 +70,7 @@
             </dependency>
             <dependency>
                 <groupId>com.exoreaction.xorcery</groupId>
-                <artifactId>xorcery-certificates-client-hk2</artifactId>
+                <artifactId>xorcery-certificates-client</artifactId>
                 <version>${xorcery.version}</version>
             </dependency>
             <dependency>
@@ -95,7 +95,7 @@
             </dependency>
             <dependency>
                 <groupId>com.exoreaction.xorcery</groupId>
-                <artifactId>xorcery-reactivestreams-client-hk2</artifactId>
+                <artifactId>xorcery-reactivestreams-client</artifactId>
                 <version>${xorcery.version}</version>
             </dependency>
             <dependency>
@@ -128,6 +128,11 @@
             <dependency>
                 <groupId>com.exoreaction.xorcery</groupId>
                 <artifactId>xorcery-domainevents-neo4jprojection</artifactId>
+                <version>${xorcery.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.exoreaction.xorcery</groupId>
+                <artifactId>xorcery-jwt-server</artifactId>
                 <version>${xorcery.version}</version>
             </dependency>
             <dependency>

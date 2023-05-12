@@ -3,6 +3,7 @@ package com.exoreaction.xorcery.examples.monitor.soutmetrics;
 import com.exoreaction.xorcery.configuration.model.Configuration;
 import com.exoreaction.xorcery.server.api.ServiceResourceObjects;
 import com.exoreaction.xorcery.service.dns.client.DnsLookupService;
+import com.exoreaction.xorcery.service.reactivestreams.api.ClientConfiguration;
 import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreamsClient;
 import com.exoreaction.xorcery.service.reactivestreams.api.WithMetadata;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -65,7 +66,7 @@ public class SysoutMetrics
                             reactiveStreams.subscribe(uri.getAuthority(), "metrics",
                                     ()->configuration.getConfiguration("metrics.publisher"),
                                     new MetricEventSubscriber(configuration.getConfiguration("metrics.subscriber" ), scheduledExecutorService),
-                                    MetricEventSubscriber.class, Configuration.empty()).whenComplete((v,t)->
+                                    MetricEventSubscriber.class, ClientConfiguration.defaults()).whenComplete((v, t)->
                             {
                                 logger.info("Metrics subscription finished", t);
                             });
