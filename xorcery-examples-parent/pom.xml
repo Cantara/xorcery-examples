@@ -41,6 +41,11 @@
                 <artifactId>xorcery-core</artifactId>
                 <version>${xorcery.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.exoreaction.xorcery</groupId>
+                <artifactId>xorcery-runner</artifactId>
+                <version>${xorcery.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.exoreaction.xorcery</groupId>
@@ -174,6 +179,12 @@
             </dependency>
 
             <!-- Tests -->
+            <dependency>
+                <groupId>com.exoreaction.xorcery</groupId>
+                <artifactId>xorcery-junit</artifactId>
+                <version>${xorcery.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest</artifactId>

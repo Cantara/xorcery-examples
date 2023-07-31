@@ -1,11 +1,11 @@
 package com.exoreaction.xorcery.examples.monitor.soutmetrics;
 
-import com.exoreaction.xorcery.configuration.model.Configuration;
+import com.exoreaction.xorcery.configuration.Configuration;
+import com.exoreaction.xorcery.dns.client.providers.DnsLookupService;
+import com.exoreaction.xorcery.reactivestreams.api.WithMetadata;
+import com.exoreaction.xorcery.reactivestreams.api.client.ClientConfiguration;
+import com.exoreaction.xorcery.reactivestreams.api.client.ReactiveStreamsClient;
 import com.exoreaction.xorcery.server.api.ServiceResourceObjects;
-import com.exoreaction.xorcery.service.dns.client.DnsLookupService;
-import com.exoreaction.xorcery.service.reactivestreams.api.ClientConfiguration;
-import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreamsClient;
-import com.exoreaction.xorcery.service.reactivestreams.api.WithMetadata;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -15,6 +15,8 @@ import org.glassfish.hk2.api.PreDestroy;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.runlevel.RunLevel;
 import org.jvnet.hk2.annotations.Service;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import java.net.URI;
 import java.time.Duration;
@@ -51,22 +53,19 @@ public class SysoutMetrics
                          ServiceLocator serviceLocator) {
         this.dnsLookupService = dnsLookupService;
 
-        scheduledExecutorService.scheduleAtFixedRate(()->
+        scheduledExecutorService.scheduleAtFixedRate(() ->
         {
-            dnsLookupService.resolve(URI.create("_metrics")).whenComplete((metricUris,throwable) ->
+            dnsLookupService.resolve(URI.create("_metrics")).whenComplete((metricUris, throwable) ->
             {
-                if (throwable != null)
-                {
+                if (throwable != null) {
 
-                } else
-                {
+                } else {
                     for (URI uri : metricUris) {
-                        if (!subscribed.contains(uri))
-                        {
-                            reactiveStreams.subscribe(uri.getAuthority(), "metrics",
-                                    ()->configuration.getConfiguration("metrics.publisher"),
-                                    new MetricEventSubscriber(configuration.getConfiguration("metrics.subscriber" ), scheduledExecutorService),
-                                    MetricEventSubscriber.class, ClientConfiguration.defaults()).whenComplete((v, t)->
+                        if (!subscribed.contains(uri)) {
+                            reactiveStreams.subscribe(uri, "metrics",
+                                    () -> configuration.getConfiguration("metrics.publisher"),
+                                    new MetricEventSubscriber(configuration.getConfiguration("metrics.subscriber"), scheduledExecutorService),
+                                    MetricEventSubscriber.class, ClientConfiguration.defaults()).whenComplete((v, t) ->
                             {
                                 logger.info("Metrics subscription finished", t);
                             });
@@ -84,9 +83,9 @@ public class SysoutMetrics
     }
 
     private static class MetricEventSubscriber
-            implements Flow.Subscriber<WithMetadata<ObjectNode>> {
+            implements Subscriber<WithMetadata<ObjectNode>> {
         private final ScheduledExecutorService scheduledExecutorService;
-        private Flow.Subscription subscription;
+        private Subscription subscription;
         private final long delay;
 
         public MetricEventSubscriber(Configuration consumerConfiguration, ScheduledExecutorService scheduledExecutorService) {
@@ -96,7 +95,7 @@ public class SysoutMetrics
         }
 
         @Override
-        public void onSubscribe(Flow.Subscription subscription) {
+        public void onSubscribe(Subscription subscription) {
             this.subscription = subscription;
             subscription.request(1);
         }

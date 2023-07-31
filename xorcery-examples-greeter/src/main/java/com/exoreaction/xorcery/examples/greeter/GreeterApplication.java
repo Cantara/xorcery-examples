@@ -1,26 +1,22 @@
 package com.exoreaction.xorcery.examples.greeter;
 
-import com.exoreaction.xorcery.configuration.model.Configuration;
+import com.exoreaction.xorcery.configuration.Configuration;
 import com.exoreaction.xorcery.domainevents.api.DomainEvents;
 import com.exoreaction.xorcery.domainevents.helpers.context.DomainEventMetadata;
 import com.exoreaction.xorcery.domainevents.publisher.DomainEventPublisher;
 import com.exoreaction.xorcery.examples.greeter.commands.UpdateGreeting;
 import com.exoreaction.xorcery.examples.greeter.domainevents.UpdatedGreeting;
 import com.exoreaction.xorcery.metadata.Metadata;
-import com.exoreaction.xorcery.server.api.ServiceResourceObjects;
-import com.exoreaction.xorcery.server.model.ServiceResourceObject;
-import com.exoreaction.xorcery.service.neo4j.client.GraphDatabase;
-import com.exoreaction.xorcery.service.neo4j.client.GraphResult;
-import com.exoreaction.xorcery.service.neo4jprojections.api.Neo4jProjectionStreams;
-import com.exoreaction.xorcery.service.neo4jprojections.api.WaitForProjectionCommit;
-import com.exoreaction.xorcery.service.reactivestreams.api.ClientConfiguration;
-import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreamsClient;
-import com.exoreaction.xorcery.service.reactivestreams.api.WithMetadata;
+import com.exoreaction.xorcery.neo4j.client.GraphDatabase;
+import com.exoreaction.xorcery.neo4j.client.GraphResult;
+import com.exoreaction.xorcery.neo4jprojections.api.Neo4jProjectionStreams;
+import com.exoreaction.xorcery.neo4jprojections.api.WaitForProjectionCommit;
+import com.exoreaction.xorcery.reactivestreams.api.WithMetadata;
+import com.exoreaction.xorcery.reactivestreams.api.client.ClientConfiguration;
+import com.exoreaction.xorcery.reactivestreams.api.client.ReactiveStreamsClient;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.apache.logging.log4j.LogManager;
-import org.glassfish.hk2.api.ServiceLocator;
-import org.glassfish.hk2.runlevel.RunLevel;
 import org.jvnet.hk2.annotations.Service;
 import org.neo4j.internal.helpers.collection.MapUtil;
 

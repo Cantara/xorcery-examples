@@ -93,6 +93,10 @@
             <groupId>com.exoreaction.xorcery</groupId>
             <artifactId>xorcery-log4j</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.exoreaction.xorcery</groupId>
+            <artifactId>xorcery-runner</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

@@ -2,20 +2,19 @@ package com.exoreaction.xorcery.examples.monitor.soutlogger;
 
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
-import com.exoreaction.xorcery.configuration.model.Configuration;
-import com.exoreaction.xorcery.configuration.model.InstanceConfiguration;
+import com.exoreaction.xorcery.configuration.Configuration;
+import com.exoreaction.xorcery.configuration.InstanceConfiguration;
+import com.exoreaction.xorcery.reactivestreams.api.WithMetadata;
+import com.exoreaction.xorcery.reactivestreams.api.server.ReactiveStreamsServer;
+import com.exoreaction.xorcery.server.api.ServiceResourceObject;
 import com.exoreaction.xorcery.server.api.ServiceResourceObjects;
-import com.exoreaction.xorcery.server.model.ServiceResourceObject;
-import com.exoreaction.xorcery.service.reactivestreams.api.ReactiveStreamsServer;
-import com.exoreaction.xorcery.service.reactivestreams.api.WithMetadata;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.apache.logging.log4j.core.LogEvent;
 import org.glassfish.hk2.runlevel.RunLevel;
 import org.jvnet.hk2.annotations.Service;
-import org.neo4j.cypher.internal.expressions.In;
-
-import java.util.concurrent.Flow;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 /**
  * @author rickardoberg
@@ -35,14 +34,14 @@ public class SysoutLogging {
                          Configuration configuration,
                          MetricRegistry metricRegistry) {
         reactiveStreamsServer.subscriber("logging", cfg -> new SysoutSubscriber(metricRegistry.meter("logmeter")), SysoutSubscriber.class);
-        serviceResourceObjects.add(new ServiceResourceObject.Builder(new InstanceConfiguration(configuration.getConfiguration("instance")), SERVICE_TYPE)
+        serviceResourceObjects.add(new ServiceResourceObject.Builder(InstanceConfiguration.get(configuration), SERVICE_TYPE)
                 .subscriber("logging")
                 .build());
     }
 
     private static class SysoutSubscriber
-            implements Flow.Subscriber<WithMetadata<LogEvent>> {
-        private Flow.Subscription subscription;
+            implements Subscriber<WithMetadata<LogEvent>> {
+        private Subscription subscription;
         private final Meter logmeter;
 
         public SysoutSubscriber(Meter logmeter) {
@@ -51,7 +50,7 @@ public class SysoutLogging {
         }
 
         @Override
-        public void onSubscribe(Flow.Subscription subscription) {
+        public void onSubscribe(Subscription subscription) {
             this.subscription = subscription;
             subscription.request(1);
         }

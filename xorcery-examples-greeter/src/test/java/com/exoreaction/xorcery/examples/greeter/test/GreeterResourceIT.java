@@ -1,49 +1,36 @@
 package com.exoreaction.xorcery.examples.greeter.test;
 
 import com.exoreaction.xorcery.core.Xorcery;
+import com.exoreaction.xorcery.junit.XorceryExtension;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.Form;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.util.Fields;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-@Disabled
 class GreeterResourceIT {
 
-    static private Xorcery xorcery;
-    static private HttpClient httpClient = new HttpClient();
+    @RegisterExtension
+    XorceryExtension xorceryExtension = XorceryExtension.xorcery().build();
 
-    @BeforeAll
-    public static void setUp() throws Exception {
-        xorcery = new Xorcery(null);
-        httpClient.start();
-    }
+    @Test
+    void updateGreeting() throws Exception {
 
-    @AfterAll
-    public static void tearDown() throws Exception {
-        xorcery.close();
-        httpClient.stop();
-
-/* For debugging
-        for (Map.Entry<Thread, StackTraceElement[]> entry : Thread.getAllStackTraces().entrySet()) {
-            System.out.println(entry.getKey());
-            System.out.println(entry.getValue());
+        Client client = xorceryExtension.getXorcery().getServiceLocator().getService(ClientBuilder.class).build();
+        {
+            String content = client.target("http://localhost:8889/api/greeter").request().get().readEntity(String.class);
+            System.out.println(content);
         }
-*/
+
+        {
+            String content = client.target("http://localhost:8889/api/greeter").request().put(Entity.form(new Form().param("greeting", "HelloWorld!"))).readEntity(String.class);
+            System.out.println(content);
+        }
     }
-
-
-    @Test
-    void get() throws Exception {
-        httpClient.GET("http://localhost:8889/api/greeter").getContentAsString();
-    }
-
-    @Test
-    void post() throws Exception {
-        httpClient.FORM("http://localhost:8889/api/greeter", new Fields() {{
-            put("greeting", "HelloWorld!");
-        }}).getContentAsString();
-    }
-
 }

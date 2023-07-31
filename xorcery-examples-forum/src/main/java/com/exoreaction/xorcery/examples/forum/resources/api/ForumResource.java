@@ -6,20 +6,20 @@ import com.exoreaction.xorcery.examples.forum.contexts.PostsContext;
 import com.exoreaction.xorcery.examples.forum.entities.CommentEntity;
 import com.exoreaction.xorcery.examples.forum.entities.PostEntity;
 import com.exoreaction.xorcery.examples.forum.model.ForumModel;
-import com.exoreaction.xorcery.hyperschema.model.Link;
-import com.exoreaction.xorcery.jsonapi.model.Links;
-import com.exoreaction.xorcery.jsonapi.model.ResourceDocument;
+import com.exoreaction.xorcery.hyperschema.Link;
+import com.exoreaction.xorcery.jsonapi.Links;
+import com.exoreaction.xorcery.jsonapi.MediaTypes;
+import com.exoreaction.xorcery.jsonapi.ResourceDocument;
 import com.exoreaction.xorcery.jsonapi.server.resources.JsonApiResource;
-import com.exoreaction.xorcery.jsonapischema.model.ResourceDocumentSchema;
-import com.exoreaction.xorcery.jsonapischema.model.ResourceObjectSchema;
-import com.exoreaction.xorcery.jsonschema.jaxrs.MediaTypes;
-import com.exoreaction.xorcery.jsonschema.model.JsonSchema;
+import com.exoreaction.xorcery.jsonapischema.ResourceDocumentSchema;
+import com.exoreaction.xorcery.jsonapischema.ResourceObjectSchema;
+import com.exoreaction.xorcery.jsonschema.JsonSchema;
 import com.exoreaction.xorcery.jsonschema.server.resources.JsonSchemaMixin;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 
-import static com.exoreaction.xorcery.jsonapi.model.JsonApiRels.describedby;
+import static com.exoreaction.xorcery.jsonapi.JsonApiRels.describedby;
 
 @Path("api/forum")
 public class ForumResource
@@ -33,7 +33,7 @@ public class ForumResource
                 .resources(postSchema(), commentSchema())
                 .included(commentSchema())
                 .builder()
-                .links(new com.exoreaction.xorcery.hyperschema.model.Links.Builder()
+                .links(new com.exoreaction.xorcery.hyperschema.Links.Builder()
                         .link(selfLink()).link(describedbyLink(getAbsolutePath().toASCIIString()))
                         .with(commands(PostEntity.class),
                                 commands(PostsContext.class),

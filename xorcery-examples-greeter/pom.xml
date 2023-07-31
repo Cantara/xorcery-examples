@@ -26,6 +26,10 @@
         </dependency>
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
+            <artifactId>xorcery-runner</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.exoreaction.xorcery</groupId>
             <artifactId>xorcery-metadata</artifactId>
         </dependency>
         <dependency>
@@ -92,10 +96,10 @@
 
         <!-- Test -->
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
+            <groupId>com.exoreaction.xorcery</groupId>
+            <artifactId>xorcery-junit</artifactId>
+            <scope>test</scope>
         </dependency>
-
     </dependencies>
 
 </project>

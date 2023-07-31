@@ -5,10 +5,10 @@ import com.exoreaction.xorcery.domainevents.jsonapi.resources.ResourceObjectMapp
 import com.exoreaction.xorcery.examples.forum.ForumApplication;
 import com.exoreaction.xorcery.examples.forum.model.*;
 import com.exoreaction.xorcery.examples.forum.resources.api.*;
-import com.exoreaction.xorcery.jsonapi.model.*;
+import com.exoreaction.xorcery.jsonapi.*;
+import com.exoreaction.xorcery.neo4j.client.GraphQuery;
 import com.exoreaction.xorcery.neo4j.jsonapi.resources.JsonApiNeo4jResourceMixin;
 import com.exoreaction.xorcery.neo4j.jsonapi.resources.Pagination;
-import com.exoreaction.xorcery.service.neo4j.client.GraphQuery;
 import jakarta.ws.rs.core.Link;
 import jakarta.ws.rs.core.UriBuilder;
 
@@ -17,8 +17,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static com.exoreaction.xorcery.jsonapi.model.JsonApiRels.describedby;
-import static com.exoreaction.xorcery.jsonapi.model.JsonApiRels.self;
+import static com.exoreaction.xorcery.jsonapi.JsonApiRels.describedby;
+import static com.exoreaction.xorcery.jsonapi.JsonApiRels.self;
+
 
 public interface ForumApiMixin
         extends JsonApiNeo4jResourceMixin, ResourceObjectMapperMixin {
