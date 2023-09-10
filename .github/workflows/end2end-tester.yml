@@ -16,11 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-#      - name: Checkout
-#        uses: actions/checkout@v1
-
       - uses: actions/checkout@v3
-
       - name: Start containers
         run: docker-compose -f "docker-compose.yaml" up -d --build
 
@@ -33,15 +29,15 @@ jobs:
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots package
 
+# From here, the app can be started either within docker or outside. Possibly tested against HTTPs with curl, node or other relevant test framework
+# Following code for running possible node tests:
 
 #      - name: Install node
 #        uses: actions/setup-node@v1
 #        with:
 #          node-version: 14.x
-
 #      - name: Install dependencies
 #        run: npm install
-
 #      - name: Run tests
 #        run: npm run test
 
