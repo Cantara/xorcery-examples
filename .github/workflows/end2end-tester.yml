@@ -17,17 +17,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Start containers
-        run: docker-compose -f "docker-compose.yaml" up -d --build
 
-
-      - name: Set up JDK 17
+      - name: Set up JDK 17 Corretto for sake of test/build
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'corretto'
-      - name: Build with Maven
+
+      - name: Build java code with Maven
         run: mvn --batch-mode --update-snapshots package
+
+      - name: Start containers
+        run: docker-compose -f "docker-compose.yaml" up -d --build
+
+
 
 # From here, the app can be started either within docker or outside. Possibly tested against HTTPs with curl, node or other relevant test framework
 # Following code for running possible node tests:
