@@ -28,7 +28,7 @@ jobs:
         run: mvn --batch-mode --update-snapshots package
 
       - name: Start containers
-        run: docker-compose -f "docker-compose.yaml" up -d # --build <- This command which tries to build fails, but isn't necessarily
+        run: docker-compose -f "app-stripped-docker-compose.yaml" up -d --build
 
 
 
