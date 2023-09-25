@@ -1,0 +1,15 @@
+persistentsubscribers:
+  subscribers:
+      # Service name annotation
+    - name: examplesubscriber
+      # Override this with actual server URI
+      uri: "{{ reactivestreams.server.uri }}"
+      # Name of stream to read, has to be in metadata+domainevents format
+      stream: "testevents"
+      # Check point, error, and recovery files
+      checkpoint: "{{ instance.home }}/examplesubscriber/checkpoint.yaml"
+      errors: "{{ instance.home }}/examplesubscriber/errors.yaml"
+      recovery: "{{ instance.home }}/examplesubscriber/recovery.yaml"
+      # This configuration is sent to publisher on connect. Publisher can customize stream based on these settings
+      configuration:
+        environment: "{{ instance.environment }}"
