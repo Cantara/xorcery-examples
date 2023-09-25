@@ -6,10 +6,11 @@
     <parent>
         <groupId>com.exoreaction.xorcery.examples</groupId>
         <artifactId>xorcery-examples</artifactId>
-        <version>1.5-SNAPSHOT</version>
+        <version>1.5.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>xorcery-examples-persistentsubscriber</artifactId>
+    <version>1.5.1-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

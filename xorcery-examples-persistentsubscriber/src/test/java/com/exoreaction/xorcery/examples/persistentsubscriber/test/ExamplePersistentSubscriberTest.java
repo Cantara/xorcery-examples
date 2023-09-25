@@ -14,7 +14,7 @@ public class ExamplePersistentSubscriberTest {
             yamlfilepublisher:
                 publishers:
                     - stream: "testevents"
-                      file: "file:///{{ instance.home }}/../test-classes/testevents.yaml"
+                      file: "{{ instance.home }}/../test-classes/testevents.yaml"
                         """, Sockets.nextFreePort());
 
     @RegisterExtension
