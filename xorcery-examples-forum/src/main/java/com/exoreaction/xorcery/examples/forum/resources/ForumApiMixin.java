@@ -1,6 +1,7 @@
 package com.exoreaction.xorcery.examples.forum.resources;
 
 import com.exoreaction.xorcery.domainevents.helpers.model.CommonModel;
+import com.exoreaction.xorcery.domainevents.helpers.model.CommonModel.Entity;
 import com.exoreaction.xorcery.domainevents.jsonapi.resources.ResourceObjectMapperMixin;
 import com.exoreaction.xorcery.examples.forum.ForumApplication;
 import com.exoreaction.xorcery.examples.forum.model.*;
@@ -26,7 +27,7 @@ public interface ForumApiMixin
 
     default CompletionStage<ResourceObjects> posts(Included.Builder included, Links.Builder links) {
         GraphQuery graphQuery = postsQuery()
-                .sort(CommonModel.Entity.created_on, GraphQuery.Order.ASCENDING) // Default sorting
+                .sort(CommonModel.Entity.createdOn, GraphQuery.Order.ASCENDING) // Default sorting
                 .with(pagination(links), sort(ForumModel.Post.class)); // Query param pagination and sorting
 
         return graphQuery.stream(toModel(PostModel::new, graphQuery.getResults()).andThen(postResource(included, "")))
@@ -42,7 +43,7 @@ public interface ForumApiMixin
     default CompletionStage<ResourceObjects> postComments(String postId, Included.Builder included, Pagination pagination) {
         GraphQuery graphQuery = postCommentsQuery(postId)
                 .limit(3) // Max 5 results
-                .sort(CommonModel.Entity.created_on, GraphQuery.Order.ASCENDING) // Default sorting
+                .sort(Entity.createdOn, GraphQuery.Order.ASCENDING) // Default sorting
                 .with(pagination, sort(ForumModel.Comment.class)); // Query param pagination and sorting
 
         return graphQuery.stream(toModel(CommentModel::new, graphQuery.getResults()).andThen(commentResource(included)))

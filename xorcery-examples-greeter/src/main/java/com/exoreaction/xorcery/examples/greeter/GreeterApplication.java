@@ -1,5 +1,7 @@
 package com.exoreaction.xorcery.examples.greeter;
 
+import static java.util.Map.entry;
+
 import com.exoreaction.xorcery.configuration.Configuration;
 import com.exoreaction.xorcery.domainevents.api.DomainEvents;
 import com.exoreaction.xorcery.domainevents.helpers.context.DomainEventMetadata;
@@ -16,6 +18,7 @@ import com.exoreaction.xorcery.reactivestreams.api.client.ClientConfiguration;
 import com.exoreaction.xorcery.reactivestreams.api.client.ReactiveStreamsClient;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.jvnet.hk2.annotations.Service;
 import org.neo4j.internal.helpers.collection.MapUtil;
@@ -62,7 +65,7 @@ public class GreeterApplication {
     public CompletionStage<String> get(String name) {
 
         return graphDatabase.execute("MATCH (greeter:Greeter {id:$id}) RETURN greeter.greeting as greeting",
-                        new MapUtil.MapBuilder<String, Object>().entry("id", "greeter").create(), 30)
+            Map.ofEntries(entry("id", "greeter")), 30)
                 .thenApply(r ->
                 {
                     try (GraphResult result = r) {
