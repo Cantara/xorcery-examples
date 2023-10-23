@@ -4,10 +4,9 @@
 
     <parent>
         <groupId>com.exoreaction.xorcery.examples</groupId>
-        <artifactId>xorcery-examples-parent</artifactId>
+        <artifactId>xorcery-examples</artifactId>
         <version>1.5.2-SNAPSHOT</version>
-        <relativePath>../xorcery-examples-parent/pom.xml</relativePath>
-    </parent>
+        </parent>
 
     <artifactId>xorcery-examples-monitor</artifactId>
     <version>1.5.1-SNAPSHOT</version>

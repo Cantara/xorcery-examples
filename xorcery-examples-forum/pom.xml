@@ -4,10 +4,9 @@
 
     <parent>
         <groupId>com.exoreaction.xorcery.examples</groupId>
-        <artifactId>xorcery-examples-parent</artifactId>
+        <artifactId>xorcery-examples</artifactId>
         <version>1.5.2-SNAPSHOT</version>
-        <relativePath>../xorcery-examples-parent/pom.xml</relativePath>
-    </parent>
+        </parent>
 
     <artifactId>xorcery-examples-forum</artifactId>
     <version>1.5.1-SNAPSHOT</version>
@@ -118,10 +117,6 @@
             <artifactId>xorcery-log4j</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j2-impl</artifactId>
-        </dependency>
-    </dependencies>
+        </dependencies>
 
 </project>
