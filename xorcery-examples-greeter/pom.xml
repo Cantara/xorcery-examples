@@ -7,14 +7,14 @@
         <groupId>com.exoreaction.xorcery.examples</groupId>
         <artifactId>xorcery-examples</artifactId>
         <version>1.6.2-SNAPSHOT</version>
-        </parent>
+    </parent>
 
     <artifactId>xorcery-examples-greeter</artifactId>
     <version>1.6.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <dependencies>
-        <!-- Xorcery -->
+        <!-- Core dependencies -->
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
             <artifactId>xorcery-core</artifactId>
@@ -29,10 +29,6 @@
         </dependency>
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-certificates-ca</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
             <artifactId>xorcery-configuration-api</artifactId>
         </dependency>
         <dependency>
@@ -40,17 +36,28 @@
             <artifactId>xorcery-json</artifactId>
         </dependency>
 
+        <!-- REST API -->
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
             <artifactId>xorcery-jsonapi-jaxrs</artifactId>
         </dependency>
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-jersey-client</artifactId>
+            <artifactId>xorcery-jersey-server</artifactId>
         </dependency>
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-jersey-server</artifactId>
+            <artifactId>xorcery-handlebars</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.exoreaction.xorcery</groupId>
+            <artifactId>xorcery-status-server</artifactId>
+        </dependency>
+
+        <!-- Integration -->
+        <dependency>
+            <groupId>com.exoreaction.xorcery</groupId>
+            <artifactId>xorcery-jersey-client</artifactId>
         </dependency>
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
@@ -75,10 +82,8 @@
             <groupId>com.exoreaction.xorcery</groupId>
             <artifactId>xorcery-domainevents-neo4jprojection</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-handlebars</artifactId>
-        </dependency>
+
+        <!-- Logging -->
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
             <artifactId>xorcery-log4j</artifactId>
@@ -86,7 +91,16 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.20.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+        </dependency>
+
+        <!-- These features can be extracted out into their own service -->
+        <dependency>
+            <groupId>com.exoreaction.xorcery</groupId>
+            <artifactId>xorcery-certificates-ca</artifactId>
         </dependency>
 
         <!-- Test -->
@@ -177,27 +191,27 @@
                         <artifactId>jpackage-maven-plugin</artifactId>
                         <version>0.1.5</version>
                         <executions>
-                        <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jpackage</goal>
-                        </goals>
-                        <configuration>
-                            <resourcedir>${project.basedir}/src/jpackage/resources</resourcedir>
-                            <input>${project.build.directory}/app</input>
-                            <mainjar>lib/${project.artifactId}-${project.version}.jar</mainjar>
-                            <mainclass>com.exoreaction.xorcery.examples.greeter.Main</mainclass>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jpackage</goal>
+                                </goals>
+                                <configuration>
+                                    <resourcedir>${project.basedir}/src/jpackage/resources</resourcedir>
+                                    <input>${project.build.directory}/app</input>
+                                    <mainjar>lib/${project.artifactId}-${project.version}.jar</mainjar>
+                                    <mainclass>com.exoreaction.xorcery.examples.greeter.Main</mainclass>
 
-                            <name>greeter</name>
-                            <appversion>${project.version}</appversion>
-                            <copyright>Copyright eXOReaction AS</copyright>
-                            <description>Description</description>
-                            <vendor>eXOReaction AS</vendor>
-                            <installdir>/opt/exoreaction</installdir>
-                            <javaoptions>-Dfile.encoding=UTF-8 -Xms256m -Xmx512m</javaoptions>
-                            <dest>${project.build.directory}/jpackage</dest>
-                        </configuration>
-                        </execution>
+                                    <name>greeter</name>
+                                    <appversion>${project.version}</appversion>
+                                    <copyright>Copyright eXOReaction AS</copyright>
+                                    <description>Description</description>
+                                    <vendor>eXOReaction AS</vendor>
+                                    <installdir>/opt/exoreaction</installdir>
+                                    <javaoptions>-Dfile.encoding=UTF-8 -Xms256m -Xmx512m</javaoptions>
+                                    <dest>${project.build.directory}/jpackage</dest>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                 </plugins>

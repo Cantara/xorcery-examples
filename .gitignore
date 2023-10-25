@@ -36,3 +36,7 @@ dependency-reduced-pom.xml
 /.classpath
 /.idea/
 /target/
+
+# Runtime files
+*.p12
+neo4j/

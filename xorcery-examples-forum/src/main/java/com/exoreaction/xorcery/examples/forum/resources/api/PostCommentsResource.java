@@ -10,7 +10,7 @@ import com.exoreaction.xorcery.jsonapi.ResourceDocument;
 import com.exoreaction.xorcery.jsonapi.ResourceObject;
 import com.exoreaction.xorcery.jsonapi.server.resources.JsonApiResource;
 import com.exoreaction.xorcery.metadata.Metadata;
-import com.exoreaction.xorcery.examples.forum.ForumApplication;
+import com.exoreaction.xorcery.examples.forum.resources.ForumApplication;
 import com.exoreaction.xorcery.examples.forum.entities.CommentEntity;
 import com.exoreaction.xorcery.neo4j.client.GraphQuery;
 import jakarta.inject.Inject;

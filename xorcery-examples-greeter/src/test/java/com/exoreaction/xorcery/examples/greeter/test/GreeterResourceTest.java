@@ -4,6 +4,7 @@ import com.exoreaction.xorcery.configuration.Configuration;
 import com.exoreaction.xorcery.configuration.InstanceConfiguration;
 import com.exoreaction.xorcery.configuration.builder.ConfigurationBuilder;
 import com.exoreaction.xorcery.junit.XorceryExtension;
+import com.exoreaction.xorcery.net.Sockets;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -13,11 +14,15 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.net.URI;
 
-class GreeterResourceIT {
+class GreeterResourceTest {
 
     @RegisterExtension
     static XorceryExtension xorceryExtension = XorceryExtension.xorcery()
             .configuration(ConfigurationBuilder::addTestDefaults)
+            .addYaml(String.format("""
+                    jetty.server.http.enabled: false
+                    jetty.server.ssl.port: %d
+                    """, Sockets.nextFreePort()))
             .build();
 
     @Test

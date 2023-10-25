@@ -2,7 +2,7 @@ package com.exoreaction.xorcery.examples.forum.contexts;
 
 import com.exoreaction.xorcery.domainevents.helpers.context.DomainContext;
 import com.exoreaction.xorcery.domainevents.helpers.entity.Command;
-import com.exoreaction.xorcery.examples.forum.ForumApplication;
+import com.exoreaction.xorcery.examples.forum.resources.ForumApplication;
 import com.exoreaction.xorcery.examples.forum.entities.PostEntity;
 import com.exoreaction.xorcery.examples.forum.model.PostModel;
 import com.exoreaction.xorcery.metadata.Metadata;

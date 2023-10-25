@@ -2,6 +2,19 @@ instance.name: "greeter"
 instance.home: "{{ SYSTEM.jpackage_app-path ? jpackage.app | SYSTEM.user_dir}}"
 jpackage.app: "{{ SYSTEM.jpackage_app-path }}/../../lib/app"
 
+# So that we can generate a SSL certificate for the local hostname. Replace with whatever domain name you actually use
+instance.domain: local
+
+# Add local convenience names for your own computer into the SSL cert
+certificates:
+  dnsNames:
+    - localhost
+    - "{{ instance.host }}"
+  ipAddresses:
+    - 127.0.0.1
+    - "{{ instance.ip }}"
+
+# REST API resources
 jersey.server.register:
   - com.exoreaction.xorcery.examples.greeter.resources.api.GreeterResource
 
@@ -56,8 +69,6 @@ log4j2.Configuration:
       AppenderRef:
         - ref: STDOUT
         - ref: Log4jPublisher
-
-certificates.enabled: false
 
 log4j2:
   Configuration:

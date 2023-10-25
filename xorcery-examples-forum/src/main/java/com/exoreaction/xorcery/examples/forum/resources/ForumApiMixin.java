@@ -3,7 +3,6 @@ package com.exoreaction.xorcery.examples.forum.resources;
 import com.exoreaction.xorcery.domainevents.helpers.model.CommonModel;
 import com.exoreaction.xorcery.domainevents.helpers.model.CommonModel.Entity;
 import com.exoreaction.xorcery.domainevents.jsonapi.resources.ResourceObjectMapperMixin;
-import com.exoreaction.xorcery.examples.forum.ForumApplication;
 import com.exoreaction.xorcery.examples.forum.model.*;
 import com.exoreaction.xorcery.examples.forum.resources.api.*;
 import com.exoreaction.xorcery.jsonapi.*;
