@@ -1,3 +1,7 @@
+instance.name: "greeter"
+instance.home: "{{ SYSTEM.jpackage_app-path ? jpackage.app | SYSTEM.user_dir}}"
+jpackage.app: "{{ SYSTEM.jpackage_app-path }}/../../lib/app"
+
 jersey.server.register:
   - com.exoreaction.xorcery.examples.greeter.resources.api.GreeterResource
 
@@ -12,6 +16,46 @@ log4jpublisher.enabled: false
 log4jsubscriber.enabled: false
 
 domainevents.subscriber.configuration.projection: "greeter"
+
+log4j2.Configuration:
+  name: Xorcery Example Greeter
+  status: warn
+  properties:
+    property:
+      name: filename
+      value: target/test-yaml.log
+  thresholdFilter:
+    level: debug
+  appenders:
+    Console:
+      name: STDOUT
+      target: SYSTEM_OUT
+      PatternLayout:
+        Pattern: "%d [%t] %-5level %marker %c{1.}: %msg%n%throwable"
+    Log4jPublisher:
+      name: Log4jPublisher
+      PatternLayout:
+        Pattern: "%d [%t] %-5level %marker %c{1.}: %msg%n%throwable"
+
+  Loggers:
+    logger:
+      - name: org.apache.logging.log4j
+        level: debug
+        additivity: false
+        AppenderRef:
+          ref: STDOUT
+
+      - name: com.exoreaction.xorcery.core.Xorcery
+        level: debug
+
+      - name: com.exoreaction.xorcery.service
+        level: debug
+
+    Root:
+      level: info
+      AppenderRef:
+        - ref: STDOUT
+        - ref: Log4jPublisher
 
 certificates.enabled: false
 

@@ -1,0 +1,6 @@
+instance.name: "examplepersistentsubscriber"
+instance.home: "{{ SYSTEM.user_dir }}/../data"
+persistentsubscribers:
+  subscribers:
+    - name: examplesubscriber
+      uri: "ws://localhost:"

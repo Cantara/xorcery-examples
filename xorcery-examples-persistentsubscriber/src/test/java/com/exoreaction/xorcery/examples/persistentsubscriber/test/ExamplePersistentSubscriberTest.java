@@ -26,6 +26,6 @@ public class ExamplePersistentSubscriberTest {
     @Test
     public void testExamplePersistentSubscriber() throws InterruptedException {
         // Xorcery will start persistent subscribers server and run the example subscriber, along with publisher of test events
-        Thread.sleep(30000);
+        Thread.sleep(5000);
     }
 }

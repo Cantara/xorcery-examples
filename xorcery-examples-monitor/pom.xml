@@ -12,11 +12,6 @@
     <version>1.6.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    </properties>
-
     <dependencies>
         <!-- Xorcery -->
         <dependency>
@@ -63,7 +58,6 @@
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
             <artifactId>xorcery-neo4j</artifactId>
-            <version>${xorcery.version}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
