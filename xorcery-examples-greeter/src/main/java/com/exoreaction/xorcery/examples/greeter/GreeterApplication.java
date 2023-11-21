@@ -1,6 +1,6 @@
 package com.exoreaction.xorcery.examples.greeter;
 
-import com.exoreaction.xorcery.domainevents.api.DomainEvents;
+import com.exoreaction.xorcery.domainevents.api.CommandEvents;
 import com.exoreaction.xorcery.domainevents.helpers.context.DomainEventMetadata;
 import com.exoreaction.xorcery.domainevents.publisher.DomainEventPublisher;
 import com.exoreaction.xorcery.examples.greeter.commands.UpdateGreeting;
@@ -10,6 +10,7 @@ import com.exoreaction.xorcery.neo4j.client.GraphDatabase;
 import com.exoreaction.xorcery.neo4j.client.GraphResult;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import java.util.Collections;
 import org.jvnet.hk2.annotations.Service;
 
 import java.util.Map;
@@ -61,15 +62,16 @@ public class GreeterApplication {
                 .timestamp(System.currentTimeMillis()).builder();
 
         try {
-            DomainEvents domainEvents = (DomainEvents) getClass().getDeclaredMethod("handle", command.getClass()).invoke(this, command);
+            CommandEvents commandEvents = (CommandEvents) getClass().getDeclaredMethod("handle", command.getClass()).invoke(this, command);
             Metadata md = metadata.add("commandType", command.getClass().getName()).build();
-            return domainEventPublisher.publish(md, domainEvents);
+            return domainEventPublisher.publish(commandEvents);
         } catch (Throwable e) {
             return CompletableFuture.failedStage(e);
         }
     }
 
-    private DomainEvents handle(UpdateGreeting updateGreeting) {
-        return DomainEvents.of(new UpdatedGreeting(updateGreeting.newGreeting()));
+    private CommandEvents handle(UpdateGreeting updateGreeting) {
+        return new CommandEvents(domainEventMetadata.context(),
+            Collections.singletonList(new UpdatedGreeting(updateGreeting.newGreeting())));
     }
 }

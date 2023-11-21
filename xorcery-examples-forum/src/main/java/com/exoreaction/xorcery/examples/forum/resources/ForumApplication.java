@@ -1,6 +1,7 @@
 package com.exoreaction.xorcery.examples.forum.resources;
 
-import com.exoreaction.xorcery.domainevents.api.DomainEvents;
+import com.exoreaction.xorcery.domainevents.api.CommandEvents;
+import com.exoreaction.xorcery.domainevents.api.DomainEvent;
 import com.exoreaction.xorcery.domainevents.helpers.context.DomainEventMetadata;
 import com.exoreaction.xorcery.domainevents.helpers.entity.Command;
 import com.exoreaction.xorcery.domainevents.helpers.entity.Entity;
@@ -17,6 +18,7 @@ import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.neo4j.client.GraphDatabase;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BadRequestException;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jvnet.hk2.annotations.Service;
@@ -60,7 +62,7 @@ public class ForumApplication {
         try {
             DomainEventMetadata domainMetadata = new DomainEventMetadata.Builder(metadata.context())
                     .domain("forum")
-                    .commandType(command.getClass())
+                    .commandName(command.getClass())
                     .build();
 
             T snapshot;
@@ -79,9 +81,9 @@ public class ForumApplication {
                 snapshot = snapshotLoader.load(domainMetadata, entity);
             }
 
-            DomainEvents events = entity.handle(domainMetadata, snapshot, command);
+            List<DomainEvent> events = entity.handle(domainMetadata, snapshot, command);
 
-            return domainEventPublisher.publish(metadata.context(), events);
+            return domainEventPublisher.publish(new CommandEvents(metadata.context(), events));
         } catch (Throwable e) {
             return CompletableFuture.failedStage(e);
         }
