@@ -1,2 +1,4 @@
-MATCH (entity:Post {id:$entity_id})
-RETURN entity.title as title
+MATCH (entity:Post {id:$id})
+RETURN
+entity.title as title,
+entity.body as body

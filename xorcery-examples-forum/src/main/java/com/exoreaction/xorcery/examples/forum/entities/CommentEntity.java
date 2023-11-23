@@ -33,18 +33,6 @@ public class CommentEntity
         public String body;
     }
 
-    private CommentSnapshot snapshot = new CommentSnapshot();
-
-    @Override
-    public CommentSnapshot getSnapshot() {
-        return snapshot;
-    }
-
-    @Override
-    protected void setSnapshot(CommentSnapshot snapshot) {
-        this.snapshot = snapshot;
-    }
-
     public void handle(AddComment command) {
         add(event("addedcomment")
                 .created("Comment", command.id)
@@ -54,6 +42,9 @@ public class CommentEntity
     }
 
     public void handle(UpdateComment command) {
+        if (snapshot.body.equals(command.body))
+            return;
+
         add(event("updatedcomment")
                 .updated("Comment", command.id)
                 .attribute("body", command.body)

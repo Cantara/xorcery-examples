@@ -17,30 +17,19 @@ public class PostEntity
     }
 
     @Update
-    public record UpdatePost(String title, String body)
+    public record UpdatePost(String id, String title, String body)
             implements Command {
     }
 
     public static class PostSnapshot
             implements EntitySnapshot {
         public String title;
-    }
-
-    private PostSnapshot snapshot = new PostSnapshot();
-
-    @Override
-    public PostSnapshot getSnapshot() {
-        return snapshot;
-    }
-
-    @Override
-    protected void setSnapshot(PostSnapshot snapshot) {
-        this.snapshot = snapshot;
+        public String body;
     }
 
     public void handle(CreatePost command) {
         add(event("createdpost")
-                .created("Post", metadata.getAggregateId())
+                .created("Post", command.id)
                 .attribute("title", command.title)
                 .attribute("body", command.body)
                 .build());
@@ -48,7 +37,7 @@ public class PostEntity
 
     public void handle(UpdatePost command) {
         add(event("updatedpost")
-                .updated("Post", metadata.getAggregateId())
+                .updated("Post", command.id)
                 .attribute("title", command.title)
                 .attribute("body", command.body)
                 .build());

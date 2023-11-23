@@ -12,6 +12,8 @@ import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.examples.forum.resources.ForumApplication;
 import com.exoreaction.xorcery.examples.forum.resources.ForumApiMixin;
 import com.exoreaction.xorcery.neo4j.client.GraphQuery;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;

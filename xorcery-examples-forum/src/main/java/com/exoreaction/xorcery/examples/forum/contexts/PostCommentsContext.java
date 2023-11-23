@@ -13,7 +13,8 @@ import java.util.concurrent.CompletionStage;
 
 import static com.exoreaction.xorcery.domainevents.helpers.context.DomainEventMetadata.Builder.aggregate;
 
-public record PostCommentsContext(ForumApplication forumApplication, PostModel postModel)
+public record PostCommentsContext(ForumApplication forumApplication, PostModel postModel,
+                                  java.util.function.Supplier<CommentEntity> commentEntitySupplier)
         implements DomainContext {
 
     @Override
@@ -23,6 +24,6 @@ public record PostCommentsContext(ForumApplication forumApplication, PostModel p
 
     @Override
     public CompletionStage<Metadata> handle(Metadata metadata, Command command) {
-        return forumApplication.handle(new CommentEntity(), aggregate("PostAggregate", postModel.getAggregateId(), metadata), command);
+        return forumApplication.handle(commentEntitySupplier.get(), aggregate("PostAggregate", postModel.getAggregateId(), metadata), command);
     }
 }

@@ -1,2 +1,2 @@
-MATCH (entity:Comment {id:$entity_id})
+MATCH (entity:Comment {id:$id})
 RETURN entity.body as body

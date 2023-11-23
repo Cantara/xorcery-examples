@@ -9,10 +9,11 @@ import com.exoreaction.xorcery.util.UUIDs;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
+import java.util.function.Supplier;
 
 import static com.exoreaction.xorcery.domainevents.helpers.context.DomainEventMetadata.Builder.aggregateType;
 
-public record PostsContext(ForumApplication forumApplication)
+public record PostsContext(ForumApplication forumApplication, Supplier<PostEntity> postEntitySupplier)
         implements DomainContext {
     @Override
     public List<Command> commands() {
@@ -24,16 +25,15 @@ public record PostsContext(ForumApplication forumApplication)
         if (command instanceof CreatePosts createPosts) {
             CompletionStage<Metadata> result = null;
             for (int i = 0; i < createPosts.amount(); i++) {
-                result = forumApplication.handle(new PostEntity(), aggregateType("PostAggregate", metadata.copy()), new PostEntity.CreatePost(UUIDs.newId(), createPosts.title() + " " + i, createPosts.body() + " " + i));
+                result = forumApplication.handle(postEntitySupplier.get(), aggregateType("PostAggregate", metadata.copy()), new PostEntity.CreatePost(UUIDs.newId(), createPosts.title() + " " + i, createPosts.body() + " " + i));
             }
             return result;
         } else {
-            return forumApplication.handle(new PostEntity(), aggregateType("PostAggregate", metadata), command);
+            return forumApplication.handle(postEntitySupplier.get(), aggregateType("PostAggregate", metadata), command);
         }
     }
 
     public record CreatePosts(String title, String body, int amount)
             implements Command {
-
     }
 }

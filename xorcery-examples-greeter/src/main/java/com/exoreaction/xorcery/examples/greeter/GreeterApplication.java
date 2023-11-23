@@ -1,6 +1,8 @@
 package com.exoreaction.xorcery.examples.greeter;
 
 import com.exoreaction.xorcery.domainevents.api.CommandEvents;
+import com.exoreaction.xorcery.domainevents.api.DomainEvent;
+import com.exoreaction.xorcery.domainevents.api.Model;
 import com.exoreaction.xorcery.domainevents.helpers.context.DomainEventMetadata;
 import com.exoreaction.xorcery.domainevents.publisher.DomainEventPublisher;
 import com.exoreaction.xorcery.examples.greeter.commands.UpdateGreeting;
@@ -13,6 +15,7 @@ import jakarta.inject.Named;
 import java.util.Collections;
 import org.jvnet.hk2.annotations.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -62,16 +65,16 @@ public class GreeterApplication {
                 .timestamp(System.currentTimeMillis()).builder();
 
         try {
-            CommandEvents commandEvents = (CommandEvents) getClass().getDeclaredMethod("handle", command.getClass()).invoke(this, command);
-            Metadata md = metadata.add("commandType", command.getClass().getName()).build();
+            List<DomainEvent> events = (List<DomainEvent>) getClass().getDeclaredMethod("handle", command.getClass()).invoke(this, command);
+            Metadata md = metadata.add(Model.Metadata.commandName, command.getClass().getName()).build();
+            CommandEvents commandEvents = new CommandEvents(md, events);
             return domainEventPublisher.publish(commandEvents);
         } catch (Throwable e) {
             return CompletableFuture.failedStage(e);
         }
     }
 
-    private CommandEvents handle(UpdateGreeting updateGreeting) {
-        return new CommandEvents(domainEventMetadata.context(),
-            Collections.singletonList(new UpdatedGreeting(updateGreeting.newGreeting())));
+    private List<DomainEvent> handle(UpdateGreeting updateGreeting) {
+        return Collections.singletonList(new UpdatedGreeting(updateGreeting.newGreeting()));
     }
 }
