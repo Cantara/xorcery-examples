@@ -1,6 +1,5 @@
 open module xorcery.examples.greeter {
     exports com.exoreaction.xorcery.examples.greeter.commands;
-    exports com.exoreaction.xorcery.examples.greeter.domainevents;
     exports com.exoreaction.xorcery.examples.greeter.resources.api;
     exports com.exoreaction.xorcery.examples.greeter;
 

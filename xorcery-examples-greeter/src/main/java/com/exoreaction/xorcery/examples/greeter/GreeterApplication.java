@@ -2,19 +2,19 @@ package com.exoreaction.xorcery.examples.greeter;
 
 import com.exoreaction.xorcery.domainevents.api.CommandEvents;
 import com.exoreaction.xorcery.domainevents.api.DomainEvent;
+import com.exoreaction.xorcery.domainevents.api.JsonDomainEvent;
 import com.exoreaction.xorcery.domainevents.api.Model;
 import com.exoreaction.xorcery.domainevents.helpers.context.DomainEventMetadata;
 import com.exoreaction.xorcery.domainevents.publisher.DomainEventPublisher;
 import com.exoreaction.xorcery.examples.greeter.commands.UpdateGreeting;
-import com.exoreaction.xorcery.examples.greeter.domainevents.UpdatedGreeting;
 import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.neo4j.client.GraphDatabase;
 import com.exoreaction.xorcery.neo4j.client.GraphResult;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import java.util.Collections;
 import org.jvnet.hk2.annotations.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -48,7 +48,7 @@ public class GreeterApplication {
     public CompletionStage<String> get(String name) {
 
         return graphDatabase.execute("MATCH (greeter:Greeter {id:$id}) RETURN greeter.greeting as greeting",
-            Map.ofEntries(entry("id", "greeter")), 30)
+                        Map.ofEntries(entry("id", "greeter")), 30)
                 .thenApply(r ->
                 {
                     try (GraphResult result = r) {
@@ -75,6 +75,8 @@ public class GreeterApplication {
     }
 
     private List<DomainEvent> handle(UpdateGreeting updateGreeting) {
-        return Collections.singletonList(new UpdatedGreeting(updateGreeting.newGreeting()));
+        return Collections.singletonList(JsonDomainEvent.event("UpdatedGreeting").updated("Greeter", "greeter")
+                .attribute("greeting", updateGreeting.newGreeting())
+                .build());
     }
 }
