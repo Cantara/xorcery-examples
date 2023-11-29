@@ -30,16 +30,16 @@ public class PostEntity
     public void handle(CreatePost command) {
         add(event("createdpost")
                 .created("Post", command.id)
-                .attribute("title", command.title)
-                .attribute("body", command.body)
+                .updatedAttribute("title", command.title)
+                .updatedAttribute("body", command.body)
                 .build());
     }
 
     public void handle(UpdatePost command) {
         add(event("updatedpost")
                 .updated("Post", command.id)
-                .attribute("title", command.title)
-                .attribute("body", command.body)
+                .updatedAttribute("title", command.title)
+                .updatedAttribute("body", command.body)
                 .build());
     }
 }

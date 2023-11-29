@@ -36,7 +36,7 @@ public class CommentEntity
     public void handle(AddComment command) {
         add(event("addedcomment")
                 .created("Comment", command.id)
-                .attribute("body", command.body)
+                .updatedAttribute("body", command.body)
                 .addedRelationship("PostComments", "Post", metadata.getAggregateId())
                 .build());
     }
@@ -47,7 +47,7 @@ public class CommentEntity
 
         add(event("updatedcomment")
                 .updated("Comment", command.id)
-                .attribute("body", command.body)
+                .updatedAttribute("body", command.body)
                 .build());
     }
 
