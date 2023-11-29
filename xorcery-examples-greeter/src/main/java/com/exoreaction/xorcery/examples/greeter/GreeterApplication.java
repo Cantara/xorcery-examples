@@ -76,7 +76,7 @@ public class GreeterApplication {
 
     private List<DomainEvent> handle(UpdateGreeting updateGreeting) {
         return Collections.singletonList(JsonDomainEvent.event("UpdatedGreeting").updated("Greeter", "greeter")
-                .attribute("greeting", updateGreeting.newGreeting())
+                .updatedAttribute("greeting", updateGreeting.newGreeting())
                 .build());
     }
 }
