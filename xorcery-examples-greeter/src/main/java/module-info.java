@@ -22,4 +22,5 @@ open module xorcery.examples.greeter {
     requires org.glassfish.hk2.runlevel;
     requires info.picocli;
     requires xorcery.runner;
+    requires xorcery.jaxrs.server;
 }
