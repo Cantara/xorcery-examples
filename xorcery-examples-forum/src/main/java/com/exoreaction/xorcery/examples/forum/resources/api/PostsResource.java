@@ -3,6 +3,7 @@ package com.exoreaction.xorcery.examples.forum.resources.api;
 import com.exoreaction.xorcery.domainevents.helpers.context.DomainEventMetadata;
 import com.exoreaction.xorcery.domainevents.helpers.entity.Command;
 import com.exoreaction.xorcery.examples.forum.contexts.PostsContext;
+import com.exoreaction.xorcery.jaxrs.server.resources.AbstractResource;
 import com.exoreaction.xorcery.jsonapi.Included;
 import com.exoreaction.xorcery.jsonapi.Links;
 import com.exoreaction.xorcery.jsonapi.ResourceDocument;
@@ -22,8 +23,8 @@ import static com.exoreaction.xorcery.jsonapi.MediaTypes.APPLICATION_JSON_API;
 
 @Path("api/forum/posts")
 public class PostsResource
-        extends JsonApiResource
-        implements ForumApiMixin {
+        extends AbstractResource
+        implements JsonApiResource, ForumApiMixin {
 
     private final PostsContext context;
 
