@@ -2,7 +2,7 @@ package com.exoreaction.xorcery.examples.forum.resources;
 
 import com.exoreaction.xorcery.domainevents.helpers.model.CommonModel;
 import com.exoreaction.xorcery.domainevents.helpers.model.CommonModel.Entity;
-import com.exoreaction.xorcery.domainevents.jsonapi.resources.ResourceObjectMapperMixin;
+import com.exoreaction.xorcery.domainevents.jsonapi.resources.ResourceObjectMapperResource;
 import com.exoreaction.xorcery.examples.forum.model.*;
 import com.exoreaction.xorcery.examples.forum.resources.api.*;
 import com.exoreaction.xorcery.jsonapi.*;
@@ -12,6 +12,7 @@ import com.exoreaction.xorcery.neo4j.jsonapi.resources.Pagination;
 import jakarta.ws.rs.core.Link;
 import jakarta.ws.rs.core.UriBuilder;
 
+import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -22,7 +23,7 @@ import static com.exoreaction.xorcery.jsonapi.JsonApiRels.self;
 
 
 public interface ForumApiMixin
-        extends JsonApiNeo4jResourceMixin, ResourceObjectMapperMixin {
+        extends ResourceObjectMapperResource, JsonApiNeo4jResourceMixin {
 
     default CompletionStage<ResourceObjects> posts(Included.Builder included, Links.Builder links) {
         GraphQuery graphQuery = postsQuery()
@@ -33,7 +34,7 @@ public interface ForumApiMixin
                 .thenApply(ResourceObjects::toResourceObjects);
     }
 
-    default CompletionStage<ResourceObject> post(String id, Included.Builder included) {
+    default CompletionStage<Optional<ResourceObject>> post(String id, Included.Builder included) {
         GraphQuery graphQuery = postsQuery()
                 .parameter(CommonModel.Entity.id, id);
         return graphQuery.first(toModel(PostModel::new, graphQuery.getResults()).andThen(postResource(included, "")));
@@ -49,7 +50,7 @@ public interface ForumApiMixin
                 .thenApply(ResourceObjects::toResourceObjects);
     }
 
-    default CompletionStage<ResourceObject> comment(String id, Included.Builder included) {
+    default CompletionStage<Optional<ResourceObject>> comment(String id, Included.Builder included) {
         GraphQuery graphQuery = commentByIdQuery(id);
         return graphQuery.first(toModel(CommentModel::new, graphQuery.getResults()).andThen(commentResource(included)));
     }
