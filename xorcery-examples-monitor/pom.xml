@@ -84,11 +84,11 @@
         </dependency>
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-log4j</artifactId>
+            <artifactId>xorcery-runner</artifactId>
         </dependency>
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-runner</artifactId>
+            <artifactId>xorcery-metricregistry</artifactId>
         </dependency>
     </dependencies>
 

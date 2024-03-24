@@ -25,10 +25,6 @@
             <groupId>com.exoreaction.xorcery</groupId>
             <artifactId>xorcery-reactivestreams-persistentsubscriber</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-metricregistry</artifactId>
-        </dependency>
 
         <!-- Tests -->
         <dependency>

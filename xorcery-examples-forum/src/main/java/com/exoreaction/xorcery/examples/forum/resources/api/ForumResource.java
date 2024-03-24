@@ -1,12 +1,13 @@
 package com.exoreaction.xorcery.examples.forum.resources.api;
 
 import com.exoreaction.xorcery.domainevents.helpers.model.CommonModel;
-import com.exoreaction.xorcery.domainevents.jsonapi.resources.CommandsJsonSchemaMixin;
+import com.exoreaction.xorcery.domainevents.jsonapi.resources.CommandsJsonSchemaResource;
 import com.exoreaction.xorcery.examples.forum.contexts.PostsContext;
 import com.exoreaction.xorcery.examples.forum.entities.CommentEntity;
 import com.exoreaction.xorcery.examples.forum.entities.PostEntity;
 import com.exoreaction.xorcery.examples.forum.model.ForumModel;
 import com.exoreaction.xorcery.hyperschema.Link;
+import com.exoreaction.xorcery.jaxrs.server.resources.AbstractResource;
 import com.exoreaction.xorcery.jsonapi.Links;
 import com.exoreaction.xorcery.jsonapi.MediaTypes;
 import com.exoreaction.xorcery.jsonapi.ResourceDocument;
@@ -14,7 +15,7 @@ import com.exoreaction.xorcery.jsonapi.server.resources.JsonApiResource;
 import com.exoreaction.xorcery.jsonapischema.ResourceDocumentSchema;
 import com.exoreaction.xorcery.jsonapischema.ResourceObjectSchema;
 import com.exoreaction.xorcery.jsonschema.JsonSchema;
-import com.exoreaction.xorcery.jsonschema.server.resources.JsonSchemaMixin;
+import com.exoreaction.xorcery.jsonschema.server.resources.JsonSchemaResource;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -22,9 +23,9 @@ import jakarta.ws.rs.Produces;
 import static com.exoreaction.xorcery.jsonapi.JsonApiRels.describedby;
 
 @Path("api/forum")
-public class ForumResource
-        extends JsonApiResource
-        implements JsonSchemaMixin, CommandsJsonSchemaMixin {
+public class ForumResource extends AbstractResource
+        implements JsonApiResource, JsonSchemaResource, CommandsJsonSchemaResource
+{
 
     @GET
     @Produces(MediaTypes.APPLICATION_JSON_SCHEMA)

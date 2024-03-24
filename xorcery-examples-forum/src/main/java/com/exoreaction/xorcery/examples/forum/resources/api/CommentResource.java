@@ -5,6 +5,7 @@ import com.exoreaction.xorcery.examples.forum.resources.ForumApplication;
 import com.exoreaction.xorcery.examples.forum.contexts.CommentContext;
 import com.exoreaction.xorcery.examples.forum.model.CommentModel;
 import com.exoreaction.xorcery.examples.forum.resources.ForumApiMixin;
+import com.exoreaction.xorcery.jaxrs.server.resources.AbstractResource;
 import com.exoreaction.xorcery.jsonapi.Included;
 import com.exoreaction.xorcery.jsonapi.Links;
 import com.exoreaction.xorcery.jsonapi.ResourceDocument;
@@ -23,8 +24,8 @@ import static com.exoreaction.xorcery.jsonapi.MediaTypes.APPLICATION_JSON_API;
 
 @Path("api/forum/comments/{comment}")
 public class CommentResource
-        extends JsonApiResource
-        implements ForumApiMixin {
+        extends AbstractResource
+        implements JsonApiResource, ForumApiMixin {
 
     private CommentModel model;
     private CommentContext context;
@@ -35,7 +36,7 @@ public class CommentResource
         model = graphQuery
                 .first(toModel(CommentModel::new, graphQuery.getResults()))
                 .toCompletableFuture()
-                .join();
+                .join().orElseThrow();
         context = forumApplication.comment(model);
     }
 

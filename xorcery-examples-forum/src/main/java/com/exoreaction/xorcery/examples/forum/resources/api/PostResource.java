@@ -3,6 +3,7 @@ package com.exoreaction.xorcery.examples.forum.resources.api;
 import com.exoreaction.xorcery.domainevents.helpers.entity.Command;
 import com.exoreaction.xorcery.examples.forum.contexts.PostContext;
 import com.exoreaction.xorcery.examples.forum.model.PostModel;
+import com.exoreaction.xorcery.jaxrs.server.resources.AbstractResource;
 import com.exoreaction.xorcery.jsonapi.Included;
 import com.exoreaction.xorcery.jsonapi.Links;
 import com.exoreaction.xorcery.jsonapi.ResourceDocument;
@@ -24,8 +25,7 @@ import java.util.concurrent.CompletionStage;
 import static com.exoreaction.xorcery.jsonapi.MediaTypes.APPLICATION_JSON_API;
 
 @Path("api/forum/posts/{id}")
-public class PostResource
-        extends JsonApiResource
+public class PostResource extends AbstractResource
         implements ForumApiMixin {
 
     private PostModel post;
@@ -37,7 +37,7 @@ public class PostResource
         post = graphQuery
                 .first(toModel(PostModel::new, graphQuery.getResults()))
                 .toCompletableFuture()
-                .join();
+                .join().orElseThrow();
         context = forumApplication.post(post);
     }
 

@@ -4,6 +4,7 @@ import com.exoreaction.xorcery.domainevents.helpers.entity.Command;
 import com.exoreaction.xorcery.examples.forum.contexts.PostCommentsContext;
 import com.exoreaction.xorcery.examples.forum.model.PostModel;
 import com.exoreaction.xorcery.examples.forum.resources.ForumApiMixin;
+import com.exoreaction.xorcery.jaxrs.server.resources.AbstractResource;
 import com.exoreaction.xorcery.jsonapi.Included;
 import com.exoreaction.xorcery.jsonapi.Links;
 import com.exoreaction.xorcery.jsonapi.ResourceDocument;
@@ -23,8 +24,8 @@ import static com.exoreaction.xorcery.jsonapi.MediaTypes.APPLICATION_JSON_API;
 
 @Path("api/forum/posts/{id}/comments")
 public class PostCommentsResource
-        extends JsonApiResource
-        implements ForumApiMixin {
+        extends AbstractResource
+        implements JsonApiResource, ForumApiMixin {
 
     private PostCommentsContext context;
     private PostModel post;
@@ -35,7 +36,7 @@ public class PostCommentsResource
         post = graphQuery
                 .first(toModel(PostModel::new, graphQuery.getResults()))
                 .toCompletableFuture()
-                .join();
+                .join().orElseThrow();
         context = forumApplication.postComments(post);
     }
 
@@ -66,7 +67,7 @@ public class PostCommentsResource
 
         if (command instanceof CommentEntity.AddComment addComment) {
             return comment(addComment.id(), new Included.Builder())
-                    .thenApply(resource -> Response.created(resource.getLinks().getSelf().orElseThrow().getHrefAsUri())
+                    .thenApply(resource -> Response.created(resource.orElseThrow().getLinks().getSelf().orElseThrow().getHrefAsUri())
                             .links(schemaHeader()).entity(resource).build());
         } else
             throw new NotFoundException();
