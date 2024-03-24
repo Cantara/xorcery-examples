@@ -36,7 +36,7 @@ public class CommentResource
         model = graphQuery
                 .first(toModel(CommentModel::new, graphQuery.getResults()))
                 .toCompletableFuture()
-                .join();
+                .join().orElseThrow();
         context = forumApplication.comment(model);
     }
 

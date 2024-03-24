@@ -1,5 +1,6 @@
 package com.exoreaction.xorcery.examples.monitor.api.resources;
 
+import com.exoreaction.xorcery.jaxrs.server.resources.AbstractResource;
 import com.exoreaction.xorcery.jsonapi.server.resources.JsonApiResource;
 import com.github.jknack.handlebars.Context;
 import jakarta.inject.Inject;
@@ -9,8 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Path("api/loggenerator")
-public class LogGeneratorResource
-        extends JsonApiResource {
+public class LogGeneratorResource extends AbstractResource implements JsonApiResource{
 
     @Inject
     public LogGeneratorResource() {

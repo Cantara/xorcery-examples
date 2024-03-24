@@ -86,6 +86,10 @@
             <groupId>com.exoreaction.xorcery</groupId>
             <artifactId>xorcery-runner</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.exoreaction.xorcery</groupId>
+            <artifactId>xorcery-metricregistry</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

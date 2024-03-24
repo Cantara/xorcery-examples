@@ -36,7 +36,7 @@ public class PostCommentsResource
         post = graphQuery
                 .first(toModel(PostModel::new, graphQuery.getResults()))
                 .toCompletableFuture()
-                .join();
+                .join().orElseThrow();
         context = forumApplication.postComments(post);
     }
 
@@ -67,7 +67,7 @@ public class PostCommentsResource
 
         if (command instanceof CommentEntity.AddComment addComment) {
             return comment(addComment.id(), new Included.Builder())
-                    .thenApply(resource -> Response.created(resource.getLinks().getSelf().orElseThrow().getHrefAsUri())
+                    .thenApply(resource -> Response.created(resource.orElseThrow().getLinks().getSelf().orElseThrow().getHrefAsUri())
                             .links(schemaHeader()).entity(resource).build());
         } else
             throw new NotFoundException();
