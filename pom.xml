@@ -4,7 +4,7 @@
 
     <groupId>com.exoreaction.xorcery.examples</groupId>
     <artifactId>xorcery-examples</artifactId>
-    <version>1.100.0</version>
+    <version>1.100.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -27,7 +27,7 @@
         <developerConnection>scm:git:ssh://git@github.com/Cantara/xorcery-examples.git</developerConnection>
         <connection>scm:git:https://github.com/Cantara/xorcery-examples.git</connection>
         <url>https://github.com/Cantara/xorcery-examples</url>
-        <tag>xorcery-examples-1.100.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <modules>
