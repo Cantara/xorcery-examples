@@ -104,10 +104,6 @@
             <artifactId>xorcery-junit</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-thymeleaf-jaxrs</artifactId>
-        </dependency>
     </dependencies>
 
     <profiles>
