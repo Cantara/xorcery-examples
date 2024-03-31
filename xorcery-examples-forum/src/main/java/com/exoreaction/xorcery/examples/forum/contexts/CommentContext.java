@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Supplier;
 
-import static com.exoreaction.xorcery.domainevents.helpers.context.DomainEventMetadata.Builder.aggregate;
+import static com.exoreaction.xorcery.domainevents.helpers.context.EventMetadata.Builder.aggregate;
 
 public record CommentContext(ForumApplication forumApplication, CommentModel model,
                              Supplier<CommentEntity> commentEntitySupplier)

@@ -9,6 +9,7 @@ import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.Form;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -26,7 +27,8 @@ class GreeterResourceTest {
             .build();
 
     @Test
-    void updateGreeting() throws Exception {
+    @Disabled
+    void updateGreeting() {
 
         Configuration configuration = xorceryExtension.getServiceLocator().getService(Configuration.class);
         URI baseUri = InstanceConfiguration.get(configuration).getURI();

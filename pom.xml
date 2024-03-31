@@ -32,7 +32,6 @@
 
     <modules>
         <module>xorcery-examples-greeter</module>
-        <!-- Monitor and forum aren't functional at currently -->
         <module>xorcery-examples-monitor</module>
         <module>xorcery-examples-forum</module>
         <module>xorcery-examples-persistentsubscriber</module>
@@ -62,7 +61,7 @@
                 <version>2.2</version>
                 <scope>test</scope>
             </dependency>
-            <!-- Used by Forum and Metrics. Original sub-projects are abandoned and the specific dependencies might be used in stead -->
+            <!-- Metricregistry should be replaced by the OpenTelemetry integrations, and Handlebars replaced by Thymeleaf integration -->
             <dependency>
                 <groupId>com.exoreaction.xorcery</groupId>
                 <artifactId>xorcery-metricregistry</artifactId>

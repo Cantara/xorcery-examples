@@ -11,9 +11,9 @@ open module xorcery.examples.greeter {
     requires jakarta.inject;
     requires handlebars;
     requires org.apache.logging.log4j;
-    requires xorcery.domainevents;
+    requires xorcery.domainevents.api;
     requires xorcery.domainevents.publisher;
-    requires xorcery.neo4j;
+    requires xorcery.neo4j.embedded;
     requires xorcery.neo4j.projections;
     requires xorcery.reactivestreams.api;
     requires org.glassfish.hk2.api;

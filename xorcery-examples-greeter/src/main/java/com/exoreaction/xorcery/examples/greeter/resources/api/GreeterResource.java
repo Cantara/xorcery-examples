@@ -2,7 +2,7 @@ package com.exoreaction.xorcery.examples.greeter.resources.api;
 
 import com.exoreaction.xorcery.examples.greeter.GreeterApplication;
 import com.exoreaction.xorcery.examples.greeter.commands.UpdateGreeting;
-import com.exoreaction.xorcery.jaxrs.server.resources.AbstractResource;
+import com.exoreaction.xorcery.jaxrs.server.resources.BaseResource;
 import com.exoreaction.xorcery.jsonapi.server.resources.JsonApiResource;
 import com.github.jknack.handlebars.Context;
 import jakarta.inject.Inject;
@@ -16,7 +16,7 @@ import java.util.concurrent.CompletionStage;
 
 @Path("api/greeter")
 public class GreeterResource
-        extends AbstractResource
+        extends BaseResource
         implements JsonApiResource
          {
     private GreeterApplication application;

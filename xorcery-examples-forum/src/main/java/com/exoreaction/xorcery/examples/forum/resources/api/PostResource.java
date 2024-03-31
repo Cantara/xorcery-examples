@@ -3,18 +3,15 @@ package com.exoreaction.xorcery.examples.forum.resources.api;
 import com.exoreaction.xorcery.domainevents.helpers.entity.Command;
 import com.exoreaction.xorcery.examples.forum.contexts.PostContext;
 import com.exoreaction.xorcery.examples.forum.model.PostModel;
-import com.exoreaction.xorcery.jaxrs.server.resources.AbstractResource;
+import com.exoreaction.xorcery.jaxrs.server.resources.BaseResource;
 import com.exoreaction.xorcery.jsonapi.Included;
 import com.exoreaction.xorcery.jsonapi.Links;
 import com.exoreaction.xorcery.jsonapi.ResourceDocument;
 import com.exoreaction.xorcery.jsonapi.ResourceObject;
-import com.exoreaction.xorcery.jsonapi.server.resources.JsonApiResource;
 import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.examples.forum.resources.ForumApplication;
 import com.exoreaction.xorcery.examples.forum.resources.ForumApiMixin;
 import com.exoreaction.xorcery.neo4j.client.GraphQuery;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
@@ -25,7 +22,7 @@ import java.util.concurrent.CompletionStage;
 import static com.exoreaction.xorcery.jsonapi.MediaTypes.APPLICATION_JSON_API;
 
 @Path("api/forum/posts/{id}")
-public class PostResource extends AbstractResource
+public class PostResource extends BaseResource
         implements ForumApiMixin {
 
     private PostModel post;

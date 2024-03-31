@@ -1,10 +1,10 @@
 package com.exoreaction.xorcery.examples.greeter;
 
-import com.exoreaction.xorcery.domainevents.api.CommandEvents;
 import com.exoreaction.xorcery.domainevents.api.DomainEvent;
+import com.exoreaction.xorcery.domainevents.api.DomainEventMetadata;
 import com.exoreaction.xorcery.domainevents.api.JsonDomainEvent;
-import com.exoreaction.xorcery.domainevents.api.Model;
-import com.exoreaction.xorcery.domainevents.helpers.context.DomainEventMetadata;
+import com.exoreaction.xorcery.domainevents.api.MetadataEvents;
+import com.exoreaction.xorcery.domainevents.helpers.context.EventMetadata;
 import com.exoreaction.xorcery.domainevents.publisher.DomainEventPublisher;
 import com.exoreaction.xorcery.examples.greeter.commands.UpdateGreeting;
 import com.exoreaction.xorcery.metadata.Metadata;
@@ -30,7 +30,7 @@ public class GreeterApplication {
     public static final String SERVICE_TYPE = "greeter";
 
     private final DomainEventPublisher domainEventPublisher;
-    private final DomainEventMetadata domainEventMetadata;
+    private final EventMetadata domainEventMetadata;
     private final GraphDatabase graphDatabase;
 
     @Inject
@@ -39,7 +39,7 @@ public class GreeterApplication {
 
         this.domainEventPublisher = domainEventPublisher;
         this.graphDatabase = graphDatabase;
-        this.domainEventMetadata = new DomainEventMetadata(new Metadata.Builder()
+        this.domainEventMetadata = new EventMetadata(new Metadata.Builder()
                 .add("domain", "greeter")
                 .build());
     }
@@ -61,13 +61,13 @@ public class GreeterApplication {
 
     // Writes
     public CompletionStage<Metadata> handle(Record command) {
-        Metadata.Builder metadata = new DomainEventMetadata.Builder(new Metadata.Builder().add(domainEventMetadata.context()))
+        Metadata.Builder metadata = new EventMetadata.Builder(new Metadata.Builder().add(domainEventMetadata.context()))
                 .timestamp(System.currentTimeMillis()).builder();
 
         try {
             List<DomainEvent> events = (List<DomainEvent>) getClass().getDeclaredMethod("handle", command.getClass()).invoke(this, command);
-            Metadata md = metadata.add(Model.Metadata.commandName, command.getClass().getName()).build();
-            CommandEvents commandEvents = new CommandEvents(md, events);
+            Metadata md = metadata.add(DomainEventMetadata.commandName.name(), command.getClass().getName()).build();
+            MetadataEvents commandEvents = new MetadataEvents(md, events);
             return domainEventPublisher.publish(commandEvents);
         } catch (Throwable e) {
             return CompletableFuture.failedStage(e);

@@ -4,7 +4,6 @@ open module xorcery.examples.persistentsubscriber.test {
     requires xorcery.reactivestreams.persistentsubscriber;
 
     requires xorcery.reactivestreams.server;
-    requires xorcery.reactivestreams.server.extra;
     requires xorcery.jetty.server;
     requires xorcery.configuration;
     requires xorcery.junit;

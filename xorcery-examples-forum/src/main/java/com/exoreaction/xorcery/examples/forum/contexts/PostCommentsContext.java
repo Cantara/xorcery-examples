@@ -11,7 +11,7 @@ import com.exoreaction.xorcery.util.UUIDs;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
-import static com.exoreaction.xorcery.domainevents.helpers.context.DomainEventMetadata.Builder.aggregate;
+import static com.exoreaction.xorcery.domainevents.helpers.context.EventMetadata.Builder.aggregate;
 
 public record PostCommentsContext(ForumApplication forumApplication, PostModel postModel,
                                   java.util.function.Supplier<CommentEntity> commentEntitySupplier)

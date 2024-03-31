@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Supplier;
 
-import static com.exoreaction.xorcery.domainevents.helpers.context.DomainEventMetadata.Builder.aggregateType;
+import static com.exoreaction.xorcery.domainevents.helpers.context.EventMetadata.Builder.aggregateType;
 
 public record PostsContext(ForumApplication forumApplication, Supplier<PostEntity> postEntitySupplier)
         implements DomainContext {

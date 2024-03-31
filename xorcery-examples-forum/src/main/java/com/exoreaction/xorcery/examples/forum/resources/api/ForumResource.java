@@ -7,7 +7,7 @@ import com.exoreaction.xorcery.examples.forum.entities.CommentEntity;
 import com.exoreaction.xorcery.examples.forum.entities.PostEntity;
 import com.exoreaction.xorcery.examples.forum.model.ForumModel;
 import com.exoreaction.xorcery.hyperschema.Link;
-import com.exoreaction.xorcery.jaxrs.server.resources.AbstractResource;
+import com.exoreaction.xorcery.jaxrs.server.resources.BaseResource;
 import com.exoreaction.xorcery.jsonapi.Links;
 import com.exoreaction.xorcery.jsonapi.MediaTypes;
 import com.exoreaction.xorcery.jsonapi.ResourceDocument;
@@ -23,7 +23,7 @@ import jakarta.ws.rs.Produces;
 import static com.exoreaction.xorcery.jsonapi.JsonApiRels.describedby;
 
 @Path("api/forum")
-public class ForumResource extends AbstractResource
+public class ForumResource extends BaseResource
         implements JsonApiResource, JsonSchemaResource, CommandsJsonSchemaResource
 {
 

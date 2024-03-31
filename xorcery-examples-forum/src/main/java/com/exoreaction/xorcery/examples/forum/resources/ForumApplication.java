@@ -1,8 +1,8 @@
 package com.exoreaction.xorcery.examples.forum.resources;
 
-import com.exoreaction.xorcery.domainevents.api.CommandEvents;
 import com.exoreaction.xorcery.domainevents.api.DomainEvent;
-import com.exoreaction.xorcery.domainevents.helpers.context.DomainEventMetadata;
+import com.exoreaction.xorcery.domainevents.api.MetadataEvents;
+import com.exoreaction.xorcery.domainevents.helpers.context.EventMetadata;
 import com.exoreaction.xorcery.domainevents.helpers.entity.Command;
 import com.exoreaction.xorcery.domainevents.helpers.entity.Entity;
 import com.exoreaction.xorcery.domainevents.helpers.entity.EntitySnapshot;
@@ -69,10 +69,10 @@ public class ForumApplication {
         return new PostCommentsContext(this, postModel, commentEntitySupplier);
     }
 
-    public <T extends EntitySnapshot> CompletionStage<Metadata> handle(Entity<T> entity, DomainEventMetadata metadata, Command command) {
+    public <T extends EntitySnapshot> CompletionStage<Metadata> handle(Entity<T> entity, EventMetadata metadata, Command command) {
 
         try {
-            DomainEventMetadata domainMetadata = new DomainEventMetadata.Builder(metadata.context())
+            EventMetadata domainMetadata = new EventMetadata.Builder(metadata.context())
                     .domain("forum")
                     .commandName(command.getClass())
                     .build();
@@ -96,7 +96,7 @@ public class ForumApplication {
 
             List<DomainEvent> events = entity.handle(domainMetadata, snapshot, command);
 
-            return domainEventPublisher.publish(new CommandEvents(metadata.context(), events));
+            return domainEventPublisher.publish(new MetadataEvents(metadata.context(), events));
         } catch (Throwable e) {
             return CompletableFuture.failedStage(e);
         }
