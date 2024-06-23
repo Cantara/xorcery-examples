@@ -31,14 +31,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import reactor.core.CoreSubscriber;
 import reactor.core.publisher.Flux;
 import reactor.util.context.Context;
 
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class SubscribePublisherWebSocketTest {
 
@@ -75,23 +73,23 @@ public class SubscribePublisherWebSocketTest {
     @Test
     public void complete() throws Exception {
         // Given
-        try (Xorcery server = new Xorcery(serverConfiguration)) {
-            try (Xorcery client = new Xorcery(clientConfiguration)) {
+        try (Xorcery consumer = new Xorcery(serverConfiguration)) {
+            ServerWebSocketStreams websocketStreamsConsumer = consumer.getServiceLocator().getService(ServerWebSocketStreams.class);
+
+            try (Xorcery producer = new Xorcery(clientConfiguration)) {
                 LogManager.getLogger().info(serverConfiguration);
-                ServerWebSocketStreams websocketStreamsServer = server.getServiceLocator().getService(ServerWebSocketStreams.class);
-                ClientWebSocketStreams websocketStreamsClientClient = client.getServiceLocator().getService(ClientWebSocketStreams.class);
+                ClientWebSocketStreams websocketStreamsClientProducer = producer.getServiceLocator().getService(ClientWebSocketStreams.class);
 
-                List<Integer> source = IntStream.range(0, 100).boxed().toList();
-                websocketStreamsServer.publisher(
+                List<Person> source = List.of(new Person("Gunnar", "Ost"), new Person("Bjarne", "Hansen"));
+                websocketStreamsConsumer.publisher(
                         "numbers",
-                        Integer.class,
+                        Person.class,
                         Flux.fromIterable(source));
-
                 // When
-                Flux<Integer> numbers = websocketStreamsClientClient.subscribe(
-                        ClientWebSocketOptions.instance(), Integer.class, MediaType.APPLICATION_JSON
+                Flux<Person> myFlux = websocketStreamsClientProducer.subscribe(
+                        ClientWebSocketOptions.instance(), Person.class, MediaType.APPLICATION_JSON
                 ).contextWrite(webSocketContext);
-                List<Integer> result = numbers.toStream().toList();
+                List<Person> result = myFlux.toStream().toList();
 
                 // Then
                 Assertions.assertEquals(source, result);
@@ -110,7 +108,21 @@ public class SubscribePublisherWebSocketTest {
                 ClientWebSocketStreams websocketStreamsClientClient = client.getServiceLocator().getService(ClientWebSocketStreams.class);
 
                 // When
-                Publisher<String> configPublisher = SubscribePublisherWebSocketTest::createSubscriber;
+                Publisher<String> configPublisher = s -> {
+                    if (s instanceof CoreSubscriber<? super String> subscriber) {;
+                        s.onSubscribe(new Subscription() {
+                            @Override
+                            public void request(long n) {
+                                subscriber.onNext(mangleContext(subscriber.currentContext()));
+                            }
+
+                            @Override
+                            public void cancel() {
+                                subscriber.onComplete();
+                            }
+                        });
+                    }
+                };
                 websocketStreamsServer.publisher(
                         "numbers/{foo}",
                         String.class,
@@ -130,20 +142,9 @@ public class SubscribePublisherWebSocketTest {
         }
     }
 
-    private static void createSubscriber(Subscriber<? super String> s) {
-        if (s instanceof CoreSubscriber<? super String> subscriber) {
-            String val = subscriber.currentContext().stream().filter(e -> !(e.getKey().equals("request") || e.getKey().equals("response"))).toList().toString();
-            s.onSubscribe(new Subscription() {
-                @Override
-                public void request(long n) {
-                    subscriber.onNext(val);
-                }
-
-                @Override
-                public void cancel() {
-                    subscriber.onComplete();
-                }
-            });
-        }
+    private static String mangleContext(Context context) {
+        return context.stream().filter(e -> !(e.getKey().equals("request") || e.getKey().equals("response"))).toList().toString();
     }
 }
+
+record Person(String firstname, String lastname){}
