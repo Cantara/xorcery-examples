@@ -57,7 +57,7 @@
         </dependency>
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-neo4j</artifactId>
+            <artifactId>xorcery-neo4j-embedded</artifactId>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -72,7 +72,7 @@
         </dependency>
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-eventstore</artifactId>
+            <artifactId>xorcery-eventstore-client</artifactId>
         </dependency>
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
