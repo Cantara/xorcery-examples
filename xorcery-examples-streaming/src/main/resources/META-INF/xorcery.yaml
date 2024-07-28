@@ -1,0 +1,6 @@
+result:
+  processors:
+    - "{{ reactivestreams.server.uri }}processor1"
+    - "{{ reactivestreams.server.uri }}processor2"
+    - "{{ reactivestreams.server.uri }}processor3"
+  source: "{{ reactivestreams.server.uri }}source"

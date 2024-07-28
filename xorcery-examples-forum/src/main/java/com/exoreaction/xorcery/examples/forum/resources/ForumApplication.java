@@ -1,11 +1,11 @@
 package com.exoreaction.xorcery.examples.forum.resources;
 
-import com.exoreaction.xorcery.domainevents.api.CommandEvents;
 import com.exoreaction.xorcery.domainevents.api.DomainEvent;
-import com.exoreaction.xorcery.domainevents.helpers.context.DomainEventMetadata;
-import com.exoreaction.xorcery.domainevents.helpers.entity.Command;
-import com.exoreaction.xorcery.domainevents.helpers.entity.Entity;
-import com.exoreaction.xorcery.domainevents.helpers.entity.EntitySnapshot;
+import com.exoreaction.xorcery.domainevents.api.MetadataEvents;
+import com.exoreaction.xorcery.domainevents.context.CommandMetadata;
+import com.exoreaction.xorcery.domainevents.context.CommandResult;
+import com.exoreaction.xorcery.domainevents.entity.Command;
+import com.exoreaction.xorcery.domainevents.entity.Entity;
 import com.exoreaction.xorcery.domainevents.publisher.DomainEventPublisher;
 import com.exoreaction.xorcery.domainevents.snapshot.Neo4jEntitySnapshotLoader;
 import com.exoreaction.xorcery.examples.forum.contexts.CommentContext;
@@ -20,19 +20,18 @@ import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.neo4j.client.GraphDatabase;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BadRequestException;
-
-import java.lang.reflect.ParameterizedType;
-import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.jvnet.hk2.annotations.Service;
 
+import java.lang.reflect.ParameterizedType;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Supplier;
 
-@Service(name="forum")
+@Service(name = "forum")
 public class ForumApplication {
     private static final Logger logger = LogManager.getLogger(ForumApplication.class);
 
@@ -69,36 +68,36 @@ public class ForumApplication {
         return new PostCommentsContext(this, postModel, commentEntitySupplier);
     }
 
-    public <T extends EntitySnapshot> CompletionStage<Metadata> handle(Entity<T> entity, DomainEventMetadata metadata, Command command) {
+    public <SNAPSHOT, COMMAND extends Command> CompletableFuture<CommandResult<COMMAND>> handle(Entity<SNAPSHOT> entity, Metadata metadata, COMMAND command) {
 
         try {
-            DomainEventMetadata domainMetadata = new DomainEventMetadata.Builder(metadata.context())
+            CommandMetadata domainMetadata = new CommandMetadata.Builder(metadata)
                     .domain("forum")
                     .commandName(command.getClass())
                     .build();
 
-            T snapshot;
+            SNAPSHOT snapshot;
 
             if (Command.isCreate(command.getClass())) {
                 // Should fail
                 try {
                     snapshotLoader.load(domainMetadata, command.id(), entity);
-                    return CompletableFuture.failedStage(new BadRequestException("Entity already exists"));
+                    return CompletableFuture.failedFuture(new BadRequestException("Entity already exists"));
                 } catch (Exception e) {
                     // Good!
-                    Class<?> snapshotClass = (Class<?>) ((ParameterizedType) entity.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-                    snapshot = (T)snapshotClass.getConstructor().newInstance();
+                    Class<SNAPSHOT> snapshotClass = (Class<SNAPSHOT>) ((ParameterizedType) entity.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+                    snapshot = snapshotClass.getConstructor().newInstance();
                 }
 
             } else {
                 snapshot = snapshotLoader.load(domainMetadata, command.id(), entity);
             }
 
-            List<DomainEvent> events = entity.handle(domainMetadata, snapshot, command);
-
-            return domainEventPublisher.publish(new CommandEvents(metadata.context(), events));
+            return entity.handle(domainMetadata, snapshot, command)
+                    .thenCompose(result -> domainEventPublisher.publish(new MetadataEvents(result.metadata(), result.events()))
+                            .thenApply(md -> new CommandResult<>(command, result.events(), md)));
         } catch (Throwable e) {
-            return CompletableFuture.failedStage(e);
+            return CompletableFuture.failedFuture(e);
         }
     }
 }

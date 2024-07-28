@@ -1,0 +1,11 @@
+<div data-th-if="${command}">
+    <form hx-post="/todo/signup" hx-target="#app">
+        <input id="id" value="" type="hidden" data-th-value="${command.id()}">
+        <label for="email">Email</label><input id="email" name="email" type="text"><br/>
+        <label for="password">Password</label><input id="password" name="password" type="text"><br/>
+        <button type="submit">Signup</button>
+    </form>
+</div>
+<div data-th-unless="${command}">
+    <p>Signup has been temporarily suspended. Check in later!</p>
+</div>

@@ -1,6 +1,6 @@
 package com.exoreaction.xorcery.examples.forum.model;
 
-import com.exoreaction.xorcery.domainevents.helpers.model.EntityModel;
+import com.exoreaction.xorcery.domainevents.jsonapi.resources.model.EntityModel;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public record PostModel(ObjectNode json)

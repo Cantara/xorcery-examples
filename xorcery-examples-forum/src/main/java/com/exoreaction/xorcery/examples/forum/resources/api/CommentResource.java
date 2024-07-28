@@ -1,11 +1,12 @@
 package com.exoreaction.xorcery.examples.forum.resources.api;
 
-import com.exoreaction.xorcery.domainevents.helpers.entity.Command;
-import com.exoreaction.xorcery.examples.forum.resources.ForumApplication;
+import com.exoreaction.xorcery.domainevents.context.CommandResult;
+import com.exoreaction.xorcery.domainevents.entity.Command;
 import com.exoreaction.xorcery.examples.forum.contexts.CommentContext;
 import com.exoreaction.xorcery.examples.forum.model.CommentModel;
 import com.exoreaction.xorcery.examples.forum.resources.ForumApiMixin;
-import com.exoreaction.xorcery.jaxrs.server.resources.AbstractResource;
+import com.exoreaction.xorcery.examples.forum.resources.ForumApplication;
+import com.exoreaction.xorcery.jaxrs.server.resources.BaseResource;
 import com.exoreaction.xorcery.jsonapi.Included;
 import com.exoreaction.xorcery.jsonapi.Links;
 import com.exoreaction.xorcery.jsonapi.ResourceDocument;
@@ -13,6 +14,7 @@ import com.exoreaction.xorcery.jsonapi.ResourceObject;
 import com.exoreaction.xorcery.jsonapi.server.resources.JsonApiResource;
 import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.neo4j.client.GraphQuery;
+import com.exoreaction.xorcery.neo4j.client.RowModel;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
@@ -24,7 +26,7 @@ import static com.exoreaction.xorcery.jsonapi.MediaTypes.APPLICATION_JSON_API;
 
 @Path("api/forum/comments/{comment}")
 public class CommentResource
-        extends AbstractResource
+        extends BaseResource
         implements JsonApiResource, ForumApiMixin {
 
     private CommentModel model;
@@ -34,7 +36,7 @@ public class CommentResource
     public void bind(ForumApplication forumApplication) {
         GraphQuery graphQuery = commentByIdQuery(getFirstPathParameter("comment"));
         model = graphQuery
-                .first(toModel(CommentModel::new, graphQuery.getResults()))
+                .first(RowModel.toModel(CommentModel::new, graphQuery.getResults()))
                 .toCompletableFuture()
                 .join().orElseThrow();
         context = forumApplication.comment(model);
@@ -69,7 +71,7 @@ public class CommentResource
     }
 
     @Override
-    public CompletionStage<Response> ok(Metadata metadata, Command command) {
+    public <T extends Command> CompletionStage<Response> ok(CommandResult<T> commandResult) {
         return comment(model.getId(), new Included.Builder())
                 .thenApply(resource -> Response.ok(resource).links(schemaHeader()).build());
     }

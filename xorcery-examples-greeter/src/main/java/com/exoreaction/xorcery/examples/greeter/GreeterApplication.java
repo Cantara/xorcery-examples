@@ -1,12 +1,10 @@
 package com.exoreaction.xorcery.examples.greeter;
 
-import com.exoreaction.xorcery.domainevents.api.CommandEvents;
-import com.exoreaction.xorcery.domainevents.api.DomainEvent;
-import com.exoreaction.xorcery.domainevents.api.JsonDomainEvent;
-import com.exoreaction.xorcery.domainevents.api.Model;
-import com.exoreaction.xorcery.domainevents.helpers.context.DomainEventMetadata;
+import com.exoreaction.xorcery.domainevents.api.*;
+import com.exoreaction.xorcery.domainevents.context.CommandMetadata;
 import com.exoreaction.xorcery.domainevents.publisher.DomainEventPublisher;
 import com.exoreaction.xorcery.examples.greeter.commands.UpdateGreeting;
+import com.exoreaction.xorcery.metadata.CommonMetadata;
 import com.exoreaction.xorcery.metadata.Metadata;
 import com.exoreaction.xorcery.neo4j.client.GraphDatabase;
 import com.exoreaction.xorcery.neo4j.client.GraphResult;
@@ -19,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.concurrent.CompletionStage;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.Map.entry;
 
@@ -30,7 +28,7 @@ public class GreeterApplication {
     public static final String SERVICE_TYPE = "greeter";
 
     private final DomainEventPublisher domainEventPublisher;
-    private final DomainEventMetadata domainEventMetadata;
+    private final Metadata domainEventMetadata;
     private final GraphDatabase graphDatabase;
 
     @Inject
@@ -39,13 +37,13 @@ public class GreeterApplication {
 
         this.domainEventPublisher = domainEventPublisher;
         this.graphDatabase = graphDatabase;
-        this.domainEventMetadata = new DomainEventMetadata(new Metadata.Builder()
+        this.domainEventMetadata = new Metadata.Builder()
                 .add("domain", "greeter")
-                .build());
+                .build();
     }
 
     // Reads
-    public CompletionStage<String> get(String name) {
+    public CompletableFuture<String> get(String name) {
 
         return graphDatabase.execute("MATCH (greeter:Greeter {id:$id}) RETURN greeter.greeting as greeting",
                         Map.ofEntries(entry("id", "greeter")), 30)
@@ -56,21 +54,21 @@ public class GreeterApplication {
                     } catch (Exception e) {
                         throw new CompletionException(e);
                     }
-                });
+                }).toCompletableFuture().orTimeout(30, TimeUnit.SECONDS);
     }
 
     // Writes
-    public CompletionStage<Metadata> handle(Record command) {
-        Metadata.Builder metadata = new DomainEventMetadata.Builder(new Metadata.Builder().add(domainEventMetadata.context()))
+    public CompletableFuture<Metadata> handle(Record command) {
+        Metadata.Builder metadata = new CommandMetadata.Builder(new Metadata.Builder().add(domainEventMetadata))
                 .timestamp(System.currentTimeMillis()).builder();
 
         try {
             List<DomainEvent> events = (List<DomainEvent>) getClass().getDeclaredMethod("handle", command.getClass()).invoke(this, command);
-            Metadata md = metadata.add(Model.Metadata.commandName, command.getClass().getName()).build();
-            CommandEvents commandEvents = new CommandEvents(md, events);
-            return domainEventPublisher.publish(commandEvents);
+            Metadata md = metadata.add(DomainEventMetadata.commandName, command.getClass().getName()).build();
+            MetadataEvents metadataEvents = new MetadataEvents(md, events);
+            return domainEventPublisher.publish(metadataEvents);
         } catch (Throwable e) {
-            return CompletableFuture.failedStage(e);
+            return CompletableFuture.failedFuture(e);
         }
     }
 

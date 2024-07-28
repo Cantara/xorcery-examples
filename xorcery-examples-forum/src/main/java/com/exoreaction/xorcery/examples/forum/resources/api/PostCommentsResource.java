@@ -1,19 +1,21 @@
 package com.exoreaction.xorcery.examples.forum.resources.api;
 
-import com.exoreaction.xorcery.domainevents.helpers.entity.Command;
+import com.exoreaction.xorcery.domainevents.context.CommandResult;
+import com.exoreaction.xorcery.domainevents.entity.Command;
 import com.exoreaction.xorcery.examples.forum.contexts.PostCommentsContext;
+import com.exoreaction.xorcery.examples.forum.entities.CommentEntity;
 import com.exoreaction.xorcery.examples.forum.model.PostModel;
 import com.exoreaction.xorcery.examples.forum.resources.ForumApiMixin;
-import com.exoreaction.xorcery.jaxrs.server.resources.AbstractResource;
+import com.exoreaction.xorcery.examples.forum.resources.ForumApplication;
+import com.exoreaction.xorcery.jaxrs.server.resources.BaseResource;
 import com.exoreaction.xorcery.jsonapi.Included;
 import com.exoreaction.xorcery.jsonapi.Links;
 import com.exoreaction.xorcery.jsonapi.ResourceDocument;
 import com.exoreaction.xorcery.jsonapi.ResourceObject;
 import com.exoreaction.xorcery.jsonapi.server.resources.JsonApiResource;
 import com.exoreaction.xorcery.metadata.Metadata;
-import com.exoreaction.xorcery.examples.forum.resources.ForumApplication;
-import com.exoreaction.xorcery.examples.forum.entities.CommentEntity;
 import com.exoreaction.xorcery.neo4j.client.GraphQuery;
+import com.exoreaction.xorcery.neo4j.client.RowModel;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
@@ -24,7 +26,7 @@ import static com.exoreaction.xorcery.jsonapi.MediaTypes.APPLICATION_JSON_API;
 
 @Path("api/forum/posts/{id}/comments")
 public class PostCommentsResource
-        extends AbstractResource
+        extends BaseResource
         implements JsonApiResource, ForumApiMixin {
 
     private PostCommentsContext context;
@@ -34,7 +36,7 @@ public class PostCommentsResource
     public void bind(ForumApplication forumApplication) {
         GraphQuery graphQuery = postByIdQuery(getFirstPathParameter("id"));
         post = graphQuery
-                .first(toModel(PostModel::new, graphQuery.getResults()))
+                .first(RowModel.toModel(PostModel::new, graphQuery.getResults()))
                 .toCompletableFuture()
                 .join().orElseThrow();
         context = forumApplication.postComments(post);
@@ -63,9 +65,8 @@ public class PostCommentsResource
     }
 
     @Override
-    public CompletionStage<Response> ok(Metadata metadata, Command command) {
-
-        if (command instanceof CommentEntity.AddComment addComment) {
+    public <T extends Command> CompletionStage<Response> ok(CommandResult<T> commandResult) {
+        if (commandResult.command() instanceof CommentEntity.AddComment addComment) {
             return comment(addComment.id(), new Included.Builder())
                     .thenApply(resource -> Response.created(resource.orElseThrow().getLinks().getSelf().orElseThrow().getHrefAsUri())
                             .links(schemaHeader()).entity(resource).build());

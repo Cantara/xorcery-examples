@@ -38,19 +38,11 @@
         <!-- REST API -->
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-jsonapi-jaxrs</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
             <artifactId>xorcery-jersey-server</artifactId>
         </dependency>
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-handlebars</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-status-server</artifactId>
+            <artifactId>xorcery-thymeleaf-jsonapi</artifactId>
         </dependency>
 
         <!-- Integration -->
@@ -68,7 +60,7 @@
         </dependency>
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-neo4j</artifactId>
+            <artifactId>xorcery-neo4j-embedded</artifactId>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -88,8 +80,8 @@
             <artifactId>log4j-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j2-impl</artifactId>
+            <groupId>com.exoreaction.xorcery</groupId>
+            <artifactId>xorcery-opentelemetry-log4j</artifactId>
         </dependency>
 
         <!-- These features can be extracted out into their own service -->

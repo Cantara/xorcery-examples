@@ -1,10 +1,9 @@
 package com.exoreaction.xorcery.examples.forum.entities;
 
-import com.exoreaction.xorcery.domainevents.helpers.entity.Command;
-import com.exoreaction.xorcery.domainevents.helpers.entity.Entity;
-import com.exoreaction.xorcery.domainevents.helpers.entity.EntitySnapshot;
-import com.exoreaction.xorcery.domainevents.helpers.entity.annotation.Create;
-import com.exoreaction.xorcery.domainevents.helpers.entity.annotation.Update;
+import com.exoreaction.xorcery.domainevents.entity.Command;
+import com.exoreaction.xorcery.domainevents.entity.Entity;
+import com.exoreaction.xorcery.domainevents.entity.annotation.Create;
+import com.exoreaction.xorcery.domainevents.entity.annotation.Update;
 
 import static com.exoreaction.xorcery.domainevents.api.JsonDomainEvent.event;
 
@@ -21,8 +20,7 @@ public class PostEntity
             implements Command {
     }
 
-    public static class PostSnapshot
-            implements EntitySnapshot {
+    public static class PostSnapshot {
         public String title;
         public String body;
     }

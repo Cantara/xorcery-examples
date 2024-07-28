@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layoutFile :: layout(~{::title}, ~{},~{},~{::section})}">
+<head>
+    <title>Page Title</title>
+</head>
+<body>
+<section>
+    <div id="app" class="container mt-5">
+        <div class="row">
+            <div id="sidebar" class="col-sm-2">
+            </div>
+            <div class="col-sm-10">
+                <h3>Signup</h3>
+                <p> <button hx-get="/todo/signup" hx-swap="outerHTML">
+                    Click Me
+                </button></p>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

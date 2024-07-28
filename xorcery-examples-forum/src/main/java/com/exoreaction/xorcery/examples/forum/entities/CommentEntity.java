@@ -1,12 +1,11 @@
 package com.exoreaction.xorcery.examples.forum.entities;
 
-
-import com.exoreaction.xorcery.domainevents.helpers.entity.Command;
-import com.exoreaction.xorcery.domainevents.helpers.entity.Entity;
-import com.exoreaction.xorcery.domainevents.helpers.entity.EntitySnapshot;
-import com.exoreaction.xorcery.domainevents.helpers.entity.annotation.Create;
-import com.exoreaction.xorcery.domainevents.helpers.entity.annotation.Delete;
-import com.exoreaction.xorcery.domainevents.helpers.entity.annotation.Update;
+import com.exoreaction.xorcery.domainevents.api.JsonDomainEvent;
+import com.exoreaction.xorcery.domainevents.entity.Command;
+import com.exoreaction.xorcery.domainevents.entity.Entity;
+import com.exoreaction.xorcery.domainevents.entity.annotation.Create;
+import com.exoreaction.xorcery.domainevents.entity.annotation.Delete;
+import com.exoreaction.xorcery.domainevents.entity.annotation.Update;
 
 import static com.exoreaction.xorcery.domainevents.api.JsonDomainEvent.event;
 
@@ -28,8 +27,7 @@ public class CommentEntity
             implements Command {
     }
 
-    public static class CommentSnapshot
-            implements EntitySnapshot {
+    public static class CommentSnapshot {
         public String body;
     }
 

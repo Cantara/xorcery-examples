@@ -18,6 +18,8 @@ certificates:
 jersey.server.register:
   - com.exoreaction.xorcery.examples.greeter.resources.api.GreeterResource
 
+jetty.server.ssl.enabled: false
+
 keystores:
   enabled: true
   keystore:
@@ -28,7 +30,8 @@ keystores:
 log4jpublisher.enabled: false
 log4jsubscriber.enabled: false
 
-domainevents.subscriber.configuration.projection: "greeter"
+domainevents.eventstore: null
+domainevents.projections: "{{reactivestreams.server.uri}}projections/greeter"
 jsondomaineventprojection.enabled: false
 
 log4j2:

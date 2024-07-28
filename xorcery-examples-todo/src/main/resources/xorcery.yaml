@@ -1,0 +1,93 @@
+application.name: "todo"
+instance.home: "{{ SYSTEM.jpackage_app-path ? jpackage.app | SYSTEM.user_dir}}"
+jpackage.app: "{{ SYSTEM.jpackage_app-path }}/../../lib/app"
+
+# So that we can generate a SSL certificate for the local hostname. Replace with whatever domain name you actually use
+instance.domain: local
+
+# Add local convenience names for your own computer into the SSL cert
+certificates:
+  dnsNames:
+    - localhost
+    - "{{ instance.host }}"
+  ipAddresses:
+    - 127.0.0.1
+    - "{{ instance.ip }}"
+
+# REST API resources
+jersey.server.register:
+  - com.exoreaction.xorcery.examples.todo.resources.AuthenticationRequiredFilter
+  - com.exoreaction.xorcery.examples.todo.resources.api.StaticContentResource
+  - com.exoreaction.xorcery.examples.todo.resources.api.SignupResource
+  - com.exoreaction.xorcery.examples.todo.resources.api.AccountResource
+
+dns.client.search:
+  - local
+dns.client.hosts:
+      _certificates._sub._https._tcp : "https://127.0.0.1"
+dns.client.nameServers:
+  - 127.0.0.1:8853
+
+jetty:
+  server:
+    http:
+      port: 8080
+    ssl:
+      port: 8443
+    security:
+      jwt:
+        issuers:
+          server.xorcery.test:
+            keys:
+            - kid: "2d3f1d1f-4038-4c01-beb7-97b260462ada"
+              alg: "ES256"
+              publicKey: "secret:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEd7L6zz97U1MMaj9MSN325SZ15htR26mec0/1A0vt1b8Yfcu0QuiN9E4ijSfMRiof+B57P/hkrb+OuRSYLL854Q=="
+
+# These features can be extracted into separate services
+jwt.server.keys:
+  - kid: "2d3f1d1f-4038-4c01-beb7-97b260462ada"
+    alg: "ES256"
+    publicKey: "secret:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEd7L6zz97U1MMaj9MSN325SZ15htR26mec0/1A0vt1b8Yfcu0QuiN9E4ijSfMRiof+B57P/hkrb+OuRSYLL854Q=="
+    privateKey: "secret:MEECAQAwEwYHKoZIzj0CAQYIKoZIzj0DAQcEJzAlAgEBBCCSHC362NTeBZYTkYGXK3vfRvoqQum+Uo6DFUDzvX7MuA=="
+
+dns.server.port: 8853
+
+# Log configuration
+log4j2.Configuration:
+  name: Xorcery Example Todo
+  status: warn
+  thresholdFilter:
+    level: trace
+  appenders:
+    Console:
+      name: STDOUT
+      target: SYSTEM_OUT
+      PatternLayout:
+        Pattern: "%d [%t] %-5level %marker %c{1.}: %msg%n%throwable"
+#    Log4jPublisher:
+#      name: Log4jPublisher
+#      PatternLayout:
+#        Pattern: "%d [%t] %-5level %marker %c{1.}: %msg%n%throwable"
+
+  Loggers:
+    logger:
+      - name: org.apache.logging.log4j
+        level: debug
+        additivity: false
+        AppenderRef:
+          ref: STDOUT
+
+      - name: com.exoreaction.xorcery.core.Xorcery
+        level: debug
+
+      - name: com.exoreaction.xorcery.service
+        level: debug
+
+      - name: com.exoreaction.xorcery.dns
+        level: trace
+
+    Root:
+      level: info
+      AppenderRef:
+        - ref: STDOUT
+ #       - ref: Log4jPublisher

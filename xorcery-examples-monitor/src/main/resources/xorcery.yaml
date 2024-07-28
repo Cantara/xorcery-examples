@@ -1,2 +1,0 @@
-jersey.server.register:
-  - com.exoreaction.xorcery.examples.monitor.api.resources.LogGeneratorResource

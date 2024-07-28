@@ -1,8 +1,7 @@
 package com.exoreaction.xorcery.examples.forum.resources;
 
-import com.exoreaction.xorcery.domainevents.helpers.model.CommonModel;
-import com.exoreaction.xorcery.domainevents.helpers.model.CommonModel.Entity;
 import com.exoreaction.xorcery.domainevents.jsonapi.resources.ResourceObjectMapperResource;
+import com.exoreaction.xorcery.domainevents.jsonapi.resources.model.CommonModel;
 import com.exoreaction.xorcery.examples.forum.model.*;
 import com.exoreaction.xorcery.examples.forum.resources.api.*;
 import com.exoreaction.xorcery.jsonapi.*;
@@ -20,6 +19,7 @@ import java.util.function.Predicate;
 
 import static com.exoreaction.xorcery.jsonapi.JsonApiRels.describedby;
 import static com.exoreaction.xorcery.jsonapi.JsonApiRels.self;
+import static com.exoreaction.xorcery.neo4j.client.RowModel.toModel;
 
 
 public interface ForumApiMixin
@@ -43,7 +43,7 @@ public interface ForumApiMixin
     default CompletionStage<ResourceObjects> postComments(String postId, Included.Builder included, Pagination pagination) {
         GraphQuery graphQuery = postCommentsQuery(postId)
                 .limit(3) // Max 5 results
-                .sort(Entity.createdOn, GraphQuery.Order.ASCENDING) // Default sorting
+                .sort(CommonModel.Entity.createdOn, GraphQuery.Order.ASCENDING) // Default sorting
                 .with(pagination, sort(ForumModel.Comment.class)); // Query param pagination and sorting
 
         return graphQuery.stream(toModel(CommentModel::new, graphQuery.getResults()).andThen(commentResource(included)))

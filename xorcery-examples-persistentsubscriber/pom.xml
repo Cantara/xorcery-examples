@@ -25,6 +25,10 @@
             <groupId>com.exoreaction.xorcery</groupId>
             <artifactId>xorcery-reactivestreams-persistentsubscriber</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.exoreaction.xorcery</groupId>
+            <artifactId>xorcery-opentelemetry-sdk</artifactId>
+        </dependency>
 
         <!-- Tests -->
         <dependency>
@@ -38,7 +42,7 @@
         </dependency>
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-reactivestreams-server-extra</artifactId>
+            <artifactId>xorcery-reactivestreams-extras</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -1,17 +1,17 @@
 package com.exoreaction.xorcery.examples.forum.resources.api;
 
-import com.exoreaction.xorcery.domainevents.helpers.context.DomainEventMetadata;
-import com.exoreaction.xorcery.domainevents.helpers.entity.Command;
+import com.exoreaction.xorcery.domainevents.context.CommandMetadata;
+import com.exoreaction.xorcery.domainevents.context.CommandResult;
+import com.exoreaction.xorcery.domainevents.entity.Command;
 import com.exoreaction.xorcery.examples.forum.contexts.PostsContext;
-import com.exoreaction.xorcery.jaxrs.server.resources.AbstractResource;
+import com.exoreaction.xorcery.examples.forum.resources.ForumApiMixin;
+import com.exoreaction.xorcery.examples.forum.resources.ForumApplication;
+import com.exoreaction.xorcery.jaxrs.server.resources.BaseResource;
 import com.exoreaction.xorcery.jsonapi.Included;
 import com.exoreaction.xorcery.jsonapi.Links;
 import com.exoreaction.xorcery.jsonapi.ResourceDocument;
 import com.exoreaction.xorcery.jsonapi.ResourceObject;
 import com.exoreaction.xorcery.jsonapi.server.resources.JsonApiResource;
-import com.exoreaction.xorcery.metadata.Metadata;
-import com.exoreaction.xorcery.examples.forum.resources.ForumApplication;
-import com.exoreaction.xorcery.examples.forum.resources.ForumApiMixin;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
@@ -23,7 +23,7 @@ import static com.exoreaction.xorcery.jsonapi.MediaTypes.APPLICATION_JSON_API;
 
 @Path("api/forum/posts")
 public class PostsResource
-        extends AbstractResource
+        extends BaseResource
         implements JsonApiResource, ForumApiMixin {
 
     private final PostsContext context;
@@ -56,8 +56,8 @@ public class PostsResource
     }
 
     @Override
-    public CompletionStage<Response> ok(Metadata metadata, Command command) {
-        String aggregateId = new DomainEventMetadata(metadata).getAggregateId();
+    public <T extends Command> CompletionStage<Response> ok(CommandResult<T> commandResult) {
+        String aggregateId = new CommandMetadata(commandResult.metadata()).getAggregateId();
         URI location = getUriBuilderFor(PostResource.class).build(aggregateId);
         return post(aggregateId, new Included.Builder())
                 .thenApply(post -> Response.created(location).links(schemaHeader()).entity(post).build());

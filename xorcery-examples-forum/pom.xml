@@ -64,7 +64,7 @@
         </dependency>
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-handlebars</artifactId>
+            <artifactId>xorcery-thymeleaf-jsonapi</artifactId>
         </dependency>
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
@@ -90,7 +90,7 @@
         </dependency>
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-neo4j</artifactId>
+            <artifactId>xorcery-neo4j-embedded</artifactId>
             <version>${xorcery.version}</version>
             <scope>compile</scope>
             <exclusions>
@@ -101,16 +101,6 @@
             </exclusions>
         </dependency>
 
-        <!-- Logging -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j2-impl</artifactId>
-        </dependency>
-
         <!-- These features can be extracted out into their own service -->
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
@@ -118,11 +108,7 @@
         </dependency>
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-eventstore</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-opensearch</artifactId>
+            <artifactId>xorcery-eventstore-client</artifactId>
         </dependency>
         <dependency>
             <groupId>com.exoreaction.xorcery</groupId>
