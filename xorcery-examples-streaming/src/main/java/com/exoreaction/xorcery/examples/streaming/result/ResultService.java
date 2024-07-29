@@ -1,6 +1,7 @@
 package com.exoreaction.xorcery.examples.streaming.result;
 
 import com.exoreaction.xorcery.configuration.Configuration;
+import com.exoreaction.xorcery.core.Xorcery;
 import com.exoreaction.xorcery.reactivestreams.api.client.ClientWebSocketOptions;
 import com.exoreaction.xorcery.reactivestreams.api.client.ClientWebSocketStreamContext;
 import com.exoreaction.xorcery.reactivestreams.api.client.ClientWebSocketStreams;
@@ -16,6 +17,7 @@ import reactor.util.context.Context;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service(name = "result")
 @RunLevel(20)
@@ -28,6 +30,7 @@ public class ResultService
     public ResultService(
             Configuration configuration,
             ClientWebSocketStreams clientWebSocketStreams,
+            Xorcery xorcery,
             Logger logger
     ) {
         List<String> processors = configuration.getListAs("result.processors", JsonNode::asText).orElse(Collections.emptyList());
@@ -40,6 +43,7 @@ public class ResultService
         logger.info("Result starting streaming from " + source);
         disposable = clientWebSocketStreams.subscribe(ClientWebSocketOptions.instance(), JsonNode.class)
                 .contextWrite(Context.of(ClientWebSocketStreamContext.serverUri, serverUri, "upstream", upstream))
+                .doOnTerminate(()-> CompletableFuture.runAsync(xorcery::close))
                 .subscribe(json -> System.out.println(json.toPrettyString()));
     }
 
