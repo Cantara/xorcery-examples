@@ -101,12 +101,6 @@
     <profiles>
         <profile>
             <id>jpackage</id>
-            <activation>
-                <os>
-                    <name>linux</name>
-                    <arch>amd64</arch>
-                </os>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
