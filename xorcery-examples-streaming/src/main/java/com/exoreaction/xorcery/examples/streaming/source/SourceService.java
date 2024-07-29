@@ -26,7 +26,9 @@ public class SourceService
     @Inject
     public SourceService(Configuration configuration, ServerWebSocketStreams serverWebSocketStreams, Logger logger) {
         List<Integer> source = IntStream.range(0, 100).boxed().toList();
-        Publisher<JsonNode> publisher = Flux.fromIterable(source).map(val -> JsonNodeFactory.instance.objectNode().set("value", JsonNodeFactory.instance.numberNode(val)));
+        Publisher<JsonNode> publisher = Flux.fromIterable(source)
+                .doOnSubscribe(s -> System.out.println("Subscribe to source"))
+                .map(val -> JsonNodeFactory.instance.objectNode().set("value", JsonNodeFactory.instance.numberNode(val)));
         disposable = serverWebSocketStreams.publisher("source", JsonNode.class, publisher);
         logger.info("Source started");
     }

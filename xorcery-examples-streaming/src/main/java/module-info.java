@@ -1,5 +1,9 @@
 module xorcery.examples.streaming {
 
+    exports com.exoreaction.xorcery.examples.streaming.source;
+    exports com.exoreaction.xorcery.examples.streaming.processors;
+    exports com.exoreaction.xorcery.examples.streaming.result;
+
     requires xorcery.configuration.api;
     requires xorcery.reactivestreams.api;
 
@@ -9,4 +13,5 @@ module xorcery.examples.streaming {
     requires jakarta.inject;
 
     requires org.apache.logging.log4j;
+    requires xorcery.core;
 }

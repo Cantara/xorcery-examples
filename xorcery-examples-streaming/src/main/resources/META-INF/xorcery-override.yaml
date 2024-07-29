@@ -1,6 +1,9 @@
 instance:
   host: "streaming"
 
+hk2:
+  threadPolicy: "USE_NO_THREADS"
+
 dns:
   client:
     hosts:
