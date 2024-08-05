@@ -4,11 +4,11 @@
     <parent>
         <groupId>com.exoreaction.xorcery.examples</groupId>
         <artifactId>xorcery-examples</artifactId>
-        <version>1.100.1</version>
+        <version>1.100.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>xorcery-examples-persistentsubscriber</artifactId>
-    <version>1.100.1</version>
+    <version>1.100.2-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
