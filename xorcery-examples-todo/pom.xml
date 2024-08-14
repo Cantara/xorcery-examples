@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.exoreaction.xorcery.examples</groupId>
         <artifactId>xorcery-examples</artifactId>
-        <version>1.100.1-SNAPSHOT</version>
+        <version>1.126.0</version>
     </parent>
 
     <artifactId>xorcery-examples-todo</artifactId>
