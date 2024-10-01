@@ -33,7 +33,7 @@ services:
         target: /var/log/eventstore
 
   exmples-forum-opensearch:
-    image: opensearchproject/opensearch:2.17.0
+    image: opensearchproject/opensearch:2.17.1
     environment:
       - cluster.name=opensearch-cluster
       - node.name=opensearch-node1
