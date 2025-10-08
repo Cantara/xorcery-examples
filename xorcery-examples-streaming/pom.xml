@@ -11,35 +11,35 @@
     <artifactId>xorcery-examples-streaming</artifactId>
 
     <dependencies>
-    <!-- Core dependencies -->
-    <dependency>
-        <groupId>com.exoreaction.xorcery</groupId>
-        <artifactId>xorcery-core</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.exoreaction.xorcery</groupId>
-        <artifactId>xorcery-runner</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.exoreaction.xorcery</groupId>
-        <artifactId>xorcery-metadata</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.exoreaction.xorcery</groupId>
-        <artifactId>xorcery-configuration-api</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.exoreaction.xorcery</groupId>
-        <artifactId>xorcery-json</artifactId>
-    </dependency>
+        <!-- Core dependencies -->
+        <dependency>
+            <groupId>dev.xorcery</groupId>
+            <artifactId>xorcery-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dev.xorcery</groupId>
+            <artifactId>xorcery-runner</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dev.xorcery</groupId>
+            <artifactId>xorcery-metadata</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dev.xorcery</groupId>
+            <artifactId>xorcery-configuration-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dev.xorcery</groupId>
+            <artifactId>xorcery-json</artifactId>
+        </dependency>
 
-    <dependency>
-        <groupId>com.exoreaction.xorcery</groupId>
-        <artifactId>xorcery-reactivestreams-client</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.exoreaction.xorcery</groupId>
-        <artifactId>xorcery-reactivestreams-server</artifactId>
-    </dependency>
+        <dependency>
+            <groupId>dev.xorcery</groupId>
+            <artifactId>xorcery-reactivestreams-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dev.xorcery</groupId>
+            <artifactId>xorcery-reactivestreams-server</artifactId>
+        </dependency>
     </dependencies>
 </project>
