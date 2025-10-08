@@ -7,7 +7,9 @@
         <version>1.166.15-SNAPSHOT</version>
     </parent>
 
-    <artifactId>xorcery-examples-persistentsubscriber</artifactId>
+    <artifactId>xorcery-examples-streaming</artifactId>
+    <!--<artifactId>xorcery-examples-persistentsubscriber</artifactId>-->
+
     <version>1.166.15-SNAPSHOT</version>
 
     <properties>
