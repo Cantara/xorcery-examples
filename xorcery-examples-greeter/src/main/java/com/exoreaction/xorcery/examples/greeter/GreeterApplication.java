@@ -7,7 +7,7 @@ import dev.xorcery.metadata.Metadata;
 import dev.xorcery.neo4j.client.GraphDatabase;
 import dev.xorcery.neo4j.client.GraphResult;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import org.jvnet.hk2.annotations.Service;
 
 import java.util.Collections;
@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 import static java.util.Map.entry;
 
 @Service
-@Named(GreeterApplication.SERVICE_TYPE)
+@Singleton
 public class GreeterApplication {
 
     public static final String SERVICE_TYPE = "greeter";

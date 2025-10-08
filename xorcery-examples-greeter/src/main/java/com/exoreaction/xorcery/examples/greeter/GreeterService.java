@@ -5,7 +5,7 @@ import dev.xorcery.domainevents.api.MetadataEvents;
 import dev.xorcery.neo4jprojections.api.Neo4jProjections;
 import dev.xorcery.neo4jprojections.api.ProjectionStreamContext;
 import dev.xorcery.reactivestreams.api.server.ServerWebSocketOptions;
-import dev.xorcery.reactivestreams.server.ServerWebSocketStreamsService;
+import dev.xorcery.reactivestreams.api.server.ServerWebSocketStreams; // Change this import
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.glassfish.hk2.api.PreDestroy;
@@ -24,7 +24,7 @@ public class GreeterService
 
     @Inject
     public GreeterService(Configuration configuration,
-                          ServerWebSocketStreamsService serverWebSocketStreams,
+                          ServerWebSocketStreams serverWebSocketStreams, // Change this parameter type
                           Neo4jProjections neo4jProjections) {
 
         subscriber = serverWebSocketStreams.subscriberWithResult(
@@ -34,11 +34,6 @@ public class GreeterService
                 MetadataEvents.class,
                 flux -> flux.transformDeferredContextual(neo4jProjections.projection())
                         .contextWrite(Context.of(ProjectionStreamContext.projectionId, "greeter")));
-
-        // Note: The ServiceResourceObjects registration has been removed in Xorcery 0.166.9
-        // Service metadata registration is now handled through other mechanisms such as:
-        // - DNS registration (via xorcery-dns-registration)
-        // - Service discovery mechanisms built into the framework
     }
 
     @Override

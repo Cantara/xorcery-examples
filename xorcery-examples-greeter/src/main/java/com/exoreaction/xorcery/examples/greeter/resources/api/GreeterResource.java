@@ -5,6 +5,7 @@ import com.exoreaction.xorcery.examples.greeter.commands.UpdateGreeting;
 import dev.xorcery.jaxrs.server.resources.BaseResource;
 import dev.xorcery.thymeleaf.resources.ThymeleafResource;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -22,7 +23,7 @@ public class GreeterResource
     private GreeterApplication application;
 
     @Inject
-    public GreeterResource(GreeterApplication application) {
+    public GreeterResource(@Named(GreeterApplication.SERVICE_TYPE) GreeterApplication application) {
         this.application = application;
     }
 
