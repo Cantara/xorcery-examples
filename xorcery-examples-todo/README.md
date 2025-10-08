@@ -1,62 +1,73 @@
+
 # Xorcery Todo Example
 
-A full-featured todo list application demonstrating authentication, authorization, domain-driven design, event sourcing, and Neo4j projections with Xorcery. This example shows how to build a secure, event-sourced web application with a modern architecture.
+A todo list application demonstrating domain-driven design, event sourcing, and Neo4j projections with Xorcery. This example shows how to build an event-sourced web application with a modern architecture.
 
 ## Table of Contents
 
 - [Overview](#overview)
+- [Current Status](#current-status)
 - [Features](#features)
 - [Architecture](#architecture)
 - [Prerequisites](#prerequisites)
 - [Quick Start](#quick-start)
 - [Configuration](#configuration)
-- [API Documentation](#api-documentation)
 - [Domain Model](#domain-model)
-- [Authentication & Authorization](#authentication--authorization)
-- [Web UI](#web-ui)
 - [Testing](#testing)
-- [Deployment](#deployment)
+- [Project Structure](#project-structure)
+- [Next Steps](#next-steps)
 - [Troubleshooting](#troubleshooting)
 
 ## Overview
 
-The Todo example is a comprehensive web application demonstrating:
+The Todo example demonstrates Xorcery's core capabilities:
 
-- **User Management** - Signup, login, profile management
-- **JWT Authentication** - Token-based security
-- **Role-Based Access Control** - User authorization
-- **Todo Management** - CRUD operations for todo items
-- **Event Sourcing** - Complete audit trail
+- **Domain-Driven Design** - Aggregates, commands, and events
+- **Event Sourcing** - Complete audit trail of state changes
 - **Neo4j Projections** - Graph-based read models
-- **Web UI** - Thymeleaf-based responsive interface
 - **REST API** - JSON:API compliant endpoints
+- **JWT Authentication** - Token-based security
+- **Reactive Streams** - WebSocket-based event streaming
+- **DNS Service Discovery** - Built-in service registration
 
-This example is ideal for understanding how to build **secure, production-ready web applications** with Xorcery.
+This example is ideal for understanding how to build **event-sourced applications** with Xorcery.
+
+## Current Status
+
+✅ **Compiling and Building**
+✅ **Application Starts Successfully**
+✅ **Core Services Registered**
+- TodoApplication service
+- Domain event publishing
+- Neo4j projections
+- JWT server
+- DNS server and client
+
+🚧 **In Progress**
+- Thymeleaf templates (HTML UI)
+- Complete REST API endpoints
+- End-to-end functional tests
 
 ## Features
 
-### User Features
+### Technical Features Implemented
 
-- ✅ **User signup** - Register new accounts
-- ✅ **User login** - JWT-based authentication
-- ✅ **Profile management** - View and update user profiles
-- ✅ **Todo lists** - Create, read, update, delete todos
-- ✅ **Todo completion** - Mark todos as done/undone
-- ✅ **Filtering** - View all, active, or completed todos
-- ✅ **Real-time updates** - WebSocket notifications
+- ✅ **Event Sourcing** - Domain events for all state changes
+- ✅ **Domain-Driven Design** - Entities, commands, contexts
+- ✅ **Neo4j Projections** - Event-driven graph updates
+- ✅ **JWT Security** - Token generation and validation
+- ✅ **DNS Service Discovery** - Built-in DNS server and client
+- ✅ **Reactive Streams** - WebSocket-based event streaming
+- ✅ **SSL/TLS** - Automatic certificate generation
+- ✅ **Embedded Neo4j** - No external database needed for development
 
-### Technical Features
+### Domain Model
 
-- ✅ **JWT Authentication** - Secure token-based auth
-- ✅ **Role-Based Access Control** - User/Admin roles
-- ✅ **Event Sourcing** - All state changes as events
-- ✅ **Domain-Driven Design** - Bounded contexts, aggregates
-- ✅ **Neo4j Projections** - Efficient graph queries
-- ✅ **Thymeleaf Templates** - Server-side rendering
-- ✅ **JSON:API** - Standard REST API
-- ✅ **OpenTelemetry** - Observability and tracing
-- ✅ **DNS Service Discovery** - Service registration
-- ✅ **SSL/TLS** - Secure HTTPS
+The application includes three main entities:
+
+1. **User** - User accounts with authentication
+2. **Project** - Projects containing tasks (formerly "Post")
+3. **Task** - Individual todo items (formerly "Comment")
 
 ## Architecture
 
@@ -64,21 +75,11 @@ This example is ideal for understanding how to build **secure, production-ready 
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                      Web Browser                             │
+│                  Jetty Server (HTTPS)                        │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
-│  │ Signup Page  │  │ Login Page   │  │ Todo List    │     │
+│  │SignupResource│  │AccountResource│ │ (Future      │     │
+│  │              │  │               │ │  Resources)  │     │
 │  └──────────────┘  └──────────────┘  └──────────────┘     │
-└─────────────────────┬───────────────────────────────────────┘
-│ HTTPS/WSS
-▼
-┌─────────────────────────────────────────────────────────────┐
-│                  Jetty Server (8443)                         │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
-│  │SignupResource│  │AccountResource│ │TodoResource  │     │
-│  │(REST)        │  │(REST)         │ │(REST)        │     │
-│  └──────────────┘  └──────────────┘  └──────────────┘     │
-│         │                  │                  │             │
-│         └──────────────────┴──────────────────┘             │
 │                            │                                 │
 │              ┌─────────────▼──────────────┐                │
 │              │ AuthenticationRequired     │                │
@@ -91,55 +92,24 @@ This example is ideal for understanding how to build **secure, production-ready 
 │                  Todo Application                            │
 │  ┌──────────────────────────────────────────────────────┐  │
 │  │              Command Handlers                         │  │
-│  │  • SignupUser      • LoginUser     • CreateTodo      │  │
-│  │  • UpdateAccount   • UpdateTodo    • CompleteTodo    │  │
-│  │  • DeleteTodo      • ListTodos                       │  │
+│  │  • SignupUser      • CreateProject    • AddTask      │  │
+│  │  • UpdateProject   • UpdateTask      • RemoveTask    │  │
 │  └──────────────────────────────────────────────────────┘  │
 │                      │                                       │
 │                      ▼ Domain Events                        │
 │  ┌──────────────────────────────────────────────────────┐  │
 │  │           Domain Event Publisher                      │  │
-│  │  • UserRegistered  • UserLoggedIn  • TodoCreated     │  │
-│  │  • TodoUpdated     • TodoCompleted • TodoDeleted     │  │
+│  │  • UserRegistered  • TaskCreated   • TaskUpdated     │  │
+│  │  • TaskRemoved     • ProjectCreated                  │  │
 │  └──────────────────────────────────────────────────────┘  │
 └─────────────────────┬───────────────────────────────────────┘
 │
 ┌───────────┼───────────┐
 ▼           ▼           ▼
 ┌──────────┐ ┌────────┐ ┌─────────┐
-│EventStore│ │ Neo4j  │ │  JWT    │
-│ (Events) │ │(Reads) │ │ Issuer  │
+│ WebSocket│ │ Neo4j  │ │  JWT    │
+│ Streams  │ │(Reads) │ │ Issuer  │
 └──────────┘ └────────┘ └─────────┘
-```
-
-### Security Flow
-
-```
-1. User submits signup form
-   ↓
-2. SignupResource validates input
-   ↓
-3. TodoApplication.handleSignupUser()
-   ↓
-4. UserRegistered event published
-   ↓
-5. Neo4j projection creates User node
-   ↓
-6. User redirected to login
-
-7. User submits login form
-   ↓
-8. AccountResource validates credentials
-   ↓
-9. JWT token generated
-   ↓
-10. Token returned to client
-    ↓
-11. Client includes token in subsequent requests
-    ↓
-12. AuthenticationRequiredFilter validates token
-    ↓
-13. Request proceeds if valid
 ```
 
 ## Prerequisites
@@ -151,29 +121,42 @@ This example is ideal for understanding how to build **secure, production-ready 
 
 ### Optional
 
-- **Neo4j** (embedded by default, or external)
-- **EventStore** (optional for event persistence)
+- **Neo4j Browser** - To inspect the graph database (http://localhost:7474)
 
 ## Quick Start
 
-### 1. Build the Application
+### 1. Build the Module
 
 ```bash
 cd xorcery-examples-todo
 mvn clean install
 ```
 
-### 2. Run the Application
+### 2. Run Tests
 
 ```bash
-# Using Maven
-mvn exec:java -Dexec.mainClass="com.exoreaction.xorcery.examples.todo.Main"
+mvn test
+```
 
-# Or using JAR
+This will:
+- Start the Xorcery application
+- Initialize embedded Neo4j
+- Start DNS server
+- Run basic smoke tests
+
+### 3. Run the Application
+
+```bash
+mvn exec:java -Dexec.mainClass="com.exoreaction.xorcery.examples.todo.Main"
+```
+
+Or using the JAR:
+
+```bash
 java -jar target/xorcery-examples-todo-*.jar
 ```
 
-### 3. Access the Application
+### 4. Access the Application
 
 Open your browser and navigate to:
 
@@ -183,26 +166,6 @@ https://localhost:8443/
 
 **Note:** Accept the self-signed SSL certificate warning.
 
-### 4. Create an Account
-
-1. Click "Sign Up"
-2. Enter username, email, and password
-3. Click "Create Account"
-4. You'll be redirected to the login page
-
-### 5. Login
-
-1. Enter your username and password
-2. Click "Login"
-3. You'll see your todo list
-
-### 6. Manage Todos
-
-- **Add Todo:** Type in the input box and press Enter
-- **Complete Todo:** Click the checkbox
-- **Delete Todo:** Click the delete button
-- **Filter:** Use All/Active/Completed tabs
-
 ## Configuration
 
 ### Main Configuration
@@ -211,8 +174,7 @@ https://localhost:8443/
 
 ```yaml
 # Application
-application:
-  name: "todo"
+application.name: "todo"
 
 # Instance
 instance:
@@ -227,15 +189,6 @@ jetty:
     ssl:
       port: 8443
 
-# Certificates
-certificates:
-  dnsNames:
-    - localhost
-    - "{{ instance.host }}"
-  ipAddresses:
-    - 127.0.0.1
-    - "{{ instance.ip }}"
-
 # REST API Resources
 jersey.server.register:
   - com.exoreaction.xorcery.examples.todo.resources.AuthenticationRequiredFilter
@@ -243,401 +196,344 @@ jersey.server.register:
   - com.exoreaction.xorcery.examples.todo.resources.api.SignupResource
   - com.exoreaction.xorcery.examples.todo.resources.api.AccountResource
 
-# DNS Client
-dns.client.search:
-  - local
-dns.client.hosts:
-  _certificates._sub._https._tcp: "https://127.0.0.1"
-dns.client.nameServers:
-  - 127.0.0.1:8853
+# DNS Configuration
+dns:
+  server:
+    port: 8853
+  client:
+    search:
+      - local
+    nameServers:
+      - 127.0.0.1:8853
 
 # JWT Security
 jetty.server.security.jwt:
   issuers:
     server.xorcery.test:
       keys:
-        - kid: "2d3f1d1f-4038-4c01-beb7-97b260462ada"
-          alg: "ES256"
-          publicKey: "secret:MFkwEw..."
+      - kid: "2d3f1d1f-4038-4c01-beb7-97b260462ada"
+        alg: "ES256"
+        publicKey: "secret:MFkwEw..."
 
-# JWT Server (for issuing tokens)
 jwt.server.keys:
   - kid: "2d3f1d1f-4038-4c01-beb7-97b260462ada"
     alg: "ES256"
     publicKey: "secret:MFkwEw..."
     privateKey: "secret:MEECAQAw..."
 
-# DNS Server
-dns.server.port: 8853
-
 # Neo4j
 neo4j:
   enabled: true
   embedded: true
-  home: "{{ instance.home }}/neo4j"
-
-# Logging
-log4j2:
-  Configuration:
-    status: warn
-    Loggers:
-      Root:
-        level: info
-      Logger:
-        - name: com.exoreaction.xorcery.examples.todo
-          level: debug
 ```
 
-### Environment-Specific Configuration
+### Test Configuration
 
-**Production configuration** (`xorcery-production.yaml`):
-
-```yaml
-jetty.server:
-  ssl:
-    port: 443
-
-neo4j:
-  embedded: false
-  uri: "neo4j://neo4j-prod:7687"
-  username: "neo4j"
-  password: "{{ SECRETS.neo4j.password }}"
-
-jwt.server.keys:
-  - kid: "prod-key-id"
-    alg: "ES256"
-    publicKey: "{{ SECRETS.jwt.publicKey }}"
-    privateKey: "{{ SECRETS.jwt.privateKey }}"
-
-log4j2:
-  Configuration:
-    Loggers:
-      Root:
-        level: warn
-```
-
-## API Documentation
-
-### Base URL
-
-```
-https://localhost:8443/api/
-```
-
-### Authentication
-
-Most endpoints require a JWT token in the Authorization header:
-
-```http
-Authorization: Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9...
-```
-
-### Endpoints
-
-#### Signup
-
-```http
-POST /api/signup
-Content-Type: application/x-www-form-urlencoded
-
-username=john&email=john@example.com&password=secret123
-```
-
-**Response:**
-```http
-302 Redirect to /login
-```
-
-#### Login
-
-```http
-POST /api/account/login
-Content-Type: application/x-www-form-urlencoded
-
-username=john&password=secret123
-```
-
-**Response:**
-```json
-{
-  "token": "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "expiresIn": 3600
-}
-```
-
-#### Get Account
-
-```http
-GET /api/account
-Authorization: Bearer {token}
-```
-
-**Response:**
-```json
-{
-  "data": {
-    "type": "accounts",
-    "id": "user-123",
-    "attributes": {
-      "username": "john",
-      "email": "john@example.com",
-      "createdAt": "2025-01-08T10:00:00Z"
-    }
-  }
-}
-```
-
-#### List Todos
-
-```http
-GET /api/todos
-Authorization: Bearer {token}
-```
-
-**Query parameters:**
-- `filter[status]` - "active", "completed", or "all"
-- `page[offset]` - Pagination offset
-- `page[limit]` - Items per page
-
-**Response:**
-```json
-{
-  "data": [
-    {
-      "type": "todos",
-      "id": "todo-123",
-      "attributes": {
-        "title": "Buy groceries",
-        "completed": false,
-        "createdAt": "2025-01-08T10:00:00Z"
-      }
-    }
-  ],
-  "links": {
-    "self": "/api/todos",
-    "next": "/api/todos?page[offset]=10"
-  }
-}
-```
-
-#### Create Todo
-
-```http
-POST /api/todos
-Authorization: Bearer {token}
-Content-Type: application/vnd.api+json
-
-{
-  "data": {
-    "type": "todos",
-    "attributes": {
-      "title": "Learn Xorcery"
-    }
-  }
-}
-```
-
-#### Update Todo
-
-```http
-PATCH /api/todos/{todoId}
-Authorization: Bearer {token}
-Content-Type: application/vnd.api+json
-
-{
-  "data": {
-    "type": "todos",
-    "id": "todo-123",
-    "attributes": {
-      "title": "Learn Xorcery framework",
-      "completed": true
-    }
-  }
-}
-```
-
-#### Delete Todo
-
-```http
-DELETE /api/todos/{todoId}
-Authorization: Bearer {token}
-```
+Tests automatically configure:
+- Random SSL port to avoid conflicts
+- Disabled DNS registration
+- Embedded Neo4j
+- Local DNS server and client
 
 ## Domain Model
 
 ### Aggregates
 
-#### User Aggregate
+#### UserEntity
 
 ```java
-public class User {
-    private String id;
-    private String username;
-    private String email;
-    private String passwordHash;
-    private List<String> roles;
-    private LocalDateTime registeredAt;
-}
+@Create
+public record Signup(String id, String email, String password) implements Command {}
 ```
 
-#### Todo Aggregate
+**Events:** `UserRegistered`
+
+#### ProjectEntity
 
 ```java
-public class Todo {
-    private String id;
-    private String userId;
-    private String title;
-    private boolean completed;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-}
+@Create
+public record CreatePost(String id, String title, String body) implements Command {}
+
+@Update
+public record UpdatePost(String id, String title, String body) implements Command {}
 ```
+
+**Events:** `createdpost`, `updatedpost`
+
+#### TaskEntity
+
+```java
+@Create
+public record AddTask(String id, String projectId, String description) implements Command {}
+
+@Update
+public record UpdateTask(String id, String description) implements Command {}
+
+@Delete
+public record RemoveTask(String id) implements Command {}
+```
+
+**Events:** `TaskCreated`, `TaskUpdated`, `TaskRemoved`
 
 ### Domain Events
 
-#### User Events
-- `UserRegistered` - New user account created
-- `UserLoggedIn` - User authenticated
-- `ProfileUpdated` - User profile modified
-
-#### Todo Events
-- `TodoCreated` - New todo item added
-- `TodoUpdated` - Todo title changed
-- `TodoCompleted` - Todo marked as done
-- `TodoReopened` - Completed todo marked as active
-- `TodoDeleted` - Todo removed
+All events follow the JSON Domain Event format and include:
+- Event type
+- Entity type and ID
+- Attribute updates
+- Relationship changes
+- Metadata (timestamp, correlation ID, etc.)
 
 ### Neo4j Graph Model
 
-```
-(User {id, username, email})
-(Todo {id, title, completed, createdAt})
-
-(User)-[:OWNS]->(Todo)
-(Todo)-[:BELONGS_TO]->(User)
-```
-
-**Cypher queries:**
-
 ```cypher
-// Get user's todos
-MATCH (u:User {id: $userId})-[:OWNS]->(t:Todo)
-RETURN t
+// Nodes
+(User {id, email, passwordHash, status})
+(Project {id, title, body})
+(Task {id, description})
 
-// Get active todos
-MATCH (u:User {id: $userId})-[:OWNS]->(t:Todo {completed: false})
-RETURN t
-
-// Count completed todos
-MATCH (u:User {id: $userId})-[:OWNS]->(t:Todo {completed: true})
-RETURN count(t) as completedCount
+// Relationships
+(Project)-[:ProjectTasks]->(Task)
 ```
 
-## Authentication & Authorization
+## Testing
 
-### JWT Token Structure
+### Run All Tests
 
-```json
-{
-  "sub": "user-123",
-  "username": "john",
-  "email": "john@example.com",
-  "roles": ["user"],
-  "iss": "server.xorcery.test",
-  "iat": 1704708000,
-  "exp": 1704711600
-}
+```bash
+mvn test
 ```
 
-### Authentication Filter
+### Current Tests
+
+1. **testApplicationStarts** - Verifies the application initializes correctly
+2. **testServiceLocatorHasTodoApplication** - Checks service registration
+3. **testServerIsRunning** - Confirms HTTPS server is active
+
+### Test Structure
 
 ```java
-@Provider
-@Priority(Priorities.AUTHENTICATION)
-public class AuthenticationRequiredFilter implements ContainerRequestFilter {
-    
-    @Override
-    public void filter(ContainerRequestContext requestContext) {
-        // Skip authentication for public endpoints
-        if (isPublicEndpoint(requestContext.getUriInfo().getPath())) {
-            return;
-        }
-        
-        // Extract and validate JWT token
-        String authHeader = requestContext.getHeaderString("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            requestContext.abortWith(
-                Response.status(Response.Status.UNAUTHORIZED).build()
-            );
-            return;
-        }
-        
-        String token = authHeader.substring(7);
-        // Validate token and extract user info
-        // Set SecurityContext with user principal
-    }
-}
+@RegisterExtension
+static XorceryExtension xorceryExtension = XorceryExtension.xorcery()
+    .configuration(ConfigurationBuilder::addTestDefaults)
+    .addYaml("""
+        jetty.server.ssl.port: <random>
+        dns.registration.enabled: false
+        dns.server.enabled: true
+        dns.client.enabled: true
+        neo4j.enabled: true
+        neo4j.embedded: true
+        """)
+    .build();
 ```
 
-### Securing Endpoints
-
-Use the `@RequiresAuthentication` annotation:
+### Adding New Tests
 
 ```java
-@Path("/api/todos")
-public class TodoResource {
+@Test
+void testCustomFeature() throws Exception {
+    Configuration config = xorceryExtension.getServiceLocator()
+        .getService(Configuration.class);
     
-    @GET
-    @RequiresAuthentication
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getTodos(@Context SecurityContext securityContext) {
-        String userId = securityContext.getUserPrincipal().getName();
-        // Return user's todos
-    }
+    // Your test logic here
 }
 ```
 
-## Web UI
+## Project Structure
 
-### Pages
+```
+xorcery-examples-todo/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/exoreaction/xorcery/examples/todo/
+│   │   │       ├── Main.java
+│   │   │       ├── TodoService.java
+│   │   │       ├── contexts/          # Domain contexts
+│   │   │       │   ├── SignupContext.java
+│   │   │       │   ├── PostContext.java
+│   │   │       │   ├── PostsContext.java
+│   │   │       │   ├── PostCommentsContext.java
+│   │   │       │   └── CommentContext.java
+│   │   │       ├── entities/          # Domain entities
+│   │   │       │   ├── DomainModel.java
+│   │   │       │   ├── UserEntity.java
+│   │   │       │   ├── ProjectEntity.java
+│   │   │       │   └── TaskEntity.java
+│   │   │       ├── model/             # Read models
+│   │   │       │   ├── ForumModel.java
+│   │   │       │   ├── PostModel.java
+│   │   │       │   ├── Posts.java
+│   │   │       │   ├── CommentModel.java
+│   │   │       │   └── Comments.java
+│   │   │       └── resources/         # REST API
+│   │   │           ├── TodoApplication.java
+│   │   │           ├── AuthenticationRequiredFilter.java
+│   │   │           ├── RequiresAuthentication.java
+│   │   │           └── api/
+│   │   │               ├── SignupResource.java
+│   │   │               ├── AccountResource.java
+│   │   │               ├── ThymeleafResource.java
+│   │   │               └── StaticContentResource.java
+│   │   └── resources/
+│   │       ├── xorcery.yaml
+│   │       └── WEB-INF/
+│   │           └── templates/         # Thymeleaf templates (to be added)
+│   │               ├── layoutFile.html
+│   │               ├── signup.html
+│   │               └── account.html
+│   └── test/
+│       └── java/
+│           └── com/exoreaction/xorcery/examples/todo/
+│               └── TodoServiceTest.java
+├── pom.xml
+└── README.md
+```
 
-#### Signup Page (`/signup`)
+## Next Steps
 
-- Username input
-- Email input
-- Password input
-- Create Account button
-- Link to Login page
+### Immediate TODOs
 
-#### Login Page (`/login`)
+1. **Create Thymeleaf Templates**
+    - signup.html - User registration form
+    - account.html - User account page
+    - layoutFile.html - Base layout template
 
-- Username input
-- Password input
-- Login button
-- Link to Signup page
+2. **Implement REST Endpoints**
+    - POST /todo/signup - User registration
+    - GET /todo/account - User account details
+    - GET /api/projects - List projects
+    - POST /api/projects - Create project
+    - GET /api/projects/{id}/tasks - List tasks
+    - POST /api/projects/{id}/tasks - Add task
 
-#### Account Page (`/account`)
+3. **Add Functional Tests**
+    - User signup flow
+    - Project creation
+    - Task management
+    - Event sourcing verification
 
-- Display username
-- Display email
-- Edit profile button
-- Logout button
-- Link to Todo list
+4. **Enhance Security**
+    - Password hashing (bcrypt)
+    - Role-based access control
+    - Token refresh mechanism
 
-#### Todo List Page (`/todos`)
+### Future Enhancements
 
-- Add new todo input
-- Filter tabs (All / Active / Completed)
-- Todo list with checkboxes
-- Delete buttons
-- Item count
-- Clear completed button
+- **EventStore Integration** - Persistent event store
+- **WebSocket UI Updates** - Real-time updates via reactive streams
+- **Search Functionality** - Full-text search with Neo4j
+- **Multi-tenant Support** - Isolated user workspaces
+- **Audit Trail UI** - Visualize event history
+- **API Documentation** - OpenAPI/Swagger integration
 
-### Thymeleaf Templates
+## Troubleshooting
 
-Templates are in `src/main/resources/WEB-INF/templates/`:
+### Application Won't Start
 
-- `layoutFile.html` - Base layout with header/footer
-- `signup.html` - Signup form
-- `account.html` - Account management
-- `todos.html
+**Problem:** `DnsLookupService not found`
+
+**Solution:** Ensure all DNS dependencies are in pom.xml:
+```xml
+<dependency>
+    <groupId>dev.xorcery</groupId>
+    <artifactId>xorcery-dns-server</artifactId>
+</dependency>
+<dependency>
+    <groupId>dev.xorcery</groupId>
+    <artifactId>xorcery-dns-client</artifactId>
+</dependency>
+```
+
+**Problem:** `DNS registration failed`
+
+**Solution:** Disable DNS registration in tests:
+```yaml
+dns.registration.enabled: false
+```
+
+### Tests Failing
+
+**Problem:** Port conflicts
+
+**Solution:** Tests use `Sockets.nextFreePort()` to find available ports automatically. If issues persist, ensure no other services are running on ports 8443, 8853, or 7687.
+
+**Problem:** Template not found errors
+
+**Solution:** This is expected until Thymeleaf templates are created. Use tests that don't require templates (like `testApplicationStarts`).
+
+### Build Issues
+
+**Problem:** Compilation errors with package names
+
+**Solution:** Ensure you're using the correct package structure:
+- Old: `com.exoreaction.xorcery.*`
+- New: `dev.xorcery.*`
+
+**Problem:** Version mismatches
+
+**Solution:** Parent POM version should match: `1.166.10-SNAPSHOT`
+Xorcery BOM version: `0.166.9`
+
+### Neo4j Issues
+
+**Problem:** Neo4j won't start
+
+**Solution:** Delete the Neo4j data directory:
+```bash
+rm -rf neo4j/
+```
+
+**Problem:** Can't access Neo4j browser
+
+**Solution:** Embedded Neo4j doesn't expose the browser by default. Use the Neo4j client API or switch to standalone Neo4j.
+
+## Dependencies
+
+### Core Framework
+- Xorcery 0.166.9
+- HK2 3.1.1 (dependency injection)
+- Jersey 3.1.3 (JAX-RS)
+
+### Domain & Persistence
+- Xorcery Domain Events
+- Neo4j Embedded
+- Jackson 2.20.0
+
+### Web & Security
+- Jetty Server
+- JWT (ES256 algorithm)
+- Thymeleaf templates
+- SSL/TLS with automatic certificates
+
+### Infrastructure
+- DNS Server & Client
+- Reactive Streams (WebSocket)
+- Log4j2 2.25.2
+
+### Testing
+- JUnit 5.6.0
+- Xorcery JUnit Extension
+
+## Contributing
+
+To contribute to this example:
+
+1. Follow the existing code structure
+2. Add tests for new features
+3. Update this README
+4. Ensure `mvn clean install` passes
+
+## License
+
+This example is part of the Xorcery project.
+
+## Support
+
+For issues or questions:
+- GitHub Issues: https://github.com/Cantara/xorcery-examples
+- Xorcery Documentation: https://github.com/Cantara/xorcery
+
+---
+
+**Status:** ✅ Building and Running | 🚧 UI In Progress | 📝 Documentation Complete
