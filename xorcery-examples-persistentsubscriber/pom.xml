@@ -30,6 +30,26 @@
             <groupId>dev.xorcery</groupId>
             <artifactId>xorcery-configuration-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>dev.xorcery</groupId>
+            <artifactId>xorcery-configuration</artifactId>
+        </dependency>
+
+        <!-- Domain Events -->
+        <dependency>
+            <groupId>dev.xorcery</groupId>
+            <artifactId>xorcery-domainevents-api</artifactId>
+        </dependency>
+
+        <!-- Neo4j - Embedded and Projections -->
+        <dependency>
+            <groupId>dev.xorcery</groupId>
+            <artifactId>xorcery-neo4j-embedded</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dev.xorcery</groupId>
+            <artifactId>xorcery-neo4j-projections</artifactId>
+        </dependency>
 
         <!-- Reactive Streams -->
         <dependency>
@@ -41,14 +61,7 @@
             <artifactId>xorcery-reactivestreams-client</artifactId>
         </dependency>
 
-        <!-- Persistent subscriber module - NOT AVAILABLE in Xorcery 0.166.9 -->
-        <!--
-        <dependency>
-            <groupId>dev.xorcery</groupId>
-            <artifactId>xorcery-reactivestreams-persistentsubscriber</artifactId>
-        </dependency>
-        -->
-
+        <!-- OpenTelemetry -->
         <dependency>
             <groupId>dev.xorcery</groupId>
             <artifactId>xorcery-opentelemetry-sdk</artifactId>
@@ -64,7 +77,7 @@
             <artifactId>xorcery-log4j</artifactId>
         </dependency>
 
-        <!-- Tests -->
+        <!-- Testing -->
         <dependency>
             <groupId>dev.xorcery</groupId>
             <artifactId>xorcery-junit</artifactId>

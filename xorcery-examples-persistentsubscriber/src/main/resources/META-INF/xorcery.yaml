@@ -1,15 +1,169 @@
-persistentsubscribers:
-  subscribers:
-      # Service name annotation
-    - name: examplesubscriber
-      # Override this with actual server URI
-      uri: "{{ reactivestreams.server.uri }}"
-      # Name of stream to read, has to be in metadata+domainevents format
-      stream: "testevents"
-      # Check point, error, and recovery files
-      checkpoint: "{{ instance.home }}/examplesubscriber/checkpoint.yaml"
-      errors: "{{ instance.home }}/examplesubscriber/errors.yaml"
-      recovery: "{{ instance.home }}/examplesubscriber/recovery.yaml"
-      # This configuration is sent to publisher on connect. Publisher can customize stream based on these settings
-      configuration:
-        environment: "{{ instance.environment }}"
+# Xorcery Persistent Subscriber Example Configuration
+# Using Neo4j Projections (replaces old persistent subscriber)
+
+instance:
+  id: "{{ instance.host }}"
+  host: "{{ CALCULATED.hostName }}"
+  fqdn: "{{ CALCULATED.fqdn }}"
+  ip: "{{ CALCULATED.ip }}"
+  domain: "xorcery.test"
+  environment: "development"
+  tags:
+    - "persistentsubscriber"
+    - "neo4j-projection"
+
+# Application metadata
+application:
+  name: "xorcery-examples-persistentsubscriber"
+  version: "1.166.1-SNAPSHOT"
+
+# Jetty server configuration (if needed for APIs/monitoring)
+jetty:
+  server:
+    enabled: true
+    http:
+      enabled: true
+      port: 8080
+    ssl:
+      enabled: false
+
+# Neo4j Configuration
+neo4j:
+  enabled: true
+  # Embedded Neo4j database
+  uri: "neo4j://localhost:7687"
+  # For embedded database (no authentication needed)
+  # For remote database, uncomment and configure:
+  # username: "neo4j"
+  # password: "{{ SECRETS.neo4j.password }}"
+  
+  # Database settings
+  database: "neo4j"
+  
+  # Embedded Neo4j directory
+  home: "{{ instance.home }}/neo4j"
+  
+  # Performance settings
+  configuration:
+    dbms.memory.heap.initial_size: "512m"
+    dbms.memory.heap.max_size: "1G"
+    dbms.memory.pagecache.size: "512m"
+
+# Neo4j Projections Configuration
+neo4jprojections:
+  enabled: true
+  
+  # Define projections
+  projections:
+    # Example persistent subscriber projection
+    - name: "examplesubscriber"
+      # Stream to subscribe to
+      stream: "applications"
+      # Batch size for processing events
+      batchSize: 100
+      # Timeout for processing batch (in seconds)
+      timeout: 30
+      # Retry configuration
+      retries: 3
+      retryDelay: 1000
+
+# Reactive Streams Configuration
+reactivestreams:
+  server:
+    enabled: true
+    # WebSocket endpoints for publishing events
+    streams:
+      - name: "applications"
+        path: "/streams/applications"
+
+# OpenTelemetry Configuration
+opentelemetry:
+  enabled: true
+  serviceName: "persistentsubscriber"
+  
+  # Metrics configuration
+  metrics:
+    enabled: true
+    exportIntervalMillis: 60000
+  
+  # Tracing configuration  
+  traces:
+    enabled: true
+    samplerProbability: 1.0
+  
+  # Logs configuration
+  logs:
+    enabled: true
+
+# Logging Configuration
+log4j:
+  Configuration:
+    status: INFO
+    
+    Appenders:
+      Console:
+        - name: STDOUT
+          target: SYSTEM_OUT
+          PatternLayout:
+            Pattern: "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
+      
+      # File appender for persistent subscriber logs
+      RollingFile:
+        - name: ProjectionFile
+          fileName: "{{ instance.home }}/logs/projection.log"
+          filePattern: "{{ instance.home }}/logs/projection-%d{yyyy-MM-dd}-%i.log.gz"
+          PatternLayout:
+            Pattern: "%d{ISO8601} [%t] %-5level %logger{36} - %msg%n"
+          Policies:
+            SizeBasedTriggeringPolicy:
+              size: "10MB"
+            TimeBasedTriggeringPolicy:
+              interval: 1
+              modulate: true
+          DefaultRolloverStrategy:
+            max: 10
+    
+    Loggers:
+      Logger:
+        # Application logging
+        - name: com.exoreaction.xorcery.examples.persistentsubscriber
+          level: DEBUG
+          additivity: false
+          AppenderRef:
+            - ref: STDOUT
+            - ref: ProjectionFile
+        
+        # Neo4j projections logging
+        - name: dev.xorcery.neo4jprojections
+          level: DEBUG
+          additivity: false
+          AppenderRef:
+            - ref: STDOUT
+            - ref: ProjectionFile
+        
+        # Neo4j logging
+        - name: org.neo4j
+          level: INFO
+          additivity: false
+          AppenderRef:
+            - ref: STDOUT
+        
+        # Xorcery framework logging
+        - name: dev.xorcery
+          level: INFO
+          additivity: false
+          AppenderRef:
+            - ref: STDOUT
+      
+      Root:
+        level: INFO
+        AppenderRef:
+          - ref: STDOUT
+
+# Health checks
+status:
+  spi:
+    neo4j:
+      enabled: true
+    projections:
+      enabled: true

@@ -35,6 +35,7 @@
         <module>xorcery-examples-greeter</module>
         <module>xorcery-examples-forum</module>
         <module>xorcery-examples-streaming</module>
+        <module>xorcery-examples-persistentsubscriber</module>
     </modules>
 
     <dependencyManagement>

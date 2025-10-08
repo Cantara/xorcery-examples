@@ -1,88 +1,31 @@
 - metadata:
-    timestamp: 1695117812950
-    host: "server"
-    commandType: "CreateApplication"
+    timestamp: 1234567890
+    domain: "applications"
+    commandName: "CreateApplication"
   events:
-    - '@class': "com.exoreaction.xorcery.domainevents.api.JsonDomainEvent"
-      event: "CreatedApplication"
-      created:
-        type: "Application"
-        id: "1"
-      attributes:
-        foo: "bar"
+    - eventType: "ApplicationCreated"
+      commandType: "CreateApplication"
+      applicationId: "app-001"
+      applicationName: "Test Application 1"
+      description: "First test application"
+
 - metadata:
-    timestamp: 1695117812950
-    host: "server"
-    commandType: "RegisterUser"
+    timestamp: 1234567891
+    domain: "applications"
+    commandName: "CreateApplication"
   events:
-    - '@class': "com.exoreaction.xorcery.domainevents.api.JsonDomainEvent"
-      event: "CreatedUser"
-      created:
-        type: "User"
-        id: "1234"
-      attributes:
-        name: ""
-    - '@class': "com.exoreaction.xorcery.domainevents.api.JsonDomainEvent"
-      event: "UpdatedUserName"
-      updated:
-        type: "User"
-        id: "1234"
-      attributes:
-        name: "Some Name"
+    - eventType: "ApplicationCreated"
+      commandType: "CreateApplication"
+      applicationId: "app-002"
+      applicationName: "Test Application 2"
+      description: "Second test application"
+
 - metadata:
-    timestamp: 1695117812950
-    host: "server"
-    commandType: "RegisterUser"
+    timestamp: 1234567892
+    domain: "applications"
+    commandName: "UpdateApplication"
   events:
-    - '@class': "com.exoreaction.xorcery.domainevents.api.JsonDomainEvent"
-      event: "CreatedUser"
-      created:
-        type: "User"
-        id: "1234"
-      attributes:
-        name: ""
-    - '@class': "com.exoreaction.xorcery.domainevents.api.JsonDomainEvent"
-      event: "UpdatedUserName"
-      updated:
-        type: "User"
-        id: "1234"
-      attributes:
-        name: "Some Name"
-- metadata:
-    timestamp: 1695117812950
-    host: "server"
-    commandType: "RegisterUser"
-  events:
-    - '@class': "com.exoreaction.xorcery.domainevents.api.JsonDomainEvent"
-      event: "CreatedUser"
-      created:
-        type: "User"
-        id: "1234"
-      attributes:
-        name: ""
-    - '@class': "com.exoreaction.xorcery.domainevents.api.JsonDomainEvent"
-      event: "UpdatedUserName"
-      updated:
-        type: "User"
-        id: "1234"
-      attributes:
-        name: "Some Name"
-- metadata:
-    timestamp: 1695117812950
-    host: "server"
-    commandType: "RegisterUser"
-  events:
-    - '@class': "com.exoreaction.xorcery.domainevents.api.JsonDomainEvent"
-      event: "CreatedUser"
-      created:
-        type: "User"
-        id: "1234"
-      attributes:
-        name: ""
-    - '@class': "com.exoreaction.xorcery.domainevents.api.JsonDomainEvent"
-      event: "UpdatedUserName"
-      updated:
-        type: "User"
-        id: "1234"
-      attributes:
-        name: "Some Name"
+    - eventType: "ApplicationUpdated"
+      commandType: "UpdateApplication"
+      applicationId: "app-001"
+      applicationName: "Updated Application 1"
