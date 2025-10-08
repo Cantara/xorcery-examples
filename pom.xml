@@ -4,7 +4,7 @@
 
     <groupId>com.exoreaction.xorcery.examples</groupId>
     <artifactId>xorcery-examples</artifactId>
-    <version>1.166.10-SNAPSHOT</version>
+    <version>1.166.15-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
