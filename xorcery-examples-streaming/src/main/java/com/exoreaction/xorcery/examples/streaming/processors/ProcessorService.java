@@ -4,6 +4,7 @@ import dev.xorcery.configuration.Configuration;
 import dev.xorcery.reactivestreams.api.client.ClientWebSocketOptions;
 import dev.xorcery.reactivestreams.api.client.ClientWebSocketStreamContext;
 import dev.xorcery.reactivestreams.api.client.ClientWebSocketStreams;
+import dev.xorcery.reactivestreams.api.server.ServerWebSocketOptions;
 import dev.xorcery.reactivestreams.api.server.ServerWebSocketStreams;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -20,13 +21,15 @@ import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.util.context.Context;
 
+import java.net.URI;
 import java.util.List;
 import java.util.function.Function;
 
 public abstract class ProcessorService
         implements PreDestroy, Publisher<JsonNode> {
     private final Disposable disposable;
-    private final Flux<JsonNode> upstreamPublisher;
+    private final ClientWebSocketStreams clientWebSocketStreams;
+    private final Function<Flux<JsonNode>, Publisher<JsonNode>> processorFunction;
     private final String processorName;
     private final Logger logger;
 
@@ -40,19 +43,22 @@ public abstract class ProcessorService
     ) {
         this.processorName = processorName;
         this.logger = logger;
-        disposable = serverWebSocketStreams.publisher(processorName, JsonNode.class, this);
-        upstreamPublisher = clientWebSocketStreams.subscribe(ClientWebSocketOptions.instance(), JsonNode.class).transformDeferred(processorFunction);
+        this.clientWebSocketStreams = clientWebSocketStreams;
+        this.processorFunction = processorFunction;
+        disposable = serverWebSocketStreams.publisher(processorName, ServerWebSocketOptions.instance(), JsonNode.class, this);
         logger.info("Processor {} started", processorName);
-
     }
 
     @Override
     public void subscribe(Subscriber<? super JsonNode> subscriber) {
         if (subscriber instanceof CoreSubscriber<? super JsonNode> coreSubscriber) {
             List<String> upstream = coreSubscriber.currentContext().get("upstream");
-            String serverUri = upstream.remove(0);
+            String serverUriString = upstream.remove(0);
+            URI serverUri = URI.create(serverUriString);
             logger.info("Processor {} connecting to {}", processorName, serverUri);
-            upstreamPublisher
+
+            clientWebSocketStreams.subscribe(serverUri, ClientWebSocketOptions.instance(), JsonNode.class)
+                    .transformDeferred(processorFunction)
                     .contextWrite(context -> Context.of(ClientWebSocketStreamContext.serverUri, serverUri, "upstream", upstream))
                     .subscribe(subscriber);
         }

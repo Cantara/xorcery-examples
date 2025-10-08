@@ -1,7 +1,8 @@
 package com.exoreaction.xorcery.examples.streaming.source;
 
-import com.exoreaction.xorcery.configuration.Configuration;
-import com.exoreaction.xorcery.reactivestreams.api.server.ServerWebSocketStreams;
+import dev.xorcery.configuration.Configuration;
+import dev.xorcery.reactivestreams.api.server.ServerWebSocketOptions;
+import dev.xorcery.reactivestreams.api.server.ServerWebSocketStreams;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import jakarta.inject.Inject;
@@ -19,7 +20,7 @@ import java.util.stream.IntStream;
 @Service(name="source")
 @RunLevel(10)
 public class SourceService
-    implements PreDestroy
+        implements PreDestroy
 {
     private final Disposable disposable;
 
@@ -29,7 +30,7 @@ public class SourceService
         Publisher<JsonNode> publisher = Flux.fromIterable(source)
                 .doOnSubscribe(s -> System.out.println("Subscribe to source"))
                 .map(val -> JsonNodeFactory.instance.objectNode().set("value", JsonNodeFactory.instance.numberNode(val)));
-        disposable = serverWebSocketStreams.publisher("source", JsonNode.class, publisher);
+        disposable = serverWebSocketStreams.publisher("source", ServerWebSocketOptions.instance(), JsonNode.class, publisher);
         logger.info("Source started");
     }
 

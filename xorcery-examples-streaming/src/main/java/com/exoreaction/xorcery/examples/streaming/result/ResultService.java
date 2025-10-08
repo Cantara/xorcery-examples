@@ -1,10 +1,10 @@
 package com.exoreaction.xorcery.examples.streaming.result;
 
-import com.exoreaction.xorcery.configuration.Configuration;
-import com.exoreaction.xorcery.core.Xorcery;
-import com.exoreaction.xorcery.reactivestreams.api.client.ClientWebSocketOptions;
-import com.exoreaction.xorcery.reactivestreams.api.client.ClientWebSocketStreamContext;
-import com.exoreaction.xorcery.reactivestreams.api.client.ClientWebSocketStreams;
+import dev.xorcery.configuration.Configuration;
+import dev.xorcery.core.Xorcery;
+import dev.xorcery.reactivestreams.api.client.ClientWebSocketOptions;
+import dev.xorcery.reactivestreams.api.client.ClientWebSocketStreamContext;
+import dev.xorcery.reactivestreams.api.client.ClientWebSocketStreams;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.inject.Inject;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +14,7 @@ import org.jvnet.hk2.annotations.Service;
 import reactor.core.Disposable;
 import reactor.util.context.Context;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,10 +39,11 @@ public class ResultService
         List<String> upstream = new ArrayList<>(processors);
         Collections.reverse(upstream);
         upstream.add(source);
-        String serverUri = upstream.remove(0);
+        String serverUriString = upstream.remove(0);
+        URI serverUri = URI.create(serverUriString);
 
         logger.info("Result starting streaming from " + source);
-        disposable = clientWebSocketStreams.subscribe(ClientWebSocketOptions.instance(), JsonNode.class)
+        disposable = clientWebSocketStreams.subscribe(serverUri, ClientWebSocketOptions.instance(), JsonNode.class)
                 .contextWrite(Context.of(ClientWebSocketStreamContext.serverUri, serverUri, "upstream", upstream))
                 .doOnTerminate(()-> CompletableFuture.runAsync(xorcery::close))
                 .subscribe(json -> System.out.println(json.toPrettyString()));
