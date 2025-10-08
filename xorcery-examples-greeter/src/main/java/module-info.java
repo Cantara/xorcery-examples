@@ -9,6 +9,7 @@ open module xorcery.examples.greeter {
     requires transitive xorcery.thymeleaf.jsonapi;
     requires xorcery.runner;
 
+    requires xorcery.configuration;  // Added for tests (ConfigurationBuilder)
     requires xorcery.domainevents.api;
     requires xorcery.domainevents.publisher;
     requires xorcery.neo4j.embedded;
