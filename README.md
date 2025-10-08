@@ -469,13 +469,13 @@ Contributions are welcome! Please:
 
 This examples repository uses:
 - **Xorcery:** 0.132.5
-- **Java:** 17+
+- **Java:** 21+
 - **Maven:** 3.8+
 
 ### Recent Updates
 
 - Removed deprecated `ServiceResourceObjects` API
-- Updated to Xorcery 0.132.5
+- Updated to Xorcery 0.166.9
 - Migrated to new service discovery mechanisms
 - Updated module dependencies
 
@@ -492,21 +492,3 @@ This project is licensed under the Apache License 2.0 - see the LICENSE file for
 ---
 
 **Built with ❤️ by the Cantara team**
-```
-
-This comprehensive README includes:
-
-1. ✅ **Clear overview** of what Xorcery is
-2. ✅ **Prerequisites** and setup instructions
-3. ✅ **Detailed description** of each example with use cases
-4. ✅ **Building and running** instructions (multiple methods)
-5. ✅ **Docker Compose** setup for dependencies
-6. ✅ **Project structure** overview
-7. ✅ **Configuration** examples and environment variables
-8. ✅ **Technology stack** with versions
-9. ✅ **Troubleshooting** section for common issues
-10. ✅ **Documentation links** and resources
-11. ✅ **Contributing** guidelines
-12. ✅ **Version compatibility** information
-
-Would you like me to adjust anything or add more details to specific sections?
