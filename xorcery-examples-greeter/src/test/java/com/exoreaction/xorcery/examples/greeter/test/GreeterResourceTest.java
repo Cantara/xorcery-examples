@@ -14,6 +14,8 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.net.URI;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class GreeterResourceTest {
 
     @RegisterExtension
@@ -44,7 +46,34 @@ class GreeterResourceTest {
                     .path("/api/greeter")
                     .request()
                     .post(Entity.form(new Form().param("greeting", "HelloWorld!")), String.class);
-            System.out.println(content);
+            // We should expect the new greeting to be in the returned html content
+            // if not, the event projection into neo4j, or the reading of the greeting from neo4j, is not working
+            assertEquals("""
+            <html lang="en">
+            <head>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+                      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+                        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+                        crossorigin="anonymous"></script>
+            
+                <title>Greeter</title>
+            </head>
+            <body class="bg-secondary container mt-3">
+            
+            <div class="card">
+                <div class="card-title">
+                    Greeting:<span>HelloWorld!</span>
+                </div>
+            
+                <form method="POST" action="" class="card-body">
+                    <input name="greeting" type="text"/>
+                    <input type="submit" value="Submit">
+                </form>
+            </div>
+            </body>
+            </html>
+            """.stripIndent(), content);
         }
     }
 }
