@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.exoreaction.xorcery.examples</groupId>
         <artifactId>xorcery-examples</artifactId>
-        <version>1.166.15</version>
+        <version>1.166.16-SNAPSHOT</version>
     </parent>
 
     <artifactId>xorcery-examples-streaming</artifactId>
