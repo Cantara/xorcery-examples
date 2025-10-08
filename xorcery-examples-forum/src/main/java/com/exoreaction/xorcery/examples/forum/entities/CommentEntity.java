@@ -1,19 +1,19 @@
 package com.exoreaction.xorcery.examples.forum.entities;
 
-import com.exoreaction.xorcery.domainevents.api.JsonDomainEvent;
-import com.exoreaction.xorcery.domainevents.entity.Command;
-import com.exoreaction.xorcery.domainevents.entity.Entity;
-import com.exoreaction.xorcery.domainevents.entity.annotation.Create;
-import com.exoreaction.xorcery.domainevents.entity.annotation.Delete;
-import com.exoreaction.xorcery.domainevents.entity.annotation.Update;
+import dev.xorcery.domainevents.api.DomainEvent;
+import dev.xorcery.domainevents.command.Command;
+import dev.xorcery.domainevents.entity.Entity;
+import dev.xorcery.domainevents.command.annotation.Create;
+import dev.xorcery.domainevents.command.annotation.Update;
+import dev.xorcery.domainevents.command.annotation.Delete;
 
-import static com.exoreaction.xorcery.domainevents.api.JsonDomainEvent.event;
+import static dev.xorcery.domainevents.api.JsonDomainEvent.event;
 
 public class CommentEntity
-        extends Entity<CommentEntity.CommentSnapshot> {
+        extends Entity {
 
     @Create
-    public record AddComment(String id, String body)
+    public record CreateComment(String id, String postId, String body)
             implements Command {
     }
 
@@ -23,15 +23,11 @@ public class CommentEntity
     }
 
     @Delete
-    public record RemoveComment(String id)
+    public record DeleteComment(String id)
             implements Command {
     }
 
-    public static class CommentSnapshot {
-        public String body;
-    }
-
-    public void handle(AddComment command) {
+    public void handle(CreateComment command) {
         add(event("addedcomment")
                 .created("Comment", command.id)
                 .updatedAttribute("body", command.body)
@@ -40,7 +36,10 @@ public class CommentEntity
     }
 
     public void handle(UpdateComment command) {
-        if (snapshot.body.equals(command.body))
+        // Access the snapshot through the Element API
+        String currentBody = snapshot.getString("body").orElse("");
+
+        if (currentBody.equals(command.body))
             return;
 
         add(event("updatedcomment")
@@ -49,7 +48,7 @@ public class CommentEntity
                 .build());
     }
 
-    public void handle(RemoveComment command) {
-        add(event("removedcomment").deleted("Comment", command.id));
+    public void handle(DeleteComment command) {
+        add(event("removedcomment").deleted("Comment", command.id()));
     }
 }

@@ -1,10 +1,11 @@
 package com.exoreaction.xorcery.examples.greeter;
 
-import com.exoreaction.xorcery.configuration.Configuration;
-import com.exoreaction.xorcery.domainevents.api.MetadataEvents;
-import com.exoreaction.xorcery.neo4jprojections.api.Neo4jProjections;
-import com.exoreaction.xorcery.neo4jprojections.api.ProjectionStreamContext;
-import com.exoreaction.xorcery.reactivestreams.api.server.ServerWebSocketStreams;
+import dev.xorcery.configuration.Configuration;
+import dev.xorcery.domainevents.api.MetadataEvents;
+import dev.xorcery.neo4jprojections.api.Neo4jProjections;
+import dev.xorcery.neo4jprojections.api.ProjectionStreamContext;
+import dev.xorcery.reactivestreams.api.server.ServerWebSocketOptions;
+import dev.xorcery.reactivestreams.server.ServerWebSocketStreamsService;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.glassfish.hk2.api.PreDestroy;
@@ -23,14 +24,18 @@ public class GreeterService
 
     @Inject
     public GreeterService(Configuration configuration,
-                          ServerWebSocketStreams serverWebSocketStreams,
+                          ServerWebSocketStreamsService serverWebSocketStreams,
                           Neo4jProjections neo4jProjections) {
 
-        subscriber = serverWebSocketStreams.subscriberWithResult("projections/greeter", MetadataEvents.class, MetadataEvents.class,
+        subscriber = serverWebSocketStreams.subscriberWithResult(
+                "projections/greeter",
+                ServerWebSocketOptions.instance(),
+                MetadataEvents.class,
+                MetadataEvents.class,
                 flux -> flux.transformDeferredContextual(neo4jProjections.projection())
                         .contextWrite(Context.of(ProjectionStreamContext.projectionId, "greeter")));
 
-        // Note: The ServiceResourceObjects registration has been removed in Xorcery 0.132.5
+        // Note: The ServiceResourceObjects registration has been removed in Xorcery 0.166.9
         // Service metadata registration is now handled through other mechanisms such as:
         // - DNS registration (via xorcery-dns-registration)
         // - Service discovery mechanisms built into the framework

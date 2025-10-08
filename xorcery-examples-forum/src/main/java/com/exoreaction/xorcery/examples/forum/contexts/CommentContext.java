@@ -1,9 +1,9 @@
 package com.exoreaction.xorcery.examples.forum.contexts;
 
-import com.exoreaction.xorcery.domainevents.context.CommandMetadata;
-import com.exoreaction.xorcery.domainevents.context.CommandResult;
-import com.exoreaction.xorcery.domainevents.context.DomainContext;
-import com.exoreaction.xorcery.domainevents.entity.Command;
+import dev.xorcery.domainevents.context.CommandMetadata;
+import dev.xorcery.domainevents.context.CommandResult;
+import dev.xorcery.domainevents.context.DomainContext;
+import dev.xorcery.domainevents.command.Command;
 import com.exoreaction.xorcery.examples.forum.entities.CommentEntity;
 import com.exoreaction.xorcery.examples.forum.model.CommentModel;
 import com.exoreaction.xorcery.examples.forum.resources.ForumApplication;
@@ -12,19 +12,19 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-import static com.exoreaction.xorcery.domainevents.context.CommandMetadata.Builder.aggregate;
-
-public record CommentContext(ForumApplication forumApplication, CommentModel model,
-                             Supplier<CommentEntity> commentEntitySupplier)
+public record CommentContext(ForumApplication forumApplication, CommentModel model, Supplier<CommentEntity> commentEntitySupplier)
         implements DomainContext {
+
     @Override
     public List<Command> commands() {
-        return List.of(new CommentEntity.UpdateComment(model.getId(), model.getBody()),
-                new CommentEntity.RemoveComment(model.getId()));
+        return List.of(
+                new CommentEntity.UpdateComment(model.getId(), ""),
+                new CommentEntity.DeleteComment(model.getId())
+        );
     }
 
     @Override
-    public <T extends Command> CompletableFuture<CommandResult<T>> handle(CommandMetadata metadata, T command) {
-        return forumApplication.handle(commentEntitySupplier.get(), aggregate("PostAggregate", model.getAggregateId(), metadata.context()).context(), command);
+    public CompletableFuture<CommandResult> apply(CommandMetadata cm, Command command) {
+        return forumApplication.handle(commentEntitySupplier.get(), cm.context(), command);
     }
 }

@@ -6,72 +6,71 @@
         <groupId>com.exoreaction.xorcery.examples</groupId>
         <artifactId>xorcery-examples</artifactId>
         <version>1.166.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>xorcery-examples-greeter</artifactId>
-    <version>1.166.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <dependencies>
-        <!-- Core dependencies -->
+        <!-- Core dependencies - using dev.xorcery group ID -->
         <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
+            <groupId>dev.xorcery</groupId>
             <artifactId>xorcery-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
+            <groupId>dev.xorcery</groupId>
             <artifactId>xorcery-runner</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
+            <groupId>dev.xorcery</groupId>
             <artifactId>xorcery-metadata</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
+            <groupId>dev.xorcery</groupId>
             <artifactId>xorcery-configuration-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
+            <groupId>dev.xorcery</groupId>
             <artifactId>xorcery-json</artifactId>
         </dependency>
 
         <!-- REST API -->
         <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
+            <groupId>dev.xorcery</groupId>
             <artifactId>xorcery-jersey-server</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
+            <groupId>dev.xorcery</groupId>
             <artifactId>xorcery-thymeleaf-jsonapi</artifactId>
+        </dependency>
+
+        <!-- Domain Events & Projections -->
+        <dependency>
+            <groupId>dev.xorcery</groupId>
+            <artifactId>xorcery-domainevents-publisher</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dev.xorcery</groupId>
+            <artifactId>xorcery-domainevents-neo4jprojection</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dev.xorcery</groupId>
+            <artifactId>xorcery-neo4j-embedded</artifactId>
         </dependency>
 
         <!-- Integration -->
         <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
+            <groupId>dev.xorcery</groupId>
             <artifactId>xorcery-jersey-client</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
+            <groupId>dev.xorcery</groupId>
             <artifactId>xorcery-reactivestreams-client</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
+            <groupId>dev.xorcery</groupId>
             <artifactId>xorcery-reactivestreams-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-neo4j-embedded</artifactId>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.glassfish.jersey.containers</groupId>
-                    <artifactId>jersey-container-servlet</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-domainevents-neo4jprojection</artifactId>
         </dependency>
 
         <!-- Logging -->
@@ -80,19 +79,19 @@
             <artifactId>log4j-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
-            <artifactId>xorcery-opentelemetry-log4j</artifactId>
+            <groupId>dev.xorcery</groupId>
+            <artifactId>xorcery-log4j</artifactId>
         </dependency>
 
-        <!-- These features can be extracted out into their own service -->
+        <!-- Security -->
         <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
+            <groupId>dev.xorcery</groupId>
             <artifactId>xorcery-certificates-ca</artifactId>
         </dependency>
 
         <!-- Test -->
         <dependency>
-            <groupId>com.exoreaction.xorcery</groupId>
+            <groupId>dev.xorcery</groupId>
             <artifactId>xorcery-junit</artifactId>
             <scope>test</scope>
         </dependency>
@@ -184,7 +183,7 @@
                                     <name>greeter</name>
                                     <appversion>${project.version}</appversion>
                                     <copyright>Copyright eXOReaction AS</copyright>
-                                    <description>Description</description>
+                                    <description>Xorcery Greeter Example</description>
                                     <vendor>eXOReaction AS</vendor>
                                     <installdir>/opt/exoreaction</installdir>
                                     <javaoptions>-Dfile.encoding=UTF-8 -Xms256m -Xmx512m</javaoptions>

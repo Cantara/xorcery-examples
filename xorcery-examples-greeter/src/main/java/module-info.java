@@ -14,10 +14,10 @@ open module xorcery.examples.greeter {
     requires xorcery.neo4j.embedded;
     requires xorcery.neo4j.projections;
     requires xorcery.reactivestreams.api;
+    requires xorcery.reactivestreams.server;
 
     requires xorcery.neo4j.shaded;
-    requires xorcery.configuration;  // Added: Required for ConfigurationBuilder in tests
-    // Removed: xorcery.service.api - no longer exists in Xorcery 0.132.5
+    requires xorcery.configuration;
 
     requires jakarta.ws.rs;
     requires jakarta.inject;
@@ -27,4 +27,6 @@ open module xorcery.examples.greeter {
     requires info.picocli;
     requires xorcery.jaxrs.server;
     requires org.apache.commons.lang3;
+
+    requires reactor.core;
 }

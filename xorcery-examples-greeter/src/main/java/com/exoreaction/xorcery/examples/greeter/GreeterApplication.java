@@ -1,13 +1,11 @@
 package com.exoreaction.xorcery.examples.greeter;
 
-import com.exoreaction.xorcery.domainevents.api.*;
-import com.exoreaction.xorcery.domainevents.context.CommandMetadata;
-import com.exoreaction.xorcery.domainevents.publisher.DomainEventPublisher;
+import dev.xorcery.domainevents.api.*;
+import dev.xorcery.domainevents.publisher.api.DomainEventPublisher;
 import com.exoreaction.xorcery.examples.greeter.commands.UpdateGreeting;
-import com.exoreaction.xorcery.metadata.CommonMetadata;
-import com.exoreaction.xorcery.metadata.Metadata;
-import com.exoreaction.xorcery.neo4j.client.GraphDatabase;
-import com.exoreaction.xorcery.neo4j.client.GraphResult;
+import dev.xorcery.metadata.Metadata;
+import dev.xorcery.neo4j.client.GraphDatabase;
+import dev.xorcery.neo4j.client.GraphResult;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.jvnet.hk2.annotations.Service;
@@ -59,13 +57,16 @@ public class GreeterApplication {
 
     // Writes
     public CompletableFuture<Metadata> handle(Record command) {
-        Metadata.Builder metadata = new CommandMetadata.Builder(new Metadata.Builder().add(domainEventMetadata))
-                .timestamp(System.currentTimeMillis()).builder();
+        // Build metadata using the DomainEventMetadata enum fields
+        Metadata metadata = new Metadata.Builder()
+                .add(domainEventMetadata)
+                .add(DomainEventMetadata.timestamp, System.currentTimeMillis())
+                .add(DomainEventMetadata.commandName, command.getClass().getName())
+                .build();
 
         try {
             List<DomainEvent> events = (List<DomainEvent>) getClass().getDeclaredMethod("handle", command.getClass()).invoke(this, command);
-            Metadata md = metadata.add(DomainEventMetadata.commandName, command.getClass().getName()).build();
-            MetadataEvents metadataEvents = new MetadataEvents(md, events);
+            MetadataEvents metadataEvents = new MetadataEvents(metadata, events);
             return domainEventPublisher.publish(metadataEvents);
         } catch (Throwable e) {
             return CompletableFuture.failedFuture(e);

@@ -1,13 +1,13 @@
 package com.exoreaction.xorcery.examples.forum.resources;
 
-import com.exoreaction.xorcery.domainevents.jsonapi.resources.ResourceObjectMapperResource;
-import com.exoreaction.xorcery.domainevents.jsonapi.resources.model.CommonModel;
+import dev.xorcery.domainevents.jsonapi.resources.ResourceObjectMapperResource;
+import dev.xorcery.domainevents.jsonapi.resources.model.CommonModel;
 import com.exoreaction.xorcery.examples.forum.model.*;
 import com.exoreaction.xorcery.examples.forum.resources.api.*;
-import com.exoreaction.xorcery.jsonapi.*;
-import com.exoreaction.xorcery.neo4j.client.GraphQuery;
-import com.exoreaction.xorcery.neo4j.jsonapi.resources.JsonApiNeo4jResourceMixin;
-import com.exoreaction.xorcery.neo4j.jsonapi.resources.Pagination;
+import dev.xorcery.jsonapi.*;
+import dev.xorcery.neo4j.client.GraphQuery;
+import dev.xorcery.neo4j.jsonapi.resources.JsonApiNeo4jResourceMixin;
+import dev.xorcery.neo4j.jsonapi.resources.Pagination;
 import jakarta.ws.rs.core.Link;
 import jakarta.ws.rs.core.UriBuilder;
 
@@ -17,9 +17,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static com.exoreaction.xorcery.jsonapi.JsonApiRels.describedby;
-import static com.exoreaction.xorcery.jsonapi.JsonApiRels.self;
-import static com.exoreaction.xorcery.neo4j.client.RowModel.toModel;
+import static dev.xorcery.jsonapi.JsonApiRels.describedby;
+import static dev.xorcery.jsonapi.JsonApiRels.self;
+import static dev.xorcery.neo4j.client.RowModel.toModel;
 
 
 public interface ForumApiMixin

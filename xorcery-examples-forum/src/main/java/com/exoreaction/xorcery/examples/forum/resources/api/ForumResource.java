@@ -1,26 +1,26 @@
 package com.exoreaction.xorcery.examples.forum.resources.api;
 
-import com.exoreaction.xorcery.domainevents.jsonapi.resources.CommandsJsonSchemaResource;
-import com.exoreaction.xorcery.domainevents.jsonapi.resources.model.CommonModel;
+import dev.xorcery.domainevents.jsonapi.resources.CommandsJsonSchemaResource;
+import dev.xorcery.domainevents.jsonapi.resources.model.CommonModel;
 import com.exoreaction.xorcery.examples.forum.contexts.PostsContext;
 import com.exoreaction.xorcery.examples.forum.entities.CommentEntity;
 import com.exoreaction.xorcery.examples.forum.entities.PostEntity;
 import com.exoreaction.xorcery.examples.forum.model.ForumModel;
-import com.exoreaction.xorcery.hyperschema.Link;
-import com.exoreaction.xorcery.jaxrs.server.resources.BaseResource;
-import com.exoreaction.xorcery.jsonapi.Links;
-import com.exoreaction.xorcery.jsonapi.MediaTypes;
-import com.exoreaction.xorcery.jsonapi.ResourceDocument;
-import com.exoreaction.xorcery.jsonapi.server.resources.JsonApiResource;
-import com.exoreaction.xorcery.jsonapischema.ResourceDocumentSchema;
-import com.exoreaction.xorcery.jsonapischema.ResourceObjectSchema;
-import com.exoreaction.xorcery.jsonschema.JsonSchema;
-import com.exoreaction.xorcery.jsonschema.server.resources.JsonSchemaResource;
+import dev.xorcery.hyperschema.Link;
+import dev.xorcery.jaxrs.server.resources.BaseResource;
+import dev.xorcery.jsonapi.Links;
+import dev.xorcery.jsonapi.MediaTypes;
+import dev.xorcery.jsonapi.ResourceDocument;
+import dev.xorcery.jsonapi.server.resources.JsonApiResource;
+import dev.xorcery.jsonapischema.ResourceDocumentSchema;
+import dev.xorcery.jsonapischema.ResourceObjectSchema;
+import dev.xorcery.jsonschema.JsonSchema;
+import dev.xorcery.jsonschema.server.resources.JsonSchemaResource;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 
-import static com.exoreaction.xorcery.jsonapi.JsonApiRels.describedby;
+import static dev.xorcery.jsonapi.JsonApiRels.describedby;
 
 @Path("api/forum")
 public class ForumResource extends BaseResource
@@ -34,7 +34,7 @@ public class ForumResource extends BaseResource
                 .resources(postSchema(), commentSchema())
                 .included(commentSchema())
                 .builder()
-                .links(new com.exoreaction.xorcery.hyperschema.Links.Builder()
+                .links(new dev.xorcery.hyperschema.Links.Builder()
                         .link(selfLink()).link(describedbyLink(getAbsolutePath().toASCIIString()))
                         .with(commands(PostEntity.class),
                                 commands(PostsContext.class),

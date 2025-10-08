@@ -1,14 +1,15 @@
 package com.exoreaction.xorcery.examples.forum.entities;
 
-import com.exoreaction.xorcery.domainevents.entity.Command;
-import com.exoreaction.xorcery.domainevents.entity.Entity;
-import com.exoreaction.xorcery.domainevents.entity.annotation.Create;
-import com.exoreaction.xorcery.domainevents.entity.annotation.Update;
+import dev.xorcery.domainevents.command.Command;
+import dev.xorcery.domainevents.entity.Entity;
+import dev.xorcery.domainevents.command.annotation.Create;
+import dev.xorcery.domainevents.command.annotation.Update;
+import dev.xorcery.domainevents.api.DomainEvent;
 
-import static com.exoreaction.xorcery.domainevents.api.JsonDomainEvent.event;
+import static dev.xorcery.domainevents.api.JsonDomainEvent.event;
 
 public class PostEntity
-        extends Entity<PostEntity.PostSnapshot> {
+        extends Entity {
 
     @Create
     public record CreatePost(String id, String title, String body)

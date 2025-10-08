@@ -20,6 +20,9 @@ jersey.server.register:
 
 jetty.server.ssl.enabled: false
 
+# Enable reactive streams server
+reactivestreams.server.enabled: true
+
 keystores:
   enabled: true
   keystore:

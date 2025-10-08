@@ -2,8 +2,8 @@ package com.exoreaction.xorcery.examples.greeter.resources.api;
 
 import com.exoreaction.xorcery.examples.greeter.GreeterApplication;
 import com.exoreaction.xorcery.examples.greeter.commands.UpdateGreeting;
-import com.exoreaction.xorcery.jaxrs.server.resources.BaseResource;
-import com.exoreaction.xorcery.thymeleaf.resources.ThymeleafResource;
+import dev.xorcery.jaxrs.server.resources.BaseResource;
+import dev.xorcery.thymeleaf.resources.ThymeleafResource;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;

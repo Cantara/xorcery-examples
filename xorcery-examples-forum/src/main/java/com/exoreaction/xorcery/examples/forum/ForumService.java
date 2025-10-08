@@ -1,6 +1,6 @@
 package com.exoreaction.xorcery.examples.forum;
 
-import com.exoreaction.xorcery.configuration.Configuration;
+import dev.xorcery.configuration.Configuration;
 import jakarta.inject.Inject;
 import org.glassfish.hk2.runlevel.RunLevel;
 import org.jvnet.hk2.annotations.Service;
