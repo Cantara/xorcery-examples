@@ -8,9 +8,6 @@
     </parent>
 
     <artifactId>xorcery-examples-streaming</artifactId>
-    <!--<artifactId>xorcery-examples-persistentsubscriber</artifactId>-->
-
-    <version>1.166.15-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
