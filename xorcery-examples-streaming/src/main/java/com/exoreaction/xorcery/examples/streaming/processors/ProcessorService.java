@@ -1,10 +1,10 @@
 package com.exoreaction.xorcery.examples.streaming.processors;
 
-import com.exoreaction.xorcery.configuration.Configuration;
-import com.exoreaction.xorcery.reactivestreams.api.client.ClientWebSocketOptions;
-import com.exoreaction.xorcery.reactivestreams.api.client.ClientWebSocketStreamContext;
-import com.exoreaction.xorcery.reactivestreams.api.client.ClientWebSocketStreams;
-import com.exoreaction.xorcery.reactivestreams.api.server.ServerWebSocketStreams;
+import dev.xorcery.configuration.Configuration;
+import dev.xorcery.reactivestreams.api.client.ClientWebSocketOptions;
+import dev.xorcery.reactivestreams.api.client.ClientWebSocketStreamContext;
+import dev.xorcery.reactivestreams.api.client.ClientWebSocketStreams;
+import dev.xorcery.reactivestreams.api.server.ServerWebSocketStreams;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;

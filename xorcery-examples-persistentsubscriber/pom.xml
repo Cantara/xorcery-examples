@@ -11,29 +11,64 @@
     <version>1.166.1-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
+        <!-- Core dependencies -->
+        <dependency>
+            <groupId>dev.xorcery</groupId>
+            <artifactId>xorcery-core</artifactId>
+        </dependency>
         <dependency>
             <groupId>dev.xorcery</groupId>
             <artifactId>xorcery-runner</artifactId>
         </dependency>
         <dependency>
             <groupId>dev.xorcery</groupId>
-            <artifactId>xorcery-reactivestreams-persistentsubscriber</artifactId>
+            <artifactId>xorcery-configuration-api</artifactId>
+        </dependency>
+
+        <!-- Reactive Streams -->
+        <dependency>
+            <groupId>dev.xorcery</groupId>
+            <artifactId>xorcery-reactivestreams-api</artifactId>
         </dependency>
         <dependency>
             <groupId>dev.xorcery</groupId>
+            <artifactId>xorcery-reactivestreams-client</artifactId>
+        </dependency>
+
+        <!-- Persistent subscriber module - NOT AVAILABLE in Xorcery 0.166.9 -->
+        <!--
+        <dependency>
+            <groupId>dev.xorcery</groupId>
+            <artifactId>xorcery-reactivestreams-persistentsubscriber</artifactId>
+        </dependency>
+        -->
+
+        <dependency>
+            <groupId>dev.xorcery</groupId>
             <artifactId>xorcery-opentelemetry-sdk</artifactId>
+        </dependency>
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dev.xorcery</groupId>
+            <artifactId>xorcery-log4j</artifactId>
         </dependency>
 
         <!-- Tests -->
         <dependency>
             <groupId>dev.xorcery</groupId>
             <artifactId>xorcery-junit</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>dev.xorcery</groupId>
