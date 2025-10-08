@@ -16,7 +16,8 @@ open module xorcery.examples.greeter {
     requires xorcery.reactivestreams.api;
 
     requires xorcery.neo4j.shaded;
-    requires xorcery.service.api;
+    requires xorcery.configuration;  // Added: Required for ConfigurationBuilder in tests
+    // Removed: xorcery.service.api - no longer exists in Xorcery 0.132.5
 
     requires jakarta.ws.rs;
     requires jakarta.inject;
