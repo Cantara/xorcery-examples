@@ -1,13 +1,13 @@
 package com.exoreaction.xorcery.examples.todo.model;
 
-import com.exoreaction.xorcery.domainevents.helpers.model.CommonModel;
-import com.exoreaction.xorcery.neo4j.client.GraphDatabase;
-import com.exoreaction.xorcery.neo4j.client.GraphQuery;
+import dev.xorcery.domainevents.jsonapi.resources.model.CommonModel;
+import dev.xorcery.neo4j.client.GraphDatabase;
+import dev.xorcery.neo4j.client.GraphQuery;
 
 import java.text.MessageFormat;
 import java.util.function.BiConsumer;
 
-import static com.exoreaction.xorcery.neo4j.client.WhereClauseBuilder.where;
+import static dev.xorcery.neo4j.client.WhereClauseBuilder.where;
 
 public record Posts(GraphDatabase db) {
 

@@ -1,15 +1,14 @@
 package com.exoreaction.xorcery.examples.todo.entities;
 
-import com.exoreaction.xorcery.domainevents.helpers.entity.Command;
-import com.exoreaction.xorcery.domainevents.helpers.entity.Entity;
-import com.exoreaction.xorcery.domainevents.helpers.entity.EntitySnapshot;
-import com.exoreaction.xorcery.domainevents.helpers.entity.annotation.Create;
-import com.exoreaction.xorcery.domainevents.helpers.entity.annotation.Update;
+import dev.xorcery.domainevents.command.Command;
+import dev.xorcery.domainevents.entity.Entity;
+import dev.xorcery.domainevents.command.annotation.Create;
+import dev.xorcery.domainevents.command.annotation.Update;
 
-import static com.exoreaction.xorcery.domainevents.api.JsonDomainEvent.event;
+import static dev.xorcery.domainevents.api.JsonDomainEvent.event;
 
 public class ProjectEntity
-        extends Entity<ProjectEntity.PostSnapshot> {
+        extends Entity {
 
     @Create
     public record CreatePost(String id, String title, String body)
@@ -21,8 +20,7 @@ public class ProjectEntity
             implements Command {
     }
 
-    public static class PostSnapshot
-            implements EntitySnapshot {
+    public static class PostSnapshot {
         public String title;
         public String body;
     }

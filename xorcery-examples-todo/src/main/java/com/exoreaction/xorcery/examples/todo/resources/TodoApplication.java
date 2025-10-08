@@ -1,20 +1,19 @@
 package com.exoreaction.xorcery.examples.todo.resources;
 
-import com.exoreaction.xorcery.domainevents.api.CommandEvents;
-import com.exoreaction.xorcery.domainevents.api.DomainEvent;
-import com.exoreaction.xorcery.domainevents.helpers.context.DomainEventMetadata;
-import com.exoreaction.xorcery.domainevents.helpers.entity.Command;
-import com.exoreaction.xorcery.domainevents.helpers.entity.Entity;
-import com.exoreaction.xorcery.domainevents.helpers.entity.EntitySnapshot;
-import com.exoreaction.xorcery.domainevents.publisher.DomainEventPublisher;
-import com.exoreaction.xorcery.domainevents.snapshot.Neo4jEntitySnapshotLoader;
+import dev.xorcery.collections.Element;
+import dev.xorcery.domainevents.api.MetadataEvents;
+import dev.xorcery.domainevents.context.CommandMetadata;
+import dev.xorcery.domainevents.context.CommandResult;
+import dev.xorcery.domainevents.command.Command;
+import dev.xorcery.domainevents.entity.Entity;
+import dev.xorcery.domainevents.publisher.api.DomainEventPublisher;
+import dev.xorcery.domainevents.neo4jprojection.providers.Neo4jEntitySnapshotLoader;
 import com.exoreaction.xorcery.examples.todo.contexts.*;
 import com.exoreaction.xorcery.examples.todo.entities.TaskEntity;
 import com.exoreaction.xorcery.examples.todo.entities.ProjectEntity;
 import com.exoreaction.xorcery.examples.todo.entities.UserEntity;
-import com.exoreaction.xorcery.metadata.Metadata;
-import com.exoreaction.xorcery.neo4j.client.GraphDatabase;
-import com.exoreaction.xorcery.util.UUIDs;
+import dev.xorcery.metadata.Metadata;
+import dev.xorcery.neo4j.client.GraphDatabase;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BadRequestException;
 
@@ -57,59 +56,47 @@ public class TodoApplication {
         return new SignupContext(this, userEntitySupplier);
     }
 
-/*
-    public PostsContext posts() {
-        return new PostsContext(this, postEntitySupplier);
-    }
+    /*
+        public PostsContext posts() {
+            return new PostsContext(this, postEntitySupplier);
+        }
 
-    public PostContext post(PostModel postModel) {
-        return new PostContext(this, postModel, postEntitySupplier);
-    }
+        public PostContext post(PostModel postModel) {
+            return new PostContext(this, postModel, postEntitySupplier);
+        }
 
-    public CommentContext comment(CommentModel model) {
-        return new CommentContext(this, model, commentEntitySupplier);
-    }
+        public CommentContext comment(CommentModel model) {
+            return new CommentContext(this, model, commentEntitySupplier);
+        }
 
-    public PostCommentsContext postComments(PostModel postModel) {
-        return new PostCommentsContext(this, postModel, commentEntitySupplier);
-    }
+        public PostCommentsContext postComments(PostModel postModel) {
+            return new PostCommentsContext(this, postModel, commentEntitySupplier);
+        }
 
-*/
-    public <T extends EntitySnapshot> CompletionStage<Metadata> handle(Entity<T> entity, DomainEventMetadata metadata, Command command) {
+    */
+    public <COMMAND extends Command> CompletableFuture<CommandResult> handle(Entity entity, Metadata metadata, COMMAND command) {
 
         try {
-            DomainEventMetadata domainMetadata = getDomainEventMetadata(metadata, command);
+            CommandMetadata domainMetadata = new CommandMetadata.Builder(metadata)
+                    .domain("todo")
+                    .commandName(command.getClass())
+                    .build();
 
-            T snapshot;
-            if (Command.isCreate(command.getClass())) {
-                // Should fail
-                try {
-                    snapshotLoader.load(domainMetadata, command.id(), entity);
-                    return CompletableFuture.failedStage(new BadRequestException("Entity already exists"));
-                } catch (Exception e) {
-                    // Good!
-                    Class<?> snapshotClass = (Class<?>) ((ParameterizedType) entity.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-                    snapshot = (T)snapshotClass.getConstructor().newInstance();
-                }
-            } else {
-                snapshot = snapshotLoader.load(domainMetadata, command.id(), entity);
-            }
+            // Use snapshotFor to get the snapshot
+            return snapshotLoader.snapshotFor(domainMetadata, command, entity)
+                    .thenCompose(snapshot -> {
+                        // Call entity.handle() which returns CompletableFuture<CommandResult>
+                        return entity.handle(domainMetadata, snapshot.state(), command);
+                    })
+                    .thenCompose(result -> {
+                        // Publish the events
+                        return domainEventPublisher.publish(new MetadataEvents(result.metadata(), result.events()))
+                                .thenApply(md -> new CommandResult(command, result.events(), md));
+                    });
 
-            List<DomainEvent> events = entity.handle(domainMetadata, snapshot, command);
-
-            return domainEventPublisher.publish(new CommandEvents(metadata.context(), events));
         } catch (Throwable e) {
-            return CompletableFuture.failedStage(e);
+            logger.error("Error handling command", e);
+            return CompletableFuture.failedFuture(e);
         }
-    }
-
-    private DomainEventMetadata getDomainEventMetadata(DomainEventMetadata metadata, Command command) {
-        DomainEventMetadata domainMetadata = new DomainEventMetadata.Builder(metadata.context())
-                .timestamp(System.currentTimeMillis())
-                .correlationId(UUIDs.newId())
-                .domain("todo")
-                .commandName(command.getClass())
-                .build();
-        return domainMetadata;
     }
 }

@@ -36,6 +36,7 @@
         <module>xorcery-examples-forum</module>
         <module>xorcery-examples-streaming</module>
         <module>xorcery-examples-persistentsubscriber</module>
+        <module>xorcery-examples-todo</module>
     </modules>
 
     <dependencyManagement>

@@ -1,10 +1,10 @@
 package com.exoreaction.xorcery.examples.todo.resources.api;
 
-import com.exoreaction.xorcery.domainevents.helpers.entity.Command;
+import dev.xorcery.domainevents.command.Command;
 import com.exoreaction.xorcery.examples.todo.resources.RequiresAuthentication;
 import com.exoreaction.xorcery.examples.todo.resources.TodoApplication;
-import com.exoreaction.xorcery.neo4j.client.GraphDatabase;
-import com.exoreaction.xorcery.neo4j.client.GraphResult;
+import dev.xorcery.neo4j.client.GraphDatabase;
+import dev.xorcery.neo4j.client.GraphResult;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -14,6 +14,7 @@ import org.thymeleaf.context.WebContext;
 
 import javax.security.auth.Subject;
 import java.util.Map;
+import java.util.Optional;
 
 @Path("todo/account")
 @RequiresAuthentication
@@ -32,9 +33,10 @@ public class AccountResource
 
     @GET
     public Response get() throws Exception {
-        Subject subject = getSubject();
-        if (subject != null)
+        Optional<Subject> subjectOpt = getSubject();
+        if (subjectOpt.isPresent())
         {
+            Subject subject = subjectOpt.get();
             try (GraphResult result = graphDatabase.execute("""
                 MATCH (user:User {id:$id})
                 RETURN user.id as id, user.email as email

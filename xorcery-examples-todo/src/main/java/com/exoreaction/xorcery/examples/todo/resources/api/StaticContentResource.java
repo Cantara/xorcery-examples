@@ -1,6 +1,6 @@
 package com.exoreaction.xorcery.examples.todo.resources.api;
 
-import com.exoreaction.xorcery.util.Resources;
+import dev.xorcery.util.Resources;
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,17 +1,15 @@
 package com.exoreaction.xorcery.examples.todo.entities;
 
+import dev.xorcery.domainevents.command.Command;
+import dev.xorcery.domainevents.entity.Entity;
+import dev.xorcery.domainevents.command.annotation.Create;
+import dev.xorcery.domainevents.command.annotation.Delete;
+import dev.xorcery.domainevents.command.annotation.Update;
 
-import com.exoreaction.xorcery.domainevents.helpers.entity.Command;
-import com.exoreaction.xorcery.domainevents.helpers.entity.Entity;
-import com.exoreaction.xorcery.domainevents.helpers.entity.EntitySnapshot;
-import com.exoreaction.xorcery.domainevents.helpers.entity.annotation.Create;
-import com.exoreaction.xorcery.domainevents.helpers.entity.annotation.Delete;
-import com.exoreaction.xorcery.domainevents.helpers.entity.annotation.Update;
-
-import static com.exoreaction.xorcery.domainevents.api.JsonDomainEvent.event;
+import static dev.xorcery.domainevents.api.JsonDomainEvent.event;
 
 public class TaskEntity
-        extends Entity<TaskEntity.TaskSnapshot>
+        extends Entity
         implements DomainModel {
 
     @Create
@@ -29,33 +27,32 @@ public class TaskEntity
             implements Command {
     }
 
-    public static class TaskSnapshot
-            implements EntitySnapshot {
+    public static class TaskSnapshot {
         public String description;
     }
 
     public void handle(AddTask command) {
-        add(event("Created",Entity.Task)
-                .created(Entity.Task, command.id)
-                .updatedAttribute(Task.description, command.description)
-                .addedRelationship("PostComments", "Post", metadata.getAggregateId())
-                .build());
-        add(event("Added",Entity.Task)
-                .updated(Entity.Project, command.projectId())
+        add(event("TaskCreated")
+                .created("Task", command.id)
+                .updatedAttribute("description", command.description)
+                .addedRelationship("ProjectTasks", "Project", command.projectId)
                 .build());
     }
 
     public void handle(UpdateTask command) {
-        if (snapshot.description.equals(command.description))
+        // Access the snapshot through the Element API
+        String currentDescription = snapshot.getString("description").orElse("");
+
+        if (currentDescription.equals(command.description))
             return;
 
-        add(event("UpdatedTask")
+        add(event("TaskUpdated")
                 .updated("Task", command.id)
                 .updatedAttribute("description", command.description)
                 .build());
     }
 
     public void handle(RemoveTask command) {
-        add(event("removedcomment").deleted("Comment", command.id));
+        add(event("TaskRemoved").deleted("Task", command.id));
     }
 }

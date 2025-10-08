@@ -1,12 +1,13 @@
 package com.exoreaction.xorcery.examples.todo.resources.api;
 
-import com.exoreaction.xorcery.domainevents.helpers.entity.Command;
+import dev.xorcery.domainevents.command.Command;
+import dev.xorcery.domainevents.context.CommandMetadata;
 import com.exoreaction.xorcery.examples.todo.entities.UserEntity;
 import com.exoreaction.xorcery.examples.todo.resources.TodoApplication;
-import com.exoreaction.xorcery.json.JsonMerger;
-import com.exoreaction.xorcery.jwt.server.JwtServerConfiguration;
-import com.exoreaction.xorcery.jwt.server.JwtService;
-import com.exoreaction.xorcery.metadata.Metadata;
+import dev.xorcery.json.JsonMerger;
+import dev.xorcery.jwt.server.JwtServerConfiguration;
+import dev.xorcery.jwt.server.JwtService;
+import dev.xorcery.metadata.Metadata;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.inject.Inject;
@@ -18,7 +19,6 @@ import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.NewCookie;
 import jakarta.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
-import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import java.io.IOException;
@@ -61,7 +61,16 @@ public class SignupResource
             }
         }).map(signup ->
         {
-            Metadata metadata = todoApplication.signup().handle(new Metadata.Builder().build(), signup).toCompletableFuture().orTimeout(30, TimeUnit.SECONDS).join();
+            // Create CommandMetadata and call apply
+            CommandMetadata commandMetadata = new CommandMetadata.Builder(new Metadata.Builder().build())
+                    .domain("todo")
+                    .commandName(signup.getClass())
+                    .build();
+
+            var resultFuture = todoApplication.signup().apply(commandMetadata, signup)
+                    .orTimeout(30, TimeUnit.SECONDS)
+                    .join();
+
             try {
                 String token = jwtService.createJwt(signup.id());
                 JwtServerConfiguration jwtServerConfiguration = jwtService.getJwtServerConfiguration();
