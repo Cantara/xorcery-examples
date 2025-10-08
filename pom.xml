@@ -33,7 +33,8 @@
     <modules>
         <module>xorcery-examples-greeter</module>
         <module>xorcery-examples-forum</module>
-        <module>xorcery-examples-persistentsubscriber</module>
+        <!-- Temporarily disabled - xorcery-reactivestreams-persistentsubscriber module not available in Xorcery 0.166.9 -->
+        <!-- <module>xorcery-examples-persistentsubscriber</module> -->
         <module>xorcery-examples-streaming</module>
     </modules>
 
