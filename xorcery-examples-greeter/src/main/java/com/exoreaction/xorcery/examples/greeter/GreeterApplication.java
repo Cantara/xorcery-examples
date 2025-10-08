@@ -1,12 +1,13 @@
 package com.exoreaction.xorcery.examples.greeter;
 
+import com.exoreaction.xorcery.examples.greeter.commands.UpdateGreeting;
 import dev.xorcery.domainevents.api.*;
 import dev.xorcery.domainevents.publisher.api.DomainEventPublisher;
-import com.exoreaction.xorcery.examples.greeter.commands.UpdateGreeting;
 import dev.xorcery.metadata.Metadata;
 import dev.xorcery.neo4j.client.GraphDatabase;
 import dev.xorcery.neo4j.client.GraphResult;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import org.jvnet.hk2.annotations.Service;
 
@@ -19,7 +20,8 @@ import java.util.concurrent.TimeUnit;
 
 import static java.util.Map.entry;
 
-@Service
+@Service(name = "greeter")
+@Named("greeter")
 @Singleton
 public class GreeterApplication {
 
