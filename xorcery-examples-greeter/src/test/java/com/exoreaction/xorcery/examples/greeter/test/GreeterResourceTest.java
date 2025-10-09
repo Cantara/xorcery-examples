@@ -47,11 +47,11 @@ class GreeterResourceTest {
             client.target(baseUri)
                     .path("/api/greeter")
                     .request()
-                    .post(Entity.form(new Form().param("greeting", "HelloWorld!")), String.class);
+                    .post(Entity.form(new Form().param("greeting", "Hello World!")), String.class);
         }
 
         // Poll until the greeting is updated (with timeout)
-        String expectedGreeting = "HelloWorld!";
+        String expectedGreeting = "Hello World!";
         String content = null;
         int maxAttempts = 50; // 5 seconds total
         int attempt = 0;
@@ -86,7 +86,7 @@ class GreeterResourceTest {
         
         <div class="card">
             <div class="card-title">
-                Greeting:<span>HelloWorld!</span>
+                Greeting:<span>Hello World</span>
             </div>
         
             <form method="POST" action="" class="card-body">
