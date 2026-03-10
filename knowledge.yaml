@@ -1,0 +1,24 @@
+id: xorcery-examples
+name: Xorcery Examples
+version: 1.166.17-SNAPSHOT
+description: |
+  Runnable example applications demonstrating Xorcery framework usage patterns.
+  Covers event sourcing, reactive pipelines, service composition, and deployment
+  configurations.
+units:
+  - id: examples
+    name: Examples
+    type: component
+    description: Standalone example applications showing idiomatic Xorcery service structure.
+  - id: hello-world
+    name: Hello World
+    type: component
+    description: Minimal Xorcery service demonstrating framework bootstrapping and configuration.
+  - id: event-sourcing
+    name: Event Sourcing
+    type: component
+    description: Event-sourced aggregate example showing command handling and event projection.
+  - id: reactive-pipeline
+    name: Reactive Pipeline
+    type: component
+    description: Reactive stream composition example connecting producers, processors, and consumers.
