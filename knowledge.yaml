@@ -1,3 +1,17 @@
+kcp_version: "0.21"
+updated: "2026-06-20"
+language: en
+license: "Apache-2.0"
+indexing: private
+temporal:
+  valid_from: "2026-03-10"
+signing:
+  scheme: ed25519
+  scope: this-manifest
+  public_key: "MCowBQYDK2VwAyEAuipgusnqU9vjf3p2yPVLD/DmERT6tBbLOqEETdxAhMU="
+  signature: "https://raw.githubusercontent.com/Cantara/xorcery-examples/main/knowledge.yaml.sig"
+not_for: []
+
 id: xorcery-examples
 name: Xorcery Examples
 version: 1.166.17-SNAPSHOT
@@ -10,15 +24,27 @@ units:
     name: Examples
     type: component
     description: Standalone example applications showing idiomatic Xorcery service structure.
+      content_hash:
+        algorithm: sha256
+        value: ""
   - id: hello-world
     name: Hello World
     type: component
     description: Minimal Xorcery service demonstrating framework bootstrapping and configuration.
+      content_hash:
+        algorithm: sha256
+        value: ""
   - id: event-sourcing
     name: Event Sourcing
     type: component
     description: Event-sourced aggregate example showing command handling and event projection.
+      content_hash:
+        algorithm: sha256
+        value: ""
   - id: reactive-pipeline
     name: Reactive Pipeline
     type: component
     description: Reactive stream composition example connecting producers, processors, and consumers.
+      content_hash:
+        algorithm: sha256
+        value: ""
