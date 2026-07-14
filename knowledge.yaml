@@ -1,4 +1,4 @@
-kcp_version: "0.21"
+kcp_version: "0.26"
 updated: "2026-06-20"
 language: en
 license: "Apache-2.0"
@@ -24,27 +24,23 @@ units:
     name: Examples
     type: component
     description: Standalone example applications showing idiomatic Xorcery service structure.
-      content_hash:
-        algorithm: sha256
-        value: ""
   - id: hello-world
     name: Hello World
     type: component
     description: Minimal Xorcery service demonstrating framework bootstrapping and configuration.
-      content_hash:
-        algorithm: sha256
-        value: ""
   - id: event-sourcing
     name: Event Sourcing
     type: component
     description: Event-sourced aggregate example showing command handling and event projection.
-      content_hash:
-        algorithm: sha256
-        value: ""
   - id: reactive-pipeline
     name: Reactive Pipeline
     type: component
     description: Reactive stream composition example connecting producers, processors, and consumers.
-      content_hash:
-        algorithm: sha256
-        value: ""
+
+# Serving Endpoint Binding (KCP SPEC v0.26 §3.12): authoritative manifest URL
+# and authorized MCP representative. Ignored by pre-0.26 verifiers.
+serving:
+  manifest:
+    - https://raw.githubusercontent.com/Cantara/xorcery-examples/main/knowledge.yaml
+  mcp:
+    - https://mcp.cantara.no/mcp
